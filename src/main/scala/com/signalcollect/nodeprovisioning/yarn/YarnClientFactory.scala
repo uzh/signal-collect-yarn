@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
 
 object YarnClientFactory extends LogHelper{
 
-  def isValidConfig(config: Config): Boolean = {
+  protected def isValidConfig(config: Config): Boolean = {
     if (config == null) false
     else if (config.hasPath("deployment.yarn.resourcemanager.host") &&
       config.hasPath("deployment.yarn.resourcemanager.address") &&
@@ -27,7 +27,7 @@ object YarnClientFactory extends LogHelper{
     createYarnClient(yarnConfig)
   }
 
-  def createYarnClient(config: Configuration): YarnClient = {
+  protected def createYarnClient(config: Configuration): YarnClient = {
     val yarnClient = YarnClient.createYarnClient()
     log.info("initialize YarnClient")
     yarnClient.init(config)

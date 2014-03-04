@@ -20,16 +20,7 @@ package com.signalcollect.nodeprovisioning.yarn
 
 import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper
-import org.apache.hadoop.fs.{ FileSystem, Path, FileStatus }
-import org.apache.hadoop.yarn.api.ApplicationConstants
-import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
-import org.apache.hadoop.yarn.api.records._
-import org.apache.hadoop.yarn.client.api._
-import org.apache.hadoop.yarn.conf.YarnConfiguration
-import org.apache.hadoop.yarn.util.{ Records, ConverterUtils }
-import scala.collection.immutable.List
-import scala.collection.mutable.HashMap
-import scala.collection.JavaConversions._
+import org.apache.hadoop.yarn.api.records.ApplicationSubmissionContext
 
 class YarnDeploymentClient(config: Config) extends LogHelper {
 

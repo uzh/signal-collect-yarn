@@ -30,3 +30,4 @@ web-split-*
 *.class
 
 deployment.config
+/bin

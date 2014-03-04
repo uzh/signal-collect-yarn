@@ -17,7 +17,8 @@ class YarnSubmissionContextFactory(client: YarnClient, config: Config, applicati
   val memory = config.getInt("deployment.memory")
   val javaHome =Environment.JAVA_HOME.$()
   val mainClass =  config.getString("deployment.mainClass")
-  val jarName = config.getString("deployment.jar")
+  val pathToJar = config.getString("deployment.pathToJar")
+  val jarName = config.getString("deployment.jarName")
   val logDir = ApplicationConstants.LOG_DIR_EXPANSION_VAR
 
   def getSubmissionContext(): ApplicationSubmissionContext = {
@@ -27,11 +28,10 @@ class YarnSubmissionContextFactory(client: YarnClient, config: Config, applicati
   }
 
   def createLocalResourceForJar(applicationId: String) : HashMap[String, LocalResource] = {
-    val filename = config.getString("deployment.jar")
     val localResources = new HashMap[String, LocalResource]()
     val fs = FileSystem.get(client.getConfig())
-    val src = new Path(filename)
-    val pathSuffix = config.getString("deployment.applicationName") + "/" + applicationId + "/AppMaster.jar"
+    val src = new Path(pathToJar + jarName)
+    val pathSuffix = config.getString("deployment.applicationName") + "/" + applicationId + s"/${jarName}"
     val dst = new Path(fs.getHomeDirectory(), pathSuffix)
     
     fs.copyFromLocalFile(false, true, src, dst)
@@ -43,7 +43,7 @@ class YarnSubmissionContextFactory(client: YarnClient, config: Config, applicati
     jarFile.setResource(ConverterUtils.getYarnUrlFromPath(dst))
     jarFile.setTimestamp(destStatus.getModificationTime())
     jarFile.setSize(destStatus.getLen())
-    localResources.put(filename, jarFile)
+    localResources.put(jarName, jarFile)
     localResources
   }
 
