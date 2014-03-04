@@ -45,7 +45,6 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-yarn-common" % "2.2.0" % "provided",
   ("org.apache.hadoop" % "hadoop-yarn-client" % "2.2.0" % "compile").
   exclude("hadoop-yarn-api", "org.apache.hadoop"),
-  //"org.apache.hadoop" % "hadoop-yarn-server-tests" % "2.2.0" % "test",
   "commons-collections" % "commons-collections" % "3.2.1" % "test",
   "org.apache.hadoop" % "hadoop-minicluster" % "2.2.0" % "test",
   "junit" % "junit" % "4.8.2"  % "test",
