@@ -1,6 +1,5 @@
 *.snapshot
 *.orig
-lib/*
 !/.gitignore
 bin/*
 project/target/*
