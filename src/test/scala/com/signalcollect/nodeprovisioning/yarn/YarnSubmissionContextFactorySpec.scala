@@ -10,7 +10,8 @@ import org.specs2.mutable.SpecificationWithJUnit
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextFactory" should {
     val config = ConfigFactory.load("test-deployment")
-    lazy val yarnClient = YarnClientFactory.getYarnClient(config)
+    val yarnClientFactory = new DefaultYarnClientFactory()
+    lazy val yarnClient = yarnClientFactory.getYarnClient(config)
     lazy val application = YarnApplicationFactory.getApplication(config, yarnClient)
     "call Factory" in {
       val factory = new YarnSubmissionContextFactory(yarnClient, config, application)

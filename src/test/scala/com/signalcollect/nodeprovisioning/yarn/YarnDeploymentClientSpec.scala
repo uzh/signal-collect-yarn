@@ -33,7 +33,8 @@ class YarnDeploymentClientSpec extends SpecificationWithJUnit {
   "YarnClient" should {
 
     val typesafeConfig = ConfigFactory.load("test-deployment")
-    val client = new YarnDeploymentClient(typesafeConfig)
+    val yarnClientFactory = new MiniYarnClientFactory()
+    val client = new YarnDeploymentClient(typesafeConfig, yarnClientFactory)
 
     "Yarn Client should get ClusterMetrics" in {
       val yarnClient = client.yarnClient

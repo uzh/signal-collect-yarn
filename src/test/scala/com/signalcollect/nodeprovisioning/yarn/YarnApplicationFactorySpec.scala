@@ -9,8 +9,9 @@ import org.specs2.mutable.SpecificationWithJUnit
 @RunWith(classOf[JUnitRunner])
 class YarnApplicationFactorySpec extends SpecificationWithJUnit {
   "YarnApplicationFactory" should {
+    val factory = new DefaultYarnClientFactory()
     val config = ConfigFactory.load("test-deployment")
-    val yarnClient = YarnClientFactory.getYarnClient(config)
+    val yarnClient = factory.getYarnClient(config)
     
     "create a new Application" in {
       val application = YarnApplicationFactory.getApplication(config, yarnClient)
