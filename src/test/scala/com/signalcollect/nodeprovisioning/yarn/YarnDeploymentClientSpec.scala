@@ -27,6 +27,7 @@ import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.matcher.Matcher
 import com.typesafe.config.ConfigFactory
+import com.signalcollect.nodeprovisioning.yarn.JarCreator
 
 
 @RunWith(classOf[JUnitRunner])

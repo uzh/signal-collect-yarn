@@ -10,6 +10,7 @@ import org.apache.hadoop.yarn.client.api._
 import org.apache.hadoop.yarn.util.{ Records, ConverterUtils }
 import scala.collection.mutable.HashMap
 import scala.collection.JavaConversions._
+import com.signalcollect.nodeprovisioning.yarn.JarCreator
 
 
 class YarnSubmissionContextFactory(client: YarnClient, config: Config, application: YarnClientApplication) extends LogHelper {

@@ -1,7 +1,6 @@
 package com.signalcollect.nodeprovisioning.yarn
 
 import org.apache.hadoop.util.JarFinder
-import java.nio.file.Path
 import java.nio.file.Paths
 
 class JarCreator {
