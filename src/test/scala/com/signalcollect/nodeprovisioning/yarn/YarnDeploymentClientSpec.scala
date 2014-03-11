@@ -28,11 +28,12 @@ import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.matcher.Matcher
 import com.typesafe.config.ConfigFactory
 
+
 @RunWith(classOf[JUnitRunner])
 class YarnDeploymentClientSpec extends SpecificationWithJUnit {
   "YarnClient" should {
-
     val typesafeConfig = ConfigFactory.load("test-deployment")
+    val appMasterJar = new JarCreator()
     val yarnClientFactory = new MiniYarnClientFactory()
     val client = new YarnDeploymentClient(typesafeConfig, yarnClientFactory)
 

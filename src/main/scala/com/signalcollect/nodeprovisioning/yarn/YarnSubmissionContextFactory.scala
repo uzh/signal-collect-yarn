@@ -17,8 +17,9 @@ class YarnSubmissionContextFactory(client: YarnClient, config: Config, applicati
   val memory = config.getInt("deployment.memory")
   val javaHome =Environment.JAVA_HOME.$()
   val mainClass =  config.getString("deployment.mainClass")
-  val pathToJar = config.getString("deployment.pathToJar")
-  val jarName = config.getString("deployment.jarName")
+  val jarCreator = new JarCreator()
+  val pathToJar = if(config.hasPath("deployment.pathToJar")) config.getString("deployment.pathToJar") else jarCreator.path
+  val jarName = if(config.hasPath("deployment.jarName")) config.getString("deployment.jarName") else jarCreator.fileName
   val logDir = ApplicationConstants.LOG_DIR_EXPANSION_VAR
 
   def getSubmissionContext(): ApplicationSubmissionContext = {
