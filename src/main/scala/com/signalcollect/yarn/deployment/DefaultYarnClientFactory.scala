@@ -1,4 +1,4 @@
-package com.signalcollect.yarn.deploy
+package com.signalcollect.yarn.deployment
 
 import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper

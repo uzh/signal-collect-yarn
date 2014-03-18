@@ -1,4 +1,4 @@
-package com.signalcollect.yarn.deploy
+package com.signalcollect.yarn.deployment
 
 import com.signalcollect.util.ConfigProvider
 import org.apache.hadoop.yarn.util.Records

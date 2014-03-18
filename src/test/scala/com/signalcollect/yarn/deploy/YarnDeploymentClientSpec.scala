@@ -18,7 +18,7 @@
  */
 package com.signalcollect.yarn.deploy
 
-import com.signalcollect.yarn.deploy.YarnDeploymentClient;
+import com.signalcollect.yarn.deployment.YarnDeploymentClient;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigParseOptions
 import com.typesafe.config.ConfigResolveOptions

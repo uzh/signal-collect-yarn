@@ -1,8 +1,8 @@
 package com.signalcollect.yarn.deploy
 
-import com.signalcollect.yarn.deploy.YarnApplicationFactory;
-import com.signalcollect.yarn.deploy.YarnClientFactory;
-import com.signalcollect.yarn.deploy.YarnSubmissionContextFactory;
+import com.signalcollect.yarn.deployment.YarnApplicationFactory;
+import com.signalcollect.yarn.deployment.YarnClientFactory;
+import com.signalcollect.yarn.deployment.YarnSubmissionContextFactory;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 

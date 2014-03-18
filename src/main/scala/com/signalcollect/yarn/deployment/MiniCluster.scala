@@ -1,4 +1,4 @@
-package com.signalcollect.yarn.deploy
+package com.signalcollect.yarn.deployment
 
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
