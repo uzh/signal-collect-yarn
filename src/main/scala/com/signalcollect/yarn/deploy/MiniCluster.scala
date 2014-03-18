@@ -1,10 +1,11 @@
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.yarn.deploy
 
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
 import org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler
+import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 
 object MiniCluster {
   lazy val cluster = getCluster()
@@ -13,7 +14,7 @@ object MiniCluster {
     val yarnConfig = new YarnConfiguration()
     yarnConfig.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64)
     yarnConfig.setClass(YarnConfiguration.RM_SCHEDULER, classOf[FifoScheduler], classOf[ResourceScheduler])
-    val cluster = new MiniYARNCluster(classOf[ApplicationMaster].getSimpleName(), 1, 1, 1)
+    val cluster = new MiniYARNCluster(ApplicationMaster.getClass.getSimpleName, 1, 1, 1)
     cluster.init(yarnConfig)
     cluster.start()
     val nodemanager = cluster.getNodeManager(0)

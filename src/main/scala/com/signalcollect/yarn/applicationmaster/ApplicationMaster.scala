@@ -16,29 +16,33 @@ import org.apache.hadoop.yarn.api.records.Priority
 import org.apache.hadoop.yarn.api.records.Resource
 
 object ApplicationMaster extends App with LogHelper {
+  val containerListener = new NMCallbackHandler()
+  val nodeManagerClient = new NMClientAsyncImpl(containerListener)
+  val config: Configuration = new YarnConfiguration()
+  val allocListener = new RMCallbackHandler(nodeManagerClient)
+  val amRMClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
+  
   run()
+
   def run() {
-    val config: Configuration = new YarnConfiguration()
-    val allocListener = new RMCallbackHandler()
-    val amRMClient :AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
+
     amRMClient.init(config)
     amRMClient.start()
-    val containerListener = new NMCallbackHandler()
-    val nmClientAsync = new NMClientAsyncImpl(containerListener)
-    nmClientAsync.init(config);
-    nmClientAsync.start();
     
+    nodeManagerClient.init(config);
+    nodeManagerClient.start();
+
     val appMasterHostname = NetUtils.getHostname();
     val response = amRMClient
-        .registerApplicationMaster(appMasterHostname, -1, "")
+      .registerApplicationMaster(appMasterHostname, -1, "")
     val containerAsk = setupContainerAskForRM()
     amRMClient.addContainerRequest(containerAsk)
-    try{
+    try {
       Thread.sleep(10000)
     } catch {
       case e: Exception => log.info("interrupted")
     }
-    nmClientAsync.stop()
+    nodeManagerClient.stop()
     val appStatus = FinalApplicationStatus.SUCCEEDED
     val appMessage = "success"
     try {
@@ -46,10 +50,10 @@ object ApplicationMaster extends App with LogHelper {
     } catch {
       case e: Exception => log.info("failed unregister ApplicationMaster")
     }
-    
+
     amRMClient.stop()
   }
-  
+
   def setupContainerAskForRM(): ContainerRequest = {
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
@@ -61,34 +65,35 @@ object ApplicationMaster extends App with LogHelper {
     log.info("Requested container ask: " + request.toString())
     request
   }
+  
 }
 
 class NMCallbackHandler
-    extends NMClientAsync.CallbackHandler with LogHelper {
-    override def onContainerStopped(containerId: ContainerId) {
-      log.info("onContainerStopped")
-    }
-
-    override def onContainerStatusReceived(containerId: ContainerId,
-         containerStatus: ContainerStatus) {
-      log.info("onOntainerStatusReceived")
-    }
-
-    override def onContainerStarted(containerId: ContainerId,
-        allServiceResponse: java.util.Map[String, ByteBuffer]) {
-      log.info("onContarineStarted")
-    }
-
-    override def onStartContainerError(containerId: ContainerId, t: Throwable ) {
-      log.info("onStartContainerError")
-    }
-
-    override def onGetContainerStatusError(
-        containerId: ContainerId, t: Throwable) {
-      log.error("Failed to query the status of Container " + containerId);
-    }
-
-    override def onStopContainerError(containerId: ContainerId, t: Throwable) {
-      log.error("Failed to stop Container " + containerId);
-    }
+  extends NMClientAsync.CallbackHandler with LogHelper {
+  override def onContainerStopped(containerId: ContainerId) {
+    log.info("onContainerStopped")
   }
+
+  override def onContainerStatusReceived(containerId: ContainerId,
+    containerStatus: ContainerStatus) {
+    log.info("onOntainerStatusReceived")
+  }
+
+  override def onContainerStarted(containerId: ContainerId,
+    allServiceResponse: java.util.Map[String, ByteBuffer]) {
+    log.info("onContarineStarted")
+  }
+
+  override def onStartContainerError(containerId: ContainerId, t: Throwable) {
+    log.info("onStartContainerError")
+  }
+
+  override def onGetContainerStatusError(
+    containerId: ContainerId, t: Throwable) {
+    log.error("Failed to query the status of Container " + containerId);
+  }
+
+  override def onStopContainerError(containerId: ContainerId, t: Throwable) {
+    log.error("Failed to stop Container " + containerId);
+  }
+}

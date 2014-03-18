@@ -16,15 +16,16 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.yarn.deploy
 
 import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper
 import org.apache.hadoop.yarn.api.records.ApplicationSubmissionContext
+import com.signalcollect.util.ConfigProvider
 
-class YarnDeploymentClient(config: Config, yarnClientFactory: YarnClientFactory) extends LogHelper {
-
-  lazy val yarnClient = yarnClientFactory.getYarnClient(config)
+class YarnDeploymentClient extends LogHelper {
+  val config = ConfigProvider.config
+  lazy val yarnClient = YarnClientFactory.yarnClient
   lazy val application = YarnApplicationFactory.getApplication(config, yarnClient)
   lazy val submissionContext = createSubmissionContext()
 

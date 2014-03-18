@@ -1,7 +1,11 @@
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.yarn.deploy
 
+import com.signalcollect.yarn.deploy.YarnApplicationFactory;
+import com.signalcollect.yarn.deploy.YarnClientFactory;
+import com.signalcollect.yarn.deploy.YarnSubmissionContextFactory;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+
 import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
@@ -10,8 +14,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextFactory" should {
     val config = ConfigFactory.load("test-deployment")
-    val yarnClientFactory = new MiniYarnClientFactory()
-    lazy val yarnClient = yarnClientFactory.getYarnClient(config)
+    lazy val yarnClient = YarnClientFactory.yarnClient
     lazy val application = YarnApplicationFactory.getApplication(config, yarnClient)
     "call Factory" in {
       val factory = new YarnSubmissionContextFactory(yarnClient, config, application)

@@ -6,8 +6,8 @@ import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
 import org.specs2.mutable.SpecificationWithJUnit
-import com.signalcollect.nodeprovisioning.yarn.YarnClientFactory
-import com.signalcollect.nodeprovisioning.yarn.YarnDeploymentClient
+import com.signalcollect.yarn.deploy.YarnClientFactory
+import com.signalcollect.yarn.deploy.YarnDeploymentClient
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
@@ -15,9 +15,8 @@ import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 class ApplicationMasterSpec extends SpecificationWithJUnit with LogHelper {
   "ApplicationMaster" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
-    val yarnClientFactory = new YarnClientFactory(config = typesafeConfig)
-    val yarnClient = yarnClientFactory.yarnClient
-    val client = new YarnDeploymentClient(typesafeConfig, yarnClientFactory)
+    val yarnClient = YarnClientFactory.yarnClient
+    val client = new YarnDeploymentClient
 
     "run application successfull" in {
       client.submitApplication()
