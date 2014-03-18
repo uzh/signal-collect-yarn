@@ -5,8 +5,6 @@ import com.typesafe.config.Config
 import org.apache.hadoop.yarn.client.api.YarnClient
 
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.yarn.deployment.DefaultYarnClientFactory;
-import com.signalcollect.yarn.deployment.MiniYarnClientFactory;
 
 object YarnClientFactory {
   val config = ConfigProvider.config
