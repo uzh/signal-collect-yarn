@@ -6,7 +6,7 @@ import java.net.UnknownHostException
 import org.apache.hadoop.yarn.client.api._
 import org.apache.hadoop.yarn.api.protocolrecords.GetNewApplicationResponse
 
-object YarnApplicationFactory extends LogHelper {
+object YarnApplicationCreator extends LogHelper {
 
   def getApplication(config: Config, client: YarnClient): YarnClientApplication = {
     try {

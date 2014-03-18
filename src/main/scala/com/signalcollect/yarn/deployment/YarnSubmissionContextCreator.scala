@@ -8,10 +8,10 @@ import org.apache.hadoop.yarn.client.api.{YarnClient, YarnClientApplication}
 import org.apache.hadoop.yarn.util.Records
 import scala.collection.JavaConversions._
 
-class YarnSubmissionContextFactory(client: YarnClient, config: Config, application: YarnClientApplication) extends LogHelper {
+class YarnSubmissionContextCreator(client: YarnClient, config: Config, application: YarnClientApplication) extends LogHelper {
   private lazy val submissionContext = application.getApplicationSubmissionContext()
   private lazy val applicationId = submissionContext.getApplicationId().toString()
-  private lazy val launchContextFactory = new YarnContainerLaunchContextFactory(config.getString("deployment.applicationMaster"))
+  private lazy val launchContextFactory = new YarnContainerLaunchContextCreator(config.getString("deployment.applicationMaster"))
   private lazy val launchContext: ContainerLaunchContext =
     launchContextFactory.createLaunchContext(applicationId)
   val memory = config.getInt("deployment.memory")

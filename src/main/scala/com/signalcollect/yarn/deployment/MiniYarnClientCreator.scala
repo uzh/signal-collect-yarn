@@ -6,7 +6,7 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
 import com.signalcollect.util.ConfigProvider
 
-class MiniYarnClientFactory extends YarnClientFactoryImpl {
+class MiniYarnClientCreator extends YarnClientCreatorImpl {
   val config = ConfigProvider.config
   lazy val cluster = MiniCluster.getCluster()
   override def yarnClient(): YarnClient = {

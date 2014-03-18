@@ -5,10 +5,10 @@ import com.typesafe.config.Config
 import org.apache.hadoop.yarn.client.api.YarnClient
 
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.yarn.deployment.DefaultYarnClientFactory;
-import com.signalcollect.yarn.deployment.MiniYarnClientFactory;
+import com.signalcollect.yarn.deployment.DefaultYarnClientCreator;
+import com.signalcollect.yarn.deployment.MiniYarnClientCreator;
 
-object YarnClientFactory {
+object YarnClientCreator {
   val config = ConfigProvider.config
   lazy val factory = createFactory
   
@@ -16,16 +16,16 @@ object YarnClientFactory {
     factory.yarnClient
   }
   
-  def createFactory(): YarnClientFactoryImpl = {
+  def createFactory(): YarnClientCreatorImpl = {
     val factoryName = if (config.hasPath("deployment.factory.yarnclient")) config.getString("deployment.factory.yarnclient") else ""
     
     factoryName match {
-      case "com.signalcollect.yarn.deployment.MiniYarnClientFactory" => new MiniYarnClientFactory
-      case _ => new DefaultYarnClientFactory
+      case "com.signalcollect.yarn.deployment.MiniYarnClientFactory" => new MiniYarnClientCreator
+      case _ => new DefaultYarnClientCreator
     }
   }
 }
 
-trait YarnClientFactoryImpl{
+trait YarnClientCreatorImpl{
   def yarnClient: YarnClient
 }

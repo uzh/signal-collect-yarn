@@ -25,12 +25,12 @@ import com.signalcollect.util.ConfigProvider
 
 class YarnDeploymentClient extends LogHelper {
   val config = ConfigProvider.config
-  lazy val yarnClient = YarnClientFactory.yarnClient
-  lazy val application = YarnApplicationFactory.getApplication(config, yarnClient)
+  lazy val yarnClient = YarnClientCreator.yarnClient
+  lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
   lazy val submissionContext = createSubmissionContext()
 
   def createSubmissionContext(): ApplicationSubmissionContext = {
-    val submissionFactory = new YarnSubmissionContextFactory(yarnClient, config, application)
+    val submissionFactory = new YarnSubmissionContextCreator(yarnClient, config, application)
     submissionFactory.getSubmissionContext
   }
 

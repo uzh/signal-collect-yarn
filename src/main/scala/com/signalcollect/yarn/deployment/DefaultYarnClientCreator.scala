@@ -8,7 +8,7 @@ import org.apache.hadoop.yarn.client.api.YarnClient
 import scala.collection.JavaConversions._
 import com.signalcollect.util.ConfigProvider
 
-class DefaultYarnClientFactory extends YarnClientFactoryImpl with LogHelper{
+class DefaultYarnClientCreator extends YarnClientCreatorImpl with LogHelper{
   val config = ConfigProvider.config
   override lazy val yarnClient = createYarnClient
   

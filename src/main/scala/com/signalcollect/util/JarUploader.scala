@@ -1,6 +1,6 @@
 package com.signalcollect.util
 
-import com.signalcollect.yarn.deployment.YarnClientFactory
+import com.signalcollect.yarn.deployment.YarnClientCreator
 import org.apache.hadoop.yarn.util.Records
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.fs.FileSystem
@@ -16,7 +16,7 @@ class JarUploader(applicationId: String,
     jarName: String = ConfigProvider.config.getString("deployment.jarName") ) {
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
-  val client = YarnClientFactory.yarnClient
+  val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
   val src = new Path(pathToJar + jarName)
   val pathSuffix = config.getString("deployment.applicationName") + "/" + applicationId + s"/${jarName}"

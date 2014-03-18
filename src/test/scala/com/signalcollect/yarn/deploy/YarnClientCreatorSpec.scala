@@ -1,6 +1,6 @@
 package com.signalcollect.yarn.deploy
 
-import com.signalcollect.yarn.deployment.YarnClientFactory;
+import com.signalcollect.yarn.deployment.YarnClientCreator
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
@@ -9,14 +9,14 @@ import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 
 @RunWith(classOf[JUnitRunner])
-class YarnClientFactorySpec extends SpecificationWithJUnit {
+class YarnClientCreatorSpec extends SpecificationWithJUnit {
   "YarnClientFactory" should {
 
     val typesafeConfig = ConfigFactory.load("test-deployment")
     val badConfig = ConfigFactory.load("bad-test-deployment")
     
     "a valid config should contain RM Host and Address" in {
-      val yarnConfig = YarnClientFactory.yarnClient.getConfig()
+      val yarnConfig = YarnClientCreator.yarnClient.getConfig()
       val yarnHost = "yarn.resourcemanager.host"
       val yarnAddress = "yarn.resourcemanager.address"
       val deploymentHost = typesafeConfig.getString("deployment." + yarnHost)

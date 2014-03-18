@@ -1,8 +1,8 @@
 package com.signalcollect.yarn.deploy
 
-import com.signalcollect.yarn.deployment.YarnApplicationFactory;
-import com.signalcollect.yarn.deployment.YarnClientFactory;
-import com.signalcollect.yarn.deployment.YarnSubmissionContextFactory;
+import com.signalcollect.yarn.deployment.YarnApplicationCreator;
+import com.signalcollect.yarn.deployment.YarnClientCreator;
+import com.signalcollect.yarn.deployment.YarnSubmissionContextCreator;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
@@ -14,10 +14,10 @@ import org.specs2.mutable.SpecificationWithJUnit
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextFactory" should {
     val config = ConfigFactory.load("test-deployment")
-    lazy val yarnClient = YarnClientFactory.yarnClient
-    lazy val application = YarnApplicationFactory.getApplication(config, yarnClient)
+    lazy val yarnClient = YarnClientCreator.yarnClient
+    lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
     "call Factory" in {
-      val factory = new YarnSubmissionContextFactory(yarnClient, config, application)
+      val factory = new YarnSubmissionContextCreator(yarnClient, config, application)
       val context =factory.getSubmissionContext()
       context.getApplicationName() === config.getString("deployment.applicationName")
     }

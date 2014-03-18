@@ -6,17 +6,17 @@ import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
 import org.specs2.mutable.SpecificationWithJUnit
-import com.signalcollect.yarn.deployment.YarnClientFactory
+import com.signalcollect.yarn.deployment.YarnClientCreator
 import com.signalcollect.yarn.deployment.YarnDeploymentClient
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit with LogHelper {
-  args(skipAll = true) // this test does not work on drone.io
+  //args(skipAll = true) // this test does not work on drone.io
   "ApplicationMaster" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
-    val yarnClient = YarnClientFactory.yarnClient
+    val yarnClient = YarnClientCreator.yarnClient
     val client = new YarnDeploymentClient
 
     "run application successfull" in {

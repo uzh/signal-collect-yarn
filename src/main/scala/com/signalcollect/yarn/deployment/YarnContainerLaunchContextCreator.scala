@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 import com.signalcollect.util.LogHelper
 import com.typesafe.config.Config
 
-class YarnContainerLaunchContextFactory(
+class YarnContainerLaunchContextCreator(
     mainClass: String = ConfigProvider.config.getString("deployment.mainClass"),
     pathToJar: String = ConfigProvider.config.getString("deployment.pathToJar"),
     jarName: String = ConfigProvider.config.getString("deployment.jarName")) extends LogHelper {

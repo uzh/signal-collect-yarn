@@ -1,7 +1,7 @@
 package com.signalcollect.yarn.deploy
 
-import com.signalcollect.yarn.deployment.YarnApplicationFactory;
-import com.signalcollect.yarn.deployment.YarnClientFactory;
+import com.signalcollect.yarn.deployment.YarnApplicationCreator
+import com.signalcollect.yarn.deployment.YarnClientCreator
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.Config
 
@@ -10,13 +10,13 @@ import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 
 @RunWith(classOf[JUnitRunner])
-class YarnApplicationFactorySpec extends SpecificationWithJUnit {
+class YarnApplicationCreatorSpec extends SpecificationWithJUnit {
   "YarnApplicationFactory" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
-    val yarnClient = YarnClientFactory.yarnClient
+    val yarnClient = YarnClientCreator.yarnClient
     
     "create a new Application" in {
-      val application = YarnApplicationFactory.getApplication(typesafeConfig, yarnClient)
+      val application = YarnApplicationCreator.getApplication(typesafeConfig, yarnClient)
       application !== null
       application.getNewApplicationResponse().getApplicationId() !== null
     }
