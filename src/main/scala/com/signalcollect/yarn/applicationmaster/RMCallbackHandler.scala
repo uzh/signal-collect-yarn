@@ -6,7 +6,7 @@ import com.signalcollect.util.LogHelper
 import org.apache.hadoop.yarn.util.Records
 import scala.collection.JavaConversions._
 import com.signalcollect.util.JarUploader
-import com.signalcollect.nodeprovisioning.yarn.YarnContainerLaunchContextFactory
+import com.signalcollect.yarn.deploy.YarnContainerLaunchContextFactory
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
 
 

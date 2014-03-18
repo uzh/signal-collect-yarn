@@ -13,6 +13,7 @@ import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit with LogHelper {
+  args(skipAll = true)
   "ApplicationMaster" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
     val yarnClient = YarnClientFactory.yarnClient

@@ -1,6 +1,6 @@
 package com.signalcollect.util
 
-import com.signalcollect.nodeprovisioning.yarn.YarnClientFactory
+import com.signalcollect.yarn.deploy.YarnClientFactory
 import org.apache.hadoop.yarn.util.Records
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.fs.FileSystem
