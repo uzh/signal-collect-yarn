@@ -1,4 +1,4 @@
-package com.signalcollect.yarn.deploy
+package com.signalcollect.yarn.deployment
 
 import com.signalcollect.yarn.deployment.YarnApplicationCreator;
 import com.signalcollect.yarn.deployment.YarnClientCreator;
