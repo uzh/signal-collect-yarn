@@ -10,34 +10,41 @@ import com.signalcollect.yarn.deployment.YarnClientCreator
 import com.signalcollect.yarn.deployment.YarnDeploymentClient
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
+import com.signalcollect.yarn.deployment.LaunchSettings
+import com.signalcollect.yarn.deployment.MiniCluster
+import java.nio.file.Path
+import java.io.File
+import com.signalcollect.yarn.deployment.TestLaunchSettings
 
 @RunWith(classOf[JUnitRunner])
-class ApplicationMasterSpec extends SpecificationWithJUnit with LogHelper {
+class ApplicationMasterSpec extends SpecificationWithJUnit{
   //args(skipAll = true) // this test does not work on drone.io
   "ApplicationMaster" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
     val yarnClient = YarnClientCreator.yarnClient
-    val client = new YarnDeploymentClient
+    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
+    val client = new YarnDeploymentClient(launchSettings)
 
     "run application successfull" in {
-      client.submitApplication()
+      val application = client.submitApplication()
       var finished = false
-      val apps = yarnClient.getApplications
       while (!finished) {
+        Thread.sleep(1000)
+        val apps = yarnClient.getApplications.toList
         if (apps.size() == 0) {
           Thread.sleep(10)
-          log.debug("No Applications found")
         } else {
-          log.debug(apps.size() + " application(s) found")
-          val appReport = apps.get(apps.size -1)
-          
-          if (appReport.getYarnApplicationState() == YarnApplicationState.FINISHED) {
-            finished = true
+          if (apps.exists(_.getApplicationId().equals(application))) {
+            val appReport = apps.find(_.getApplicationId().equals(application)).get
+            val applicationState = appReport.getYarnApplicationState()
+            println("ApplicationState = " + applicationState)
+            if (applicationState == YarnApplicationState.FINISHED || applicationState == YarnApplicationState.FAILED) {
+              finished = true
+            }
           }
         }
       }
-      val appReport = apps.get(apps.size -1)
-      println(appReport.getApplicationId())
+      val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
       appReport.getFinalApplicationStatus() === FinalApplicationStatus.SUCCEEDED
     }
   }

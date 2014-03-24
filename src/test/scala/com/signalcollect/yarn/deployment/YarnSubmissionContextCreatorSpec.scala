@@ -1,8 +1,5 @@
 package com.signalcollect.yarn.deployment
 
-import com.signalcollect.yarn.deployment.YarnApplicationCreator;
-import com.signalcollect.yarn.deployment.YarnClientCreator;
-import com.signalcollect.yarn.deployment.YarnSubmissionContextCreator;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
@@ -17,7 +14,8 @@ class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
     lazy val yarnClient = YarnClientCreator.yarnClient
     lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
     "call Factory" in {
-      val factory = new YarnSubmissionContextCreator(yarnClient, config, application)
+      val launchSettings = new LaunchSettings()
+      val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
       val context =factory.getSubmissionContext()
       context.getApplicationName() === config.getString("deployment.applicationName")
     }

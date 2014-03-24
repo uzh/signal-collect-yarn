@@ -8,6 +8,7 @@ import scala.collection.JavaConversions._
 import com.signalcollect.util.JarUploader
 import com.signalcollect.yarn.deployment.YarnContainerLaunchContextCreator
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
+import com.signalcollect.yarn.deployment.LaunchSettings
 
 
 class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsync.CallbackHandler with LogHelper {
@@ -41,8 +42,9 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
   private def startContainer(container: Container) = {
      log.info("Setting up container launch container for containerid="
           + container.getId() + "containerAddress=" + container.getNodeHttpAddress())
-      val launchContextFactory = new YarnContainerLaunchContextCreator(pathToJar = "./")
-      val ctx = launchContextFactory.createLaunchContext(container.getId().toString())
+      val launchContextCreator = new YarnContainerLaunchContextCreator(
+          new LaunchSettings(pathsToJars = List("./")))
+      val ctx = launchContextCreator.createLaunchContext(container.getId().toString())
 //      containerListener.addContainer(container.getId(), container)
       nodeManagerClient.startContainerAsync(container, ctx)
   }

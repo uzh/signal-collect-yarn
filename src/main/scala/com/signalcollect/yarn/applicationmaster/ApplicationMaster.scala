@@ -14,11 +14,18 @@ import com.signalcollect.util.LogHelper
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.Priority
 import org.apache.hadoop.yarn.api.records.Resource
+import com.signalcollect.yarn.deployment.YarnClientCreator
+import java.io.File
+import org.apache.hadoop.fs.Path
 
 object ApplicationMaster extends App with LogHelper {
+  var config: Configuration = new YarnConfiguration()
+  val siteXml = new Path("yarn-site.xml")
+  config.addResource(siteXml)
+  log.info("RM Address: " + config.get("yarn.resourcemanager.address"))
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
-  val config: Configuration = new YarnConfiguration()
+  
   val allocListener = new RMCallbackHandler(nodeManagerClient)
   val amRMClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
   
@@ -29,8 +36,8 @@ object ApplicationMaster extends App with LogHelper {
     amRMClient.init(config)
     amRMClient.start()
     
-    nodeManagerClient.init(config);
-    nodeManagerClient.start();
+    nodeManagerClient.init(config)
+    nodeManagerClient.start()
 
     val appMasterHostname = NetUtils.getHostname();
     val response = amRMClient

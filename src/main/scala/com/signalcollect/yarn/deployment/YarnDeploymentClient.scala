@@ -22,20 +22,20 @@ import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper
 import org.apache.hadoop.yarn.api.records.ApplicationSubmissionContext
 import com.signalcollect.util.ConfigProvider
+import org.apache.hadoop.yarn.api.records.ApplicationId
 
-class YarnDeploymentClient extends LogHelper {
+class YarnDeploymentClient(launchSettings: LaunchSettings) {
   val config = ConfigProvider.config
   lazy val yarnClient = YarnClientCreator.yarnClient
   lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
   lazy val submissionContext = createSubmissionContext()
 
   def createSubmissionContext(): ApplicationSubmissionContext = {
-    val submissionFactory = new YarnSubmissionContextCreator(yarnClient, config, application)
+    val submissionFactory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
     submissionFactory.getSubmissionContext
   }
 
-  def submitApplication() {
-    log.info("Submitting application to ASM")
+  def submitApplication(): ApplicationId = {
     yarnClient.submitApplication(submissionContext)
   }
 }

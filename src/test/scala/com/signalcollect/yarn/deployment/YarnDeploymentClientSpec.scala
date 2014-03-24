@@ -18,27 +18,26 @@
  */
 package com.signalcollect.yarn.deployment
 
-import com.signalcollect.yarn.deployment.YarnDeploymentClient;
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigParseOptions
 import com.typesafe.config.ConfigResolveOptions
-
 import java.net.UnknownHostException
-
 import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.matcher.Matcher
-
 import com.typesafe.config.ConfigFactory
+import com.signalcollect.util.ConfigProvider
+import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 
 
 @RunWith(classOf[JUnitRunner])
 class YarnDeploymentClientSpec extends SpecificationWithJUnit {
   "YarnClient" should {
-    val typesafeConfig = ConfigFactory.load("test-deployment")
+    val typesafeConfig = ConfigProvider.config
+    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
     typesafeConfig.getString("deployment.applicationName")
-    val client = new YarnDeploymentClient()
+    val client = new YarnDeploymentClient(launchSettings)
 
     "Yarn Client should get ClusterMetrics" in {
       val yarnClient = client.yarnClient

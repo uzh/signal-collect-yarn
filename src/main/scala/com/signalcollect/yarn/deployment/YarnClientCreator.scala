@@ -5,8 +5,6 @@ import com.typesafe.config.Config
 import org.apache.hadoop.yarn.client.api.YarnClient
 
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.yarn.deployment.DefaultYarnClientCreator;
-import com.signalcollect.yarn.deployment.MiniYarnClientCreator;
 
 object YarnClientCreator {
   val config = ConfigProvider.config
@@ -17,11 +15,14 @@ object YarnClientCreator {
   }
   
   def createFactory(): YarnClientCreatorImpl = {
-    val factoryName = if (config.hasPath("deployment.factory.yarnclient")) config.getString("deployment.factory.yarnclient") else ""
+    val useMiniCluster = if (config.hasPath("deployment.testing.useMiniCluster"))
+      config.getBoolean("deployment.testing.useMiniCluster")
+      else false
     
-    factoryName match {
-      case "com.signalcollect.yarn.deployment.MiniYarnClientFactory" => new MiniYarnClientCreator
-      case _ => new DefaultYarnClientCreator
+    if (useMiniCluster){
+      new MiniYarnClientCreator
+    } else {
+      new DefaultYarnClientCreator
     }
   }
 }

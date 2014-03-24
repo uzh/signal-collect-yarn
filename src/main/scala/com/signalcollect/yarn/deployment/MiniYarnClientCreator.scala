@@ -5,20 +5,25 @@ import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
 import com.signalcollect.util.ConfigProvider
+import org.apache.hadoop.conf.Configuration
 
 class MiniYarnClientCreator extends YarnClientCreatorImpl {
   val config = ConfigProvider.config
-  lazy val cluster = MiniCluster.getCluster()
+  lazy val configuration = MiniCluster.getClusterConfig()
   override def yarnClient(): YarnClient = {
     val client = YarnClient.createYarnClient()
-    client.init(cluster.getConfig())
+    val conf = new Configuration(configuration)
+    println("RM Address: " + conf.get("yarn.resourcemanager.address"))
+    println("classpath: " + conf.get("yarn.application.classpath"))
+   
+    client.init(conf)
     client.start()
     client
   }
 
   def stopMiniCluster() = {
     try {
-      cluster.stop()
+      MiniCluster.cluster.stop()
     }
   }
 }
