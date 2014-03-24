@@ -36,7 +36,6 @@ class YarnDeploymentClientSpec extends SpecificationWithJUnit {
   "YarnClient" should {
     val typesafeConfig = ConfigProvider.config
     val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
-    typesafeConfig.getString("deployment.applicationName")
     val client = new YarnDeploymentClient(launchSettings)
 
     "Yarn Client should get ClusterMetrics" in {

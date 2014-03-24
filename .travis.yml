@@ -1,0 +1,5 @@
+language: scala
+install: 
+   - sbt assembly
+scala:
+   - 2.10.3
