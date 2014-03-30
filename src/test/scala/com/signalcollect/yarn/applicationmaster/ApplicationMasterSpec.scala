@@ -18,7 +18,7 @@ import com.signalcollect.yarn.deployment.TestLaunchSettings
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit{
-  //args(skipAll = true) // this test does not work on drone.io
+  
   "ApplicationMaster" should {
     val typesafeConfig = ConfigFactory.load("test-deployment")
     val yarnClient = YarnClientCreator.yarnClient

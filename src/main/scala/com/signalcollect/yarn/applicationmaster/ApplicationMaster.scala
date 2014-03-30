@@ -17,6 +17,7 @@ import org.apache.hadoop.yarn.api.records.Resource
 import com.signalcollect.yarn.deployment.YarnClientCreator
 import java.io.File
 import org.apache.hadoop.fs.Path
+import com.signalcollect.util.ConfigProvider
 
 object ApplicationMaster extends App with LogHelper {
   var config: Configuration = new YarnConfiguration()
@@ -32,26 +33,19 @@ object ApplicationMaster extends App with LogHelper {
   run()
 
   def run() {
-
-    amRMClient.init(config)
-    amRMClient.start()
-    
-    nodeManagerClient.init(config)
-    nodeManagerClient.start()
-
-    val appMasterHostname = NetUtils.getHostname();
-    val response = amRMClient
-      .registerApplicationMaster(appMasterHostname, -1, "")
+    initApplicationMaster
     val containerAsk = setupContainerAskForRM()
     amRMClient.addContainerRequest(containerAsk)
     try {
-      Thread.sleep(10000)
+      while(!ContainerRegistry.isFinished){
+        Thread.sleep(100)
+      }
     } catch {
       case e: Exception => log.info("interrupted")
     }
     nodeManagerClient.stop()
-    val appStatus = FinalApplicationStatus.SUCCEEDED
-    val appMessage = "success"
+    val appStatus = if(ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
+    val appMessage = "finished"
     try {
       amRMClient.unregisterApplicationMaster(appStatus, appMessage, null)
     } catch {
@@ -59,48 +53,32 @@ object ApplicationMaster extends App with LogHelper {
     }
 
     amRMClient.stop()
+    System.exit(0) // if there are still some threads running, they are killed by that
+  }
+  
+  private def initApplicationMaster = {
+		  amRMClient.init(config)
+		  amRMClient.start()
+		  
+		  nodeManagerClient.init(config)
+		  nodeManagerClient.start()
+		  
+		  val appMasterHostname = NetUtils.getHostname();
+		  val response = amRMClient
+				  .registerApplicationMaster(appMasterHostname, -1, "")
   }
 
   def setupContainerAskForRM(): ContainerRequest = {
+    val memory = ConfigProvider.config.getInt("deployment.containerMemory")
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
 
     val capability = Records.newRecord(classOf[Resource])
-    capability.setMemory(128)
+    capability.setMemory(memory)
 
     val request = new ContainerRequest(capability, null, null, pri)
     log.info("Requested container ask: " + request.toString())
     request
   }
   
-}
-
-class NMCallbackHandler
-  extends NMClientAsync.CallbackHandler with LogHelper {
-  override def onContainerStopped(containerId: ContainerId) {
-    log.info("onContainerStopped")
-  }
-
-  override def onContainerStatusReceived(containerId: ContainerId,
-    containerStatus: ContainerStatus) {
-    log.info("onOntainerStatusReceived")
-  }
-
-  override def onContainerStarted(containerId: ContainerId,
-    allServiceResponse: java.util.Map[String, ByteBuffer]) {
-    log.info("onContarineStarted")
-  }
-
-  override def onStartContainerError(containerId: ContainerId, t: Throwable) {
-    log.info("onStartContainerError")
-  }
-
-  override def onGetContainerStatusError(
-    containerId: ContainerId, t: Throwable) {
-    log.error("Failed to query the status of Container " + containerId);
-  }
-
-  override def onStopContainerError(containerId: ContainerId, t: Throwable) {
-    log.error("Failed to stop Container " + containerId);
-  }
 }

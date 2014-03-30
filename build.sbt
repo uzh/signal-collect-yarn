@@ -10,6 +10,8 @@ organization := "com.signalcollect"
 
 scalaVersion := "2.10.3"
 
+val hadoopVersion = "2.3.0"
+
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 scalacOptions ++= Seq("-optimize", "-Yinline-warnings", "-feature", "-deprecation", "-Xelide-below", "INFO" )
@@ -41,13 +43,13 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 
 /** Dependencies */
 libraryDependencies ++= Seq(
-  ("org.apache.hadoop" % "hadoop-common" % "2.2.0" % "compile").
+  ("org.apache.hadoop" % "hadoop-common" % hadoopVersion % "compile").
     exclude("commons-beanutils", "commons-beanutils-core"),
-  "org.apache.hadoop" % "hadoop-yarn-common" % "2.2.0" % "provided",
-  ("org.apache.hadoop" % "hadoop-yarn-client" % "2.2.0" % "compile").
+  "org.apache.hadoop" % "hadoop-yarn-common" % hadoopVersion % "provided",
+  ("org.apache.hadoop" % "hadoop-yarn-client" % hadoopVersion % "compile").
   exclude("hadoop-yarn-api", "org.apache.hadoop"),
-  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % "2.2.0",
-  "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % "2.2.0" % "compile",
+  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % hadoopVersion,
+  "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % hadoopVersion % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.3"  % "test"
 )

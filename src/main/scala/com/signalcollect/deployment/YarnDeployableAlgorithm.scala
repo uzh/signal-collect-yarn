@@ -1,5 +1,5 @@
 /*
- *  @author Tobias Bachmann
+ *  @author Philip Stutz
  *
  *  Copyright 2014 University of Zurich
  *
@@ -16,19 +16,11 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
 
-import org.junit.runner.RunWith
-import org.specs2.mutable.SpecificationWithJUnit
-import org.specs2.runner.JUnitRunner
-import com.signalcollect.util.LogHelper
+package com.signalcollect.deployment
 
-@RunWith(classOf[JUnitRunner])
-class YarnNodeBootstrapSpec extends SpecificationWithJUnit {
-  "YarnNodeBootstrap" should {
-  
-	"run yarnExecutable" in {
-	  new YarnNodeBootstrap(0, 1) must not(throwAn[Exception])
-	}
-  }
+import akka.actor.ActorRef
+
+trait YarnDeployableAlgorithm {
+  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef])
 }

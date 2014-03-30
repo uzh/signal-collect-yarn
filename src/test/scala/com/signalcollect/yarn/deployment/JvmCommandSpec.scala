@@ -20,7 +20,7 @@ class JvmCommandSpec extends SpecificationWithJUnit {
      
     command === Environment.JAVA_HOME.$() + "/bin/java" +
       " -cp first.jar" +
-      " -Xmx128M MainClass" + 
+      " -Xmx128M MainClass " + 
       " 1> " + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/MainClass.stdout" + 
       " 2> <LOG_DIR>/MainClass.stderr"
    }
@@ -34,7 +34,7 @@ class JvmCommandSpec extends SpecificationWithJUnit {
      
      command === Environment.JAVA_HOME.$() + "/bin/java" +
       " -cp first.jar:second.jar" +
-      " -Xmx128M MainClass" + 
+      " -Xmx128M MainClass " + 
       " 1> " + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/MainClass.stdout" + 
       " 2> <LOG_DIR>/MainClass.stderr"
    }
