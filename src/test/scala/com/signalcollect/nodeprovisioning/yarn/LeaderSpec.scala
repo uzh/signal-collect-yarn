@@ -22,23 +22,23 @@ class LeaderSpec() extends SpecificationWithJUnit {
     val nodeBootstrap = new YarnNodeBootstrap(id, 1)
     val leader = new Leader(nodes, akkaPort, List[String]())
 
-//    "start execution" in {
-//      val node = new Thread(new Runnable {
-//        def run() {
-//          val klass = ContainerApp.getClass()
-//          val pathToJar = JarCreator.createJarFile(klass)
-//          val fullClassName = klass.getName()
-//          val className = fullClassName.substring(0, fullClassName.length() - 1)
-//          LocalJarRunner.run(pathToJar, className, id.toString)
-//          Thread.sleep(20000)
-//          System.exit(0)
-//        }
-//      })
-//      node.start()
-//      //      nodeBootstrap.startNode
-//      Thread.sleep(10000) //wait till node is up 
-//      leader.startExecution must not(throwAn[Exception])
-//    }
+    "start execution" in {
+      val node = new Thread(new Runnable {
+        def run() {
+          val klass = ContainerApp.getClass()
+          val pathToJar = JarCreator.createJarFile(klass)
+          val fullClassName = klass.getName()
+          val className = fullClassName.substring(0, fullClassName.length() - 1)
+          LocalJarRunner.run(pathToJar, className, id.toString)
+          Thread.sleep(20000)
+          System.exit(0)
+        }
+      })
+      node.start()
+      //      nodeBootstrap.startNode
+      Thread.sleep(10000) //wait till node is up 
+      leader.startExecution must not(throwAn[Exception])
+    }
   
 
     "start execution in single jvm" in {
