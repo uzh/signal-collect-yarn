@@ -27,8 +27,8 @@ import com.signalcollect.util.LogHelper
 class YarnNodeBootstrapSpec extends SpecificationWithJUnit {
   "YarnNodeBootstrap" should {
   
-	"run yarnExecutable" in {
-	  new YarnNodeBootstrap(0, 1) must not(throwAn[Exception])
-	}
+//	"run yarnExecutable" in {
+//	  new YarnNodeBootstrap(0, 1) must not(throwAn[Exception])
+//	}
   }
 }
