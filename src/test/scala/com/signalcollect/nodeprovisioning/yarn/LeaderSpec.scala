@@ -19,7 +19,7 @@ class LeaderSpec() extends SpecificationWithJUnit {
     val ip = InetAddress.getLocalHost.getHostAddress()
     val id = 0
     val nodes = List[ContainerNode](new ContainerNode(ip, 0))
-    val nodeBootstrap = new YarnNodeBootstrap(id, 1)
+//    val nodeBootstrap = new YarnNodeBootstrap(id, 1)
     val leader = new Leader(nodes, akkaPort, List[String]())
 
     "start execution" in {
@@ -41,12 +41,12 @@ class LeaderSpec() extends SpecificationWithJUnit {
     }
   
 
-    "start execution in single jvm" in {
-
-      nodeBootstrap.startNode
-      Thread.sleep(1000) //wait till node is up 
-      leader.startExecution must not(throwAn[Exception])
-    }
+//    "start execution in single jvm" in {
+//
+//      nodeBootstrap.startNode
+//      Thread.sleep(1000) //wait till node is up 
+//      leader.startExecution must not(throwAn[Exception])
+//    }
 
   }
 }
