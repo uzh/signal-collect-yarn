@@ -19,7 +19,6 @@ class YarnNodeBootstrap(nodeId: Int,
   numberOfNodes: Int,
   basePort: Int = 2552,
   kryoRegistrations: List[String] = List.empty[String]) {
-//  val out = new PrintWriter("/home/tobi/log.txt")
   val nodePort = basePort + nodeId + 1
   val system: ActorSystem = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val nodeControllerCreator = NodeActorCreator(nodeId, numberOfNodes, None)
@@ -39,18 +38,16 @@ class YarnNodeBootstrap(nodeId: Int,
     //    val nodeController = system.actorOf(Props[DefaultNodeActor].withCreator(
     //      nodeControllerCreator.create), name = "DefaultNodeActor" + nodeId.toString)
 
-//    val address = AkkaHelper.getRemoteAddress(nodeController, system)
-//    nodeController ! "test"
-//    out.println("test send")
-//    val cal = Calendar.getInstance()
-//    cal.getTime()
-//    val sdf = new SimpleDateFormat("HH:mm:ss:SSS")
-//    val time = sdf.format(cal.getTime())
-//
-//    val ip = InetAddress.getLocalHost.getHostAddress()
-//    val message = time + " : actor system on node started with port: " + nodePort + " and Ip: " + ip + " address: " + address
-//    println(message)
-//    out.println(message)
+    val address = AkkaHelper.getRemoteAddress(nodeController, system)
+    nodeController ! "test"
+    println("test send")
+    val cal = Calendar.getInstance()
+    cal.getTime()
+    val sdf = new SimpleDateFormat("HH:mm:ss:SSS")
+    val time = sdf.format(cal.getTime())
+
+    val message = time + " : actor system on node started with port: " + nodePort + " address: " + address
+    println(message)
     
     nodeController
 
@@ -60,12 +57,10 @@ class YarnNodeBootstrap(nodeId: Int,
     println("start actorSystem on port " + nodePort)
     val system = ActorSystem("SignalCollect", akkaConfig(nodePort, kryoRegistrations))
     ActorSystemRegistry.register(system)
-//    out.println("actor system on node started")
     system
   }
 
   def stopNode {
     system.shutdown
-//    out.close
   }
 }

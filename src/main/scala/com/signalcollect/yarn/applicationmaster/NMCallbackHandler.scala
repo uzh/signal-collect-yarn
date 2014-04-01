@@ -27,7 +27,7 @@ class NMCallbackHandler
 
   override def onContainerStarted(containerId: ContainerId,
     allServiceResponse: java.util.Map[String, ByteBuffer]) {
-    log.info("onContarineStarted")
+    log.info("onContainerStarted")
     ContainerRegistry.containerStarted()
     if (ContainerRegistry.allStarted) {
       val containerNodes = ContainerRegistry.getContainerNodes

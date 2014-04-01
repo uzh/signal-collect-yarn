@@ -12,7 +12,8 @@ object ContainerApp extends App with LogHelper {
   val numberOfNodes = ConfigProvider.config.getInt("deployment.numberOfNodes")
   val nodeBootstrap = new YarnNodeBootstrap(nodeId, numberOfNodes, basePort)
   val actorRef = nodeBootstrap.startNode
-  Thread.sleep(40000) // need to detect when execution is terminated
+  println("started")
+  Thread.sleep(200000) // need to detect when execution is terminated
   log.info("stop Node")
   nodeBootstrap.stopNode
   System.exit(0)
