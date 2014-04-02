@@ -47,6 +47,6 @@ class LeaderSpec() extends SpecificationWithJUnit {
 ////      Thread.sleep(1000) //wait till node is up 
 ////      leader.startExecution must not(throwAn[Exception])
 ////    }
-
-  }
+//
+//  }
 }
