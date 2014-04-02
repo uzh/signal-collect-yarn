@@ -16,7 +16,7 @@ class LeaderSpec() extends SpecificationWithJUnit {
       new Leader(emptyIps, akkaPort, List[String]()) must throwAn[IllegalArgumentException]
     }
 
-    val ip = InetAddress.getLocalHost.getHostAddress()
+    val ip = InetAddress.getLocalHost.getHostAddress
     val id = 0
     val nodes = List[ContainerNode](new ContainerNode(ip, 0))
     val nodeBootstrap = new YarnNodeBootstrap(id, 1)
