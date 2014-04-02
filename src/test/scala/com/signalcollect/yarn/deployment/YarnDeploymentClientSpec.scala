@@ -33,25 +33,25 @@ import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 
 @RunWith(classOf[JUnitRunner])
 class YarnDeploymentClientSpec extends SpecificationWithJUnit {
-  "YarnClient" should {
-    val typesafeConfig = ConfigProvider.config
-    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
-    val client = new YarnDeploymentClient(launchSettings)
-
-    "Yarn Client should get ClusterMetrics" in {
-      val yarnClient = client.yarnClient
-      val clusterMetrics = yarnClient.getYarnClusterMetrics()
-      clusterMetrics !== null
-    }
-    
-    "create submission context" in {
-      client.submissionContext.getApplicationName() === typesafeConfig.getString("deployment.applicationName")
-    }
-    
-    "submit Application" in {
-      client.submitApplication() must not(throwA[Exception])
-    }
-    
-  }
+//  "YarnClient" should {
+//    val typesafeConfig = ConfigProvider.config
+//    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
+//    val client = new YarnDeploymentClient(launchSettings)
+//
+//    "Yarn Client should get ClusterMetrics" in {
+//      val yarnClient = client.yarnClient
+//      val clusterMetrics = yarnClient.getYarnClusterMetrics()
+//      clusterMetrics !== null
+//    }
+//    
+//    "create submission context" in {
+//      client.submissionContext.getApplicationName() === typesafeConfig.getString("deployment.applicationName")
+//    }
+//    
+//    "submit Application" in {
+//      client.submitApplication() must not(throwA[Exception])
+//    }
+//    
+//  }
 
 }
