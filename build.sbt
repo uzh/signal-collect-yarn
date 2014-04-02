@@ -43,6 +43,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 
 /** Dependencies */
 libraryDependencies ++= Seq(
+  "org.scala-lang.modules" %% "scala-async" % "0.9.0",
   ("org.apache.hadoop" % "hadoop-common" % hadoopVersion % "compile").
     exclude("commons-beanutils", "commons-beanutils-core"),
   "org.apache.hadoop" % "hadoop-yarn-common" % hadoopVersion % "provided",
