@@ -13,6 +13,8 @@ import akka.actor.Props
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{async, await}
+import akka.event.Logging
+import com.signalcollect.configuration.AkkaConfig
 
 @RunWith(classOf[JUnitRunner])
 class RemoteAkkaSpec extends SpecificationWithJUnit {
@@ -32,6 +34,7 @@ class RemoteAkkaSpec extends SpecificationWithJUnit {
       try {
     	  helloActor ! "hello" must not(throwAn[Exception])
       } finally {
+    	  Thread.sleep(1000)
     	  system.shutdown
       }
       0 === 0
@@ -41,21 +44,13 @@ class RemoteAkkaSpec extends SpecificationWithJUnit {
 
 }
 object ActorSystemCreator {
-  def createSystem(host: String, port: Int): ActorSystem = {
-    val akkaConfig = ConfigFactory.parseString(
-      s"""akka {
-				actor {
-				provider = "akka.remote.RemoteActorRefProvider"
-				}
-				remote {
-				transport = "akka.remote.netty.NettyRemoteTransport"
-				netty {
-				hostname = "$host"
-				port = $port
-				}
-				}
-				}""")
-      .withFallback(ConfigFactory.load)
+  def createSystem(host: String, akkaPort: Int): ActorSystem = {
+    val akkaConfig = AkkaConfig.get( akkaMessageCompression= false,
+    serializeMessages = false,
+    loggingLevel = Logging.DebugLevel,
+    kryoRegistrations= Nil,
+    useJavaSerialization = false,
+    port = akkaPort)
     ActorSystem("ActorSystem", akkaConfig)
   }
 }
@@ -66,6 +61,7 @@ object ContainerBootstrap extends App {
   val port = 2553
   println("start ActorSystem")
   val system = ActorSystemCreator.createSystem(host, port)
+  system.actorOf(Props[HelloActor], name = "helloactor")
   Thread.sleep(10000)
   system.shutdown
 }
@@ -79,7 +75,7 @@ class HelloActor extends Actor {
 
 object ProcessSpawner {
   val sep = Prop("file.separator")
-  val classpath = Prop("java.class.path") + ":./target/scala-2.10/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"
+  val classpath = Prop("java.class.path") + ":./target/scala-2.10/signal-collect-assembly-1.0-SNAPSHOT.jar"
   println(classpath)
   val path = Prop("java.home") + sep + "bin" + sep + "java"
 
