@@ -16,26 +16,35 @@ import scala.async.Async.{async, await}
 import akka.event.Logging
 import com.signalcollect.configuration.AkkaConfig
 
+
 @RunWith(classOf[JUnitRunner])
 class RemoteAkkaSpec extends SpecificationWithJUnit {
   "RemoteAkkaSpec" should {
 
     "run on 2 Jvms" in {
-
-      async {
-        ProcessSpawner.spawn(ContainerBootstrap.getClass().getCanonicalName().dropRight(1), true)
-      }
       val host = InetAddress.getLocalHost.getHostAddress
       val port = 2552
       val otherPort = port + 1
       val system = ActorSystemCreator.createSystem(host, port)
+      val actorAddress = s"akka://ActorSystem@127.0.0.1:$otherPort/user/helloactor"
+      println(s"Hello actor address: $actorAddress")
+      val helloActor = system.actorFor(actorAddress)
+
+      async {
+        ProcessSpawner.spawn(ContainerBootstrap.getClass().getCanonicalName().dropRight(1), true)
+      }
       Thread.sleep(2000) //wait for container to be started
-      val helloActor = system.actorFor(s"akka://SignalCollect@$host:$otherPort/user/helloactor")
       try {
-    	  helloActor ! "hello" must not(throwAn[Exception])
+        var i = 0
+        while (i < 1) {
+          helloActor ! (new Mooh)
+          i += 1
+          Thread.sleep(1000)
+        }
       } finally {
     	  Thread.sleep(1000)
     	  system.shutdown
+
       }
       0 === 0
     }
@@ -43,6 +52,9 @@ class RemoteAkkaSpec extends SpecificationWithJUnit {
   }
 
 }
+
+class Mooh
+
 object ActorSystemCreator {
   def createSystem(host: String, akkaPort: Int): ActorSystem = {
     val akkaConfig = AkkaConfig.get( akkaMessageCompression= false,
@@ -67,9 +79,11 @@ object ContainerBootstrap extends App {
 }
 
 class HelloActor extends Actor {
+
+  println("Hello actor is alive!")
+
   def receive = {
-    case "hello" => println("hello back at you")
-    case _       => println("huh?")
+    case whatever => println(s"Hello actor received $whatever")
   }
 }
 
@@ -84,14 +98,13 @@ object ProcessSpawner {
     val processBuilder = new ProcessBuilder(path, "-cp", classpath, className)
     val pbcmd = processBuilder.command().toString()
 
-
     processBuilder.redirectErrorStream(redirectStream)
 
     val process = processBuilder.start()
     val reader = new BufferedReader(new InputStreamReader(process.getInputStream()))
 
-    var line: String = "" 
-    while((line) != null){
+    var line: String = ""
+    while ((line) != null) {
       println(s"[$className]$line")
       line = reader.readLine()
     }
