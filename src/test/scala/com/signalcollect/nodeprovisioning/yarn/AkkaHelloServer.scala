@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.event.Logging
 import com.signalcollect.nodeprovisioning.AkkaHelper
 import akka.actor.Props
+import akka.actor.Actor
 
 object AkkaHelloServer extends App {
   val akkaConfig = AkkaConfigYarn.get(
@@ -25,4 +26,6 @@ object AkkaHelloServer extends App {
     system.shutdown
   }
 }
+
+
   

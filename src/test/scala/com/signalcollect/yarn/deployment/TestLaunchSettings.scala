@@ -8,6 +8,7 @@ object TestLaunchSettings {
     val config = ConfigProvider.config
     val createJarOnTheFly = config.getBoolean("deployment.testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("deployment.testing.useMiniCluster")
+    val memory = config.getInt("deployment.memory")
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("deployment.testing.dependency")

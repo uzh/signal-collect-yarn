@@ -33,7 +33,7 @@ class NMCallbackHandler
       val containerNodes = ContainerRegistry.getContainerNodes
       val numberOfContainers = ConfigProvider.config.getInt("deployment.numberOfNodes")
       val akkaPort = ConfigProvider.config.getInt("deployment.akka.port")
-      Thread.sleep(2000) // make sure all other nodes are ready
+      Thread.sleep(15000) // make sure all other nodes are ready
       val leader = new Leader(containerNodes, akkaPort, List[String]())
       try {
       leader.startExecution

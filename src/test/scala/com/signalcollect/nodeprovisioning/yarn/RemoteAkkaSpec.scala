@@ -33,7 +33,7 @@ class RemoteAkkaSpec extends SpecificationWithJUnit {
       async {
         ProcessSpawner.spawn(ContainerBootstrap.getClass().getCanonicalName().dropRight(1), true)
       }
-      Thread.sleep(2000) //wait for container to be started
+      Thread.sleep(4000) //wait for container to be started
       try {
         var i = 0
         while (i < 1) {
@@ -89,7 +89,7 @@ class HelloActor extends Actor {
 
 object ProcessSpawner {
   val sep = Prop("file.separator")
-  val classpath = Prop("java.class.path") + ":./target/scala-2.10/signal-collect-assembly-1.0-SNAPSHOT.jar"
+  val classpath = Prop("java.class.path") + ":../signal-collect-yarn-dependencies/target/scala-2.10/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"
   println(classpath)
   val path = Prop("java.home") + sep + "bin" + sep + "java"
 

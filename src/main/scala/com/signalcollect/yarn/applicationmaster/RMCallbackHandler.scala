@@ -18,14 +18,14 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
       + completedContainers.size)
       Thread.sleep(1000)
       val allSuccessfull = completedContainers.forall(_.getExitStatus() == 0)
-      ContainerRegistry.setSuccessfull(allSuccessfull) // has probably to be changed with a multi node setup
+      ContainerRegistry.setSuccessfull(allSuccessfull) 
       ContainerRegistry.setFinished(completedContainers.size)
   }
 
   override def onContainersAllocated(allocatedContainers: java.util.List[Container]) {
     log.info("Got response from RM for container ask, allocatedCnt="
       + allocatedContainers.size)
-    startContainer(allocatedContainers.get(0))
+    allocatedContainers.foreach(startContainer(_))
   }
 
   override def onShutdownRequest() {
@@ -43,9 +43,6 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
   }
 
   private def startContainer(container: Container) = {
-    log.info("Setting up container launch container for containerid="
-      + container.getId() + "containerAddress=" + InetAddress.getByName(container.getNodeHttpAddress().split(":").head).getHostAddress())
-
     val containerId = ContainerRegistry.register(container)
     val jarFiles = getJarFilesInCurrentDir()
     val launchSettings = new LaunchSettings(

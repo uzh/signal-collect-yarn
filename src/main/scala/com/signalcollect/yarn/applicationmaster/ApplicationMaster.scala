@@ -21,54 +21,43 @@ import com.signalcollect.util.ConfigProvider
 
 object ApplicationMaster extends App with LogHelper {
   var config: Configuration = new YarnConfiguration()
-  val siteXml = new Path("yarn-site.xml")
+  val siteXml = new Path("yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
-  log.info("RM Address: " + config.get("yarn.resourcemanager.address"))
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
-  
+
   val allocListener = new RMCallbackHandler(nodeManagerClient)
-  val amRMClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
-  
-  run()
+  val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
+
+  run
 
   def run() {
     initApplicationMaster
-    val containerAsk = setupContainerAskForRM()
-    amRMClient.addContainerRequest(containerAsk)
-    try {
-      while(!ContainerRegistry.isFinished){
-        Thread.sleep(100)
-      }
-    } catch {
-      case e: Exception => log.info("interrupted")
-    }
-    nodeManagerClient.stop()
-    val appStatus = if(ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
-    val appMessage = "finished"
-    try {
-      amRMClient.unregisterApplicationMaster(appStatus, appMessage, null)
-    } catch {
-      case e: Exception => log.info("failed unregister ApplicationMaster")
-    }
-
-    amRMClient.stop()
-    System.exit(0) // if there are still some threads running, they are killed by that
+    startContainers
+    waitAndStopApplicationMaster
   }
-  
+
   private def initApplicationMaster = {
-		  amRMClient.init(config)
-		  amRMClient.start()
-		  
-		  nodeManagerClient.init(config)
-		  nodeManagerClient.start()
-		  
-		  val appMasterHostname = NetUtils.getHostname();
-		  val response = amRMClient
-				  .registerApplicationMaster(appMasterHostname, -1, "")
+    ressourcManagerClient.init(config)
+    ressourcManagerClient.start()
+
+    nodeManagerClient.init(config)
+    nodeManagerClient.start()
+
+    val appMasterHostname = NetUtils.getHostname();
+    val response = ressourcManagerClient
+      .registerApplicationMaster(appMasterHostname, -1, "")
   }
 
-  def setupContainerAskForRM(): ContainerRequest = {
+  private def startContainers: Unit = {
+    val containerAsk = setupContainerAskForRM()
+    val numberOfNodes = ConfigProvider.config.getInt("deployment.numberOfNodes")
+    for (i <- 0 until numberOfNodes) {
+      ressourcManagerClient.addContainerRequest(containerAsk)
+    }
+  }
+
+  private def setupContainerAskForRM(): ContainerRequest = {
     val memory = ConfigProvider.config.getInt("deployment.containerMemory")
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
@@ -80,5 +69,30 @@ object ApplicationMaster extends App with LogHelper {
     log.info("Requested container ask: " + request.toString())
     request
   }
+
+  private def waitAndStopApplicationMaster: Unit = {
+    waitFinish
+    val appStatus = if (ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
+    val appMessage = "finished"
+    try {
+      ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
+    } catch {
+      case e: Exception => log.info("failed unregister ApplicationMaster")
+    }
+
+    nodeManagerClient.stop()
+    ressourcManagerClient.stop()
+    System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
+  }
   
+  private def waitFinish: Unit = {
+    try {
+      while (!ContainerRegistry.isFinished) {
+        Thread.sleep(100)
+      }
+    } catch {
+      case e: Exception => log.info("interrupted")
+    }
+  }
+
 }
