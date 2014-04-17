@@ -9,7 +9,7 @@ import akka.actor.Actor
 import akka.actor.Props
 import akka.actor.ActorRef
 
-class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInitializer: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
+class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
 
   def start {
@@ -40,7 +40,7 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInitiali
     serializeMessages = true,
     loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,
-    kryoInitializer = kryoInitializer,
+    kryoInitializer = kryoInit,
     port = akkaPort)
 }
 

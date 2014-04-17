@@ -19,7 +19,7 @@ class YarnNodeBootstrap(nodeId: Int,
   numberOfNodes: Int,
   basePort: Int = 2552,
   kryoRegistrations: List[String] = List.empty[String],
-  kryoInitializer: String = "com.signalcollect.configuration.KryoInit") {
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") {
   
   val nodePort = basePort + nodeId + 1
   val system: ActorSystem = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
@@ -32,7 +32,7 @@ class YarnNodeBootstrap(nodeId: Int,
     serializeMessages = true,
     loggingLevel = Logging.DebugLevel, //Logging.DebugLevelLogging.WarningLevel,
     kryoRegistrations = kryoRegistrations,
-    kryoInitializer = kryoInitializer,
+    kryoInitializer = kryoInit,
     port = port)
 
   def startNode: ActorRef = {
