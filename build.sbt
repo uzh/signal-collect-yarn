@@ -56,6 +56,7 @@ libraryDependencies ++= Seq(
   exclude("hadoop-yarn-api", "org.apache.hadoop"),
  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager-custom" % hadoopVersion % "provided",
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager-custom" % hadoopVersion % "provided",
+  "org.apache.hadoop" % "yarn-server-tests-custom" % hadoopVersion,
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.3"  % "test",
   "com.typesafe.akka" %% "akka-remote" % "2.1.4" force(),
