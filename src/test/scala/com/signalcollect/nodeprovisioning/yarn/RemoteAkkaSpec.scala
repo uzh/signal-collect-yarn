@@ -61,7 +61,7 @@ object ActorSystemCreator {
     serializeMessages = false,
     loggingLevel = Logging.DebugLevel,
     kryoRegistrations= Nil,
-    useJavaSerialization = false,
+    kryoInitializer ="com.signalcollect.configuration.KryoInit",
     port = akkaPort)
     ActorSystem("ActorSystem", akkaConfig)
   }

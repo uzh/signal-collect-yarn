@@ -11,7 +11,7 @@ import com.signalcollect.deployment.YarnDeployableAlgorithm
 import com.signalcollect.util.LogHelper
 import com.signalcollect.nodeprovisioning.AkkaHelper
 
-class Leader(nodes: List[ContainerInfo], akkaPort: Int, kryoRegistrations: List[String]) extends LogHelper {
+class Leader(nodes: List[ContainerInfo], akkaPort: Int, kryoRegistrations: List[String], kryoInitializer: String = "com.signalcollect.configuration.KryoInit") extends LogHelper {
   if (nodes.isEmpty) throw new IllegalArgumentException("There should be at least one node")
 
   val system: ActorSystem = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
@@ -21,7 +21,7 @@ class Leader(nodes: List[ContainerInfo], akkaPort: Int, kryoRegistrations: List[
     serializeMessages = true,
     loggingLevel = Logging.DebugLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,
-    useJavaSerialization = true,
+    kryoInitializer = kryoInitializer,
     port = akkaPort)
 
   def startActorSystem: ActorSystem = {

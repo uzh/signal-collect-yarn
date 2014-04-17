@@ -10,7 +10,7 @@ organization := "com.signalcollect"
 
 scalaVersion := "2.10.3"
 
-val hadoopVersion = "2.2.0"
+val hadoopVersion = "2.3.0"
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
@@ -49,18 +49,20 @@ libraryDependencies ++= Seq(
   "com.google.protobuf" % "protobuf-java" % "2.4.1" force(),
   "org.scala-lang.modules" %% "scala-async" % "0.9.0",
   "org.scala-lang" % "scala-library" % "2.10.3" % "compile",
-//  ("org.apache.hadoop" % "hadoop-common" % hadoopVersion % "provided").
-//    exclude("commons-beanutils", "commons-beanutils-core"),
-//  "org.apache.hadoop" % "hadoop-yarn-common" % hadoopVersion % "provided",
-//  ("org.apache.hadoop" % "hadoop-yarn-client" % hadoopVersion % "provided").
-//  exclude("hadoop-yarn-api", "org.apache.hadoop"),
-// "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % hadoopVersion % "provided",
-//  "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % hadoopVersion % "provided",
+ ("org.apache.hadoop" % "hadoop-common-custom" % hadoopVersion % "provided").
+   exclude("commons-beanutils", "commons-beanutils-core"),
+  "org.apache.hadoop" % "hadoop-yarn-common-custom" % hadoopVersion % "provided",
+  ("org.apache.hadoop" % "hadoop-yarn-client-custom" % hadoopVersion % "provided").
+  exclude("hadoop-yarn-api", "org.apache.hadoop"),
+ "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager-custom" % hadoopVersion % "provided",
+  "org.apache.hadoop" % "hadoop-yarn-server-nodemanager-custom" % hadoopVersion % "provided",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.3"  % "test",
   "com.typesafe.akka" %% "akka-remote" % "2.1.4" force(),
   "io.netty" % "netty" % "3.5.8.Final" force()
 )
+
+resolvers += "Ifi Public" at "https://maven.ifi.uzh.ch/maven2/content/groups/public/"
 
 dependencyOverrides += "io.netty" % "netty" % "3.5.8.Final"
 
