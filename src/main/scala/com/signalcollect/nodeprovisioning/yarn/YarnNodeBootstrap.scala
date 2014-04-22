@@ -30,7 +30,7 @@ class YarnNodeBootstrap(nodeId: Int,
   def akkaConfig(port: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
     akkaMessageCompression = true,
     serializeMessages = true,
-    loggingLevel = Logging.DebugLevel, //Logging.DebugLevelLogging.WarningLevel,
+    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel Logging.WarningLevel,
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
     port = port)
