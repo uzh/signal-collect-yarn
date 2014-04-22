@@ -8,10 +8,24 @@ import com.signalcollect.util.ConfigProvider
 
 object YarnClientCreator {
   val config = ConfigProvider.config
-  lazy val factory = createFactory
+  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator
+  var overrideFactory = false
+  
+  
+  /**
+   * This function allows to override the Creator which is chosen in the createFactory function
+   * it is useful when running a container on the MiniCluster
+   */
+  def overrideFactory(factory: YarnClientCreatorImpl){
+    overrideFactory = true
+    creator = factory
+  }
   
   def yarnClient(): YarnClient = {
-    factory.yarnClient
+    if(!overrideFactory){
+    	creator = createFactory()
+    }
+    creator.yarnClient
   }
   
   def createFactory(): YarnClientCreatorImpl = {
