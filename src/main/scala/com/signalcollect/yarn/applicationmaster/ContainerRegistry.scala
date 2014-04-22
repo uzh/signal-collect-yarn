@@ -2,7 +2,7 @@ package com.signalcollect.yarn.applicationmaster
 
 import org.apache.hadoop.yarn.api.records.Container
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.nodeprovisioning.yarn.ContainerNode
+import com.signalcollect.nodeprovisioning.yarn.ContainerInfo
 import java.net.InetAddress
 
 object ContainerRegistry {
@@ -79,10 +79,10 @@ object ContainerRegistry {
     }
   }
   
-  def getContainerNodes(): List[ContainerNode] = {
+  def getContainerNodes(): List[ContainerInfo] = {
     
     val akkaPort = ConfigProvider.config.getInt("deployment.akka.port")
-    val containerNodes = containers.values.map(t => new ContainerNode(getIpFromHostAddress(t._1), t._2, akkaPort)).toList
+    val containerNodes = containers.values.map(t => new ContainerInfo(getIpFromHostAddress(t._1), t._2, akkaPort)).toList
     containerNodes
   }
   

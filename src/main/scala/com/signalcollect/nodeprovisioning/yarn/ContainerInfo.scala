@@ -1,6 +1,6 @@
 package com.signalcollect.nodeprovisioning.yarn
 
-class ContainerNode(val ip: String, val id: Int, val akkaPort: Int = 2552) {
+class ContainerInfo(val ip: String, val id: Int, val akkaPort: Int = 2552) {
   def actorAddress: String = {
     val systemId = id + 1
     val containerPort = akkaPort + id + 1

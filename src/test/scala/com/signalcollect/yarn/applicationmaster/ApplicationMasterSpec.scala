@@ -19,33 +19,33 @@ import com.signalcollect.yarn.deployment.TestLaunchSettings
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit{
   
-//  "ApplicationMaster" should {
-//    val typesafeConfig = ConfigFactory.load("test-deployment")
-//    val yarnClient = YarnClientCreator.yarnClient
-//    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
-//    val client = new YarnDeploymentClient(launchSettings)
-//
-//    "run application successfull" in {
-//      val application = client.submitApplication()
-//      var finished = false
-//      while (!finished) {
-//        Thread.sleep(1000)
-//        val apps = yarnClient.getApplications.toList
-//        if (apps.size() == 0) {
-//          Thread.sleep(10)
-//        } else {
-//          if (apps.exists(_.getApplicationId().equals(application))) {
-//            val appReport = apps.find(_.getApplicationId().equals(application)).get
-//            val applicationState = appReport.getYarnApplicationState()
-//            println("ApplicationState = " + applicationState)
-//            if (applicationState == YarnApplicationState.FINISHED || applicationState == YarnApplicationState.FAILED) {
-//              finished = true
-//            }
-//          }
-//        }
-//      }
-//      val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
-//      appReport.getFinalApplicationStatus() === FinalApplicationStatus.SUCCEEDED
-//    }
-//  }
+  "ApplicationMaster" should {
+    val typesafeConfig = ConfigFactory.load("test-deployment")
+    val yarnClient = YarnClientCreator.yarnClient
+    val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
+    val client = new YarnDeploymentClient(launchSettings)
+
+    "run application successfull" in {
+      val application = client.submitApplication()
+      var finished = false
+      while (!finished) {
+        Thread.sleep(1000)
+        val apps = yarnClient.getApplications.toList
+        if (apps.size() == 0) {
+          Thread.sleep(10)
+        } else {
+          if (apps.exists(_.getApplicationId().equals(application))) {
+            val appReport = apps.find(_.getApplicationId().equals(application)).get
+            val applicationState = appReport.getYarnApplicationState()
+            println("ApplicationState = " + applicationState)
+            if (applicationState == YarnApplicationState.FINISHED || applicationState == YarnApplicationState.FAILED) {
+              finished = true
+            }
+          }
+        }
+      }
+      val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
+      appReport.getFinalApplicationStatus() === FinalApplicationStatus.SUCCEEDED
+    }
+  }
 }

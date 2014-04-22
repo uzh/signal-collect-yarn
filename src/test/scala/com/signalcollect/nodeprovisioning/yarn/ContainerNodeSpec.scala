@@ -11,7 +11,7 @@ class ContainerNodeSpec() extends SpecificationWithJUnit {
     val id = 0
     val basePort = 2552
     val port = basePort + 1
-    val node = new ContainerNode(ip = ip, id = id)
+    val node = new ContainerInfo(ip = ip, id = id)
     "contain ip and id" in {
       node.ip === "0.0.0.0"
       node.id === 0
@@ -24,7 +24,7 @@ class ContainerNodeSpec() extends SpecificationWithJUnit {
     "create node with other port" in {
       val otherPort = 1111
       val port = otherPort + 1
-      val node = new ContainerNode(ip = ip, id = id, akkaPort = otherPort)
+      val node = new ContainerInfo(ip = ip, id = id, akkaPort = otherPort)
       node.actorAddress === s"""akka://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
     }
 

@@ -8,15 +8,18 @@ object TestLaunchSettings {
     val config = ConfigProvider.config
     val createJarOnTheFly = config.getBoolean("deployment.testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("deployment.testing.useMiniCluster")
+    val memory = config.getInt("deployment.memory")
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("deployment.testing.dependency")
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/yarn-site.xml"
+      println(" site xml is" + dummySiteXml)
       val jars = List(pathToJar, pathToDependencies, dummySiteXml)
       new LaunchSettings(pathsToJars = jars)
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/yarn-site.xml"
       val mainJar = config.getString("deployment.pathToJar")
+      println(" site xml is" + dummySiteXml)
       new LaunchSettings(pathsToJars = List(dummySiteXml, mainJar))
 
     } else if(createJarOnTheFly) {

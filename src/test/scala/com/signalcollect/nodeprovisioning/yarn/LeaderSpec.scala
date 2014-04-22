@@ -1,52 +1,50 @@
 package com.signalcollect.nodeprovisioning.yarn
 
+import java.net.InetAddress
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.runner.JUnitRunner
-import java.net.InetAddress
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.async.Async.{ async, await }
 import com.signalcollect.yarn.deployment.JarCreator
 import com.signalcollect.yarn.deployment.LocalJarRunner
 
 @RunWith(classOf[JUnitRunner])
 class LeaderSpec() extends SpecificationWithJUnit {
 //  "Leader" should {
-//    val akkaPort = 2552
-//    "throw Exception when list is empty" in {
-//      val emptyIps = List[ContainerNode]()
-//      new Leader(emptyIps, akkaPort, List[String]()) must throwAn[IllegalArgumentException]
-//    }
-//
-//    val ip = InetAddress.getLocalHost.getHostAddress
-//    val id = 0
-//    val nodes = List[ContainerNode](new ContainerNode(ip, 0))
-//    val nodeBootstrap = new YarnNodeBootstrap(id, 1)
-//    val leader = new Leader(nodes, akkaPort, List[String]())
-//
-//    "start execution" in {
-////      val node = new Thread(new Runnable {
-////        def run() {
-////          val klass = ContainerApp.getClass()
-////          val pathToJar = JarCreator.createJarFile(klass)
-////          val fullClassName = klass.getName()
-////          val className = fullClassName.substring(0, fullClassName.length() - 1)
-////          LocalJarRunner.run(pathToJar, className, id.toString)
-////          Thread.sleep(20000)
-////          System.exit(0)
-////        }
-////      })
-////      node.start()
-//            nodeBootstrap.startNode
-//      Thread.sleep(10000) //wait till node is up 
-//      leader.startExecution must not(throwAn[Exception])
-//    }
-//  
-//
-////    "start execution in single jvm" in {
+////    val akkaPort = 2552
+////    "throw Exception when list is empty" in {
+////      val emptyIps = List[ContainerInfo]()
+////      new Leader(emptyIps, akkaPort, List[String]()) must throwAn[IllegalArgumentException]
+////    }
 ////
-////      nodeBootstrap.startNode
-////      Thread.sleep(1000) //wait till node is up 
+////    val ip = InetAddress.getLocalHost.getHostAddress
+////    val id = 0
+////    val nodes = List[ContainerInfo](new ContainerInfo(ip, 0), new ContainerInfo(ip, 1))
+////    val leader = new Leader(nodes, akkaPort, List[String]())
+////
+////    "start execution" in {
+////      async {
+////        startContainer(0)
+////      }
+////      async {
+////        startContainer(1)
+////      }
+////
+////      Thread.sleep(10000) //wait till nodes are up 
 ////      leader.startExecution must not(throwAn[Exception])
 ////    }
+////
+////    def startContainer(id: Int): Unit = {
+////      val klass = ContainerApp.getClass
+////      val pathToJar = JarCreator.createJarFile(klass)
+////      val fullClassName = klass.getName
+////      val className = fullClassName.substring(0, fullClassName.length - 1)
+////      LocalJarRunner.run(pathToJar, className, id.toString)
+////      Thread.sleep(1000)
+////    }
+// 
 //
 //  }
 }

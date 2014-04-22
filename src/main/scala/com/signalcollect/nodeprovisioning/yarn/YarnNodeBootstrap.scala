@@ -18,7 +18,9 @@ import akka.actor.ActorRef
 class YarnNodeBootstrap(nodeId: Int,
   numberOfNodes: Int,
   basePort: Int = 2552,
-  kryoRegistrations: List[String] = List.empty[String]) {
+  kryoRegistrations: List[String] = List.empty[String],
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") {
+  
   val nodePort = basePort + nodeId + 1
   val system: ActorSystem = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val nodeControllerCreator = NodeActorCreator(nodeId, numberOfNodes, None)
@@ -28,9 +30,9 @@ class YarnNodeBootstrap(nodeId: Int,
   def akkaConfig(port: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
     akkaMessageCompression = true,
     serializeMessages = true,
-    loggingLevel = Logging.DebugLevel, //Logging.DebugLevelLogging.WarningLevel,
+    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel Logging.WarningLevel,
     kryoRegistrations = kryoRegistrations,
-    useJavaSerialization = true,
+    kryoInitializer = kryoInit,
     port = port)
 
   def startNode: ActorRef = {

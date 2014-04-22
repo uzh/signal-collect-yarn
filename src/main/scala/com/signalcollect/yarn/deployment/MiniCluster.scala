@@ -34,7 +34,7 @@ object MiniCluster {
     cluster
   }
   def getClusterConfig(): Configuration = {
-    
+    println(url)
     if (url == null) {
       throw new RuntimeException("Could not find 'yarn-site.xml' dummy file in classpath")
     }

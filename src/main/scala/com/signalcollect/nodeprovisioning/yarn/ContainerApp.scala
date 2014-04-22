@@ -13,7 +13,7 @@ object ContainerApp extends App with LogHelper {
   val nodeBootstrap = new YarnNodeBootstrap(nodeId, numberOfNodes, basePort)
   val actorRef = nodeBootstrap.startNode
   println("started")
-  Thread.sleep(200000) // need to detect when execution is terminated
+  Thread.sleep(20000) // need to detect when execution is terminated
   log.info("stop Node")
   nodeBootstrap.stopNode
   System.exit(0)
