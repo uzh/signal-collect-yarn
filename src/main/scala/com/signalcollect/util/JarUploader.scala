@@ -11,13 +11,13 @@ import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
 import org.apache.hadoop.fs.FileStatus
 import java.util.HashMap
 import com.signalcollect.yarn.deployment.MiniCluster
+import org.apache.hadoop.yarn.client.api.YarnClient
 
 class JarUploader(applicationId: String, 
-  jars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar"))) {
-
+  jars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
+  client: YarnClient = YarnClientCreator.yarnClient) {
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
-  val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
 
   def uploadJars(): HashMap[String, LocalResource] = {
