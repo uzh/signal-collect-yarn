@@ -48,7 +48,8 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
     val launchSettings = new LaunchSettings(
       pathsToJars = jarFiles,
       arguments = List[String](containerId.toString),
-      memory = ConfigProvider.config.getInt("deployment.containerMemory"))
+      memory = ConfigProvider.config.getInt("deployment.containerMemory"),
+      useDefaultYarnClientCreator = true)
     val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings)
     val ctx = launchContextCreator.createLaunchContext(container.getId().toString())
     nodeManagerClient.startContainerAsync(container, ctx)
