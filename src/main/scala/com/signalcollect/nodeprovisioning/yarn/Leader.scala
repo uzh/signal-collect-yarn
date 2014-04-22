@@ -19,7 +19,7 @@ class Leader(nodes: List[ContainerInfo], akkaPort: Int, kryoRegistrations: List[
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
     akkaMessageCompression = true,
     serializeMessages = true,
-    loggingLevel = Logging.DebugLevel, //Logging.DebugLevel,Logging.WarningLevel
+    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
     port = akkaPort)

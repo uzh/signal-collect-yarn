@@ -59,6 +59,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
     val files = currentFolder.listFiles.toList
     val jarFiles = files.filter(file => file.getAbsolutePath().endsWith(".jar"))
     val jarPaths = jarFiles.map(_.toString)
+    println(s"jarfiles to uploade are: $jarPaths")
     jarPaths
   }
 }

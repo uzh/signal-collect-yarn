@@ -45,12 +45,7 @@ class LeaderSpec() extends SpecificationWithJUnit {
       LocalJarRunner.run(pathToJar, className, id.toString)
       Thread.sleep(1000)
     }
-    //    "start execution in single jvm" in {
-    //
-    //      nodeBootstrap.startNode
-    //      Thread.sleep(1000) //wait till node is up 
-    //      leader.startExecution must not(throwAn[Exception])
-    //    }
+ 
 
   }
 }
