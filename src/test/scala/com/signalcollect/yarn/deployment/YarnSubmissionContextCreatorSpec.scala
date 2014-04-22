@@ -9,15 +9,15 @@ import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
-//  "YarnSubmissionContextFactory" should {
-//    val config = ConfigFactory.load("test-deployment")
-//    lazy val yarnClient = YarnClientCreator.yarnClient
-//    lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
-//    "call Factory" in {
-//      val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
-//      val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
-//      val context =factory.getSubmissionContext()
-//      context.getApplicationName() === config.getString("deployment.applicationName")
-//    }
-//  }
+  "YarnSubmissionContextFactory" should {
+    val config = ConfigFactory.load("test-deployment")
+    lazy val yarnClient = YarnClientCreator.yarnClient
+    lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
+    "call Factory" in {
+      val launchSettings = TestLaunchSettings.getSettingsForClass(ApplicationMaster.getClass())
+      val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
+      val context =factory.getSubmissionContext()
+      context.getApplicationName() === config.getString("deployment.applicationName")
+    }
+  }
 }
