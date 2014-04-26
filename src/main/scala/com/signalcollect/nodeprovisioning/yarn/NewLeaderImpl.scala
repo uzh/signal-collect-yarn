@@ -1,26 +1,32 @@
 package com.signalcollect.nodeprovisioning.yarn
 
 import com.signalcollect.configuration.ActorSystemRegistry
-import akka.actor.ActorSystem
-import com.signalcollect.util.LogHelper
 import com.signalcollect.configuration.AkkaConfig
-import akka.event.Logging
+import com.signalcollect.util.LogHelper
+
 import akka.actor.Actor
-import akka.actor.Props
 import akka.actor.ActorRef
+import akka.actor.ActorSystem
+import akka.actor.Props
+import akka.event.Logging
 
-class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.async.Async.{ async, await }
+
+class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
-
+  var executionStarted = false
   def start {
-
+    async {
+      waitForAllNodes
+      executionStarted = true
+    }
   }
 
   def getActorRef(): ActorRef = {
     system.actorOf(Props[LeaderActor], "leaderactor")
   }
-  
-  
 
   def startActorSystem: ActorSystem = {
     try {
@@ -35,6 +41,17 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInit: St
     }
   }
 
+  def waitForAllNodes {
+    while (!allNodesRunning) {
+      Thread.sleep(100)
+    }
+  }
+
+  def allNodesRunning: Boolean = {
+    val nodesRunning = NodeAddresses.getNumberOfNodes == numberOfNodes
+    nodesRunning
+  }
+
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
     akkaMessageCompression = true,
     serializeMessages = true,
@@ -47,21 +64,33 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], kryoInit: St
 class LeaderActor extends Actor {
   override def receive = {
     case address: String => NodeAddresses.add(address)
-    case whatever => println("received unexpected Address")
+    case whatever => println("received unexpected message")
   }
   def test {
-    
+
   }
 }
 
 object NodeAddresses {
   private var addresses: List[String] = Nil
   def getAll: List[String] = {
-    addresses
+    synchronized {
+      addresses
+    }
   }
   def add(address: String) {
     synchronized {
       addresses = address :: addresses
+    }
+  }
+  def getNumberOfNodes: Int = {
+    synchronized {
+      addresses.size
+    }
+  }
+  def clear = {
+    synchronized {
+      addresses = Nil
     }
   }
 }

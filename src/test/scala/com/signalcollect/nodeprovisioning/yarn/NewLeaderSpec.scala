@@ -11,23 +11,31 @@ class NewLeaderSpec extends SpecificationWithJUnit {
 	
   "Leader" should {
     val akkaPort = 2552
-    val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil)
+    val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
     
     "be started in" in {
-      leader.start must not(throwAn[Exception])
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
     
-    val leader2 = new NewLeaderImpl(akkaPort, Nil)
+    val leader2 = new NewLeaderImpl(akkaPort, Nil,1)
     val leaderActor: ActorRef = leader2.getActorRef()
     "create LeaderActor" in {
       leaderActor !== null
     }
     
-    "leaderActor should save adresses" in {
+    "detect if all nodes are ready " in {
+      NodeAddresses.clear
+      leader2.start
+      leader2.executionStarted === false
+      leader2.allNodesRunning === false
       val address = "akka://SignalCollect@127.0.0.1:2553/user/DefaultNodeActor0"
       leaderActor ! address
-      NodeAddresses.getAll.exists(address.equals(_)) === true
+      Thread.sleep(1000)
+      leader2.allNodesRunning === true
+      leader2.executionStarted === true
     }
+    
+    
+   
   } 
 }
