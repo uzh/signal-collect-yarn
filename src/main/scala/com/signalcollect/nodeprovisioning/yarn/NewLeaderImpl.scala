@@ -14,7 +14,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 
-class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
+class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, containers: List[ContainerInfo], kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   var executionStarted = false
   def start {
@@ -59,6 +59,11 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNode
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
     port = akkaPort)
+    
+  def getNodeActors: List[ActorRef] = {
+    val nodeActors = containers.map(container => system.actorFor(container.actorAddress))
+    nodeActors
+  }
 }
 
 class LeaderActor extends Actor {

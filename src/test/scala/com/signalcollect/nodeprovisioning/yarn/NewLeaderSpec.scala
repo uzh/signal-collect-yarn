@@ -33,8 +33,12 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       Thread.sleep(1000)
       leader2.allNodesRunning === true
       leader2.executionStarted === true
+      
     }
     
+    "get NodeActors" in {
+      leader2.getNodeActors 
+    }
     
    
   } 
