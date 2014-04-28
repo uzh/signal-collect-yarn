@@ -8,38 +8,39 @@ import akka.actor.ActorRef
 
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
-	
+
   "Leader" should {
     val akkaPort = 2552
     val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
-    
+
     "be started in" in {
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
-    
-    val leader2 = new NewLeaderImpl(akkaPort, Nil,1)
+    val ip = "0.0.0.0"
+    val id = 0
+    val leader2 = new NewLeaderImpl(akkaPort, Nil, 1)
     val leaderActor: ActorRef = leader2.getActorRef()
     "create LeaderActor" in {
       leaderActor !== null
     }
-    
+
     "detect if all nodes are ready " in {
       NodeAddresses.clear
       leader2.start
       leader2.executionStarted === false
       leader2.allNodesRunning === false
-      val address = "akka://SignalCollect@127.0.0.1:2553/user/DefaultNodeActor0"
+      val address = s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
       leaderActor ! address
       Thread.sleep(1000)
       leader2.allNodesRunning === true
       leader2.executionStarted === true
-      
+
+      leader2.getNodeActors must not(throwAn[Exception])
+      val nodeActors = leader2.getNodeActors
+      nodeActors must not be empty
+      nodeActors.head.path.toString === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
+
     }
-    
-    "get NodeActors" in {
-      leader2.getNodeActors 
-    }
-    
-   
-  } 
+
+  }
 }

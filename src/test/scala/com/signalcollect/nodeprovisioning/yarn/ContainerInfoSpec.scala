@@ -5,7 +5,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ContainerNodeSpec() extends SpecificationWithJUnit {
+class ContainerInfoSpec() extends SpecificationWithJUnit {
   "ContainerNode" should {
     val ip = "0.0.0.0"
     val id = 0
@@ -21,10 +21,10 @@ class ContainerNodeSpec() extends SpecificationWithJUnit {
       node.actorAddress === s"""akka://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
     }
 
-    "create node with other port" in {
+    "create node with other baseport" in {
       val otherPort = 1111
       val port = otherPort + 1
-      val node = new ContainerInfo(ip = ip, id = id, akkaPort = otherPort)
+      val node = new ContainerInfo(ip = ip, id = id, basePort = otherPort)
       node.actorAddress === s"""akka://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
     }
 
