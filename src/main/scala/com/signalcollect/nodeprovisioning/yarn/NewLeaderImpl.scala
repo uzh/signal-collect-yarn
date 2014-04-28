@@ -21,6 +21,7 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNode
     async {
       waitForAllNodes
       executionStarted = true
+      
     }
   }
 
