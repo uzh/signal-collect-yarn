@@ -14,12 +14,12 @@ import java.net.InetAddress
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
   "Leader" should {
-	  sequential
+    sequential
 
     "be started in" in new StopActorSystemAfter {
-	    println("test1")
+      println("test1")
       val akkaPort = 2552
-  
+
       val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
@@ -62,11 +62,11 @@ class NewLeaderSpec extends SpecificationWithJUnit {
 
 }
 
-trait StopActorSystemAfter extends Scope {
-  def after = {
+trait StopActorSystemAfter extends After {
+  override def after = {
     ActorSystemRegistry.retrieve("SignalCollect") match {
       case Some(system) => clearSystem(system)
-      case None => 
+      case None =>
     }
 
   }

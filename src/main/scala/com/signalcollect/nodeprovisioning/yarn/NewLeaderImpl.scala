@@ -3,16 +3,14 @@ package com.signalcollect.nodeprovisioning.yarn
 import com.signalcollect.configuration.ActorSystemRegistry
 import com.signalcollect.configuration.AkkaConfig
 import com.signalcollect.util.LogHelper
-
 import akka.actor.Actor
-import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.event.Logging
-
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
+import akka.actor.ActorRef
 
 class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
