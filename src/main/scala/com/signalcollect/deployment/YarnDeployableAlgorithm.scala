@@ -1,5 +1,5 @@
 /*
- *  @author Philip Stutz
+ *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
  *
