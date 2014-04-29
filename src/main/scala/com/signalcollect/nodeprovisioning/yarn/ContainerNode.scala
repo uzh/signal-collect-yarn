@@ -23,13 +23,13 @@ class ContainerNode(id: Int, baseport: Int = 2552,  kryoRegistrations: List[Stri
     system.actorOf(Props[ShutdownActor], "shutdownactor")
   }
     
-  def waitForTermination {
-    async {
+  def start {
+    async ({
     while(!ShutdownHelper.isShutdownNow){
       Thread.sleep(100)
     }
     terminated = true
-    }
+    })
   }
   
   def startActorSystem: ActorSystem = {

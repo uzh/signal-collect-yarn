@@ -40,7 +40,7 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
       ShutdownHelper.reset
       ShutdownHelper.isShutdownNow === false
       val container = new ContainerNode(0)
-      container.waitForTermination
+      container.start
       container.terminated === false
       container.getShutdownActor ! "shutdown"
       Thread.sleep(1000)
