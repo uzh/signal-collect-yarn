@@ -50,7 +50,12 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
 
     "get LeaderActor" in new LeaderContainerScope {
       val leaderActor = container.getLeaderActor
-      leaderActor must not be None
+      leaderActor.path.toString === "akka://SignalCollect/user/leaderactor"
+    }
+    
+    "register with leader" in new LeaderContainerScope{
+      container.register
+      NodeAddresses.getAll.exists(_ .contains("DefaultNodeActor")) === true
     }
   }
 
@@ -62,9 +67,15 @@ trait ContainerScope extends StopActorSystemAfter {
 
 }
 trait LeaderContainerScope extends StopActorSystemAfter {
+  NodeAddresses.clear
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
   val leader = new NewLeaderImpl(2552, Nil, 1)
   leader.start
   val container = new ContainerNode(0, 1, leaderIp)
+  
+  abstract override def  after {
+    super.after
+    NodeAddresses.clear
+  }
 
 }
