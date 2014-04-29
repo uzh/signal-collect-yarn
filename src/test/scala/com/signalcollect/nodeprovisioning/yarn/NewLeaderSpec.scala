@@ -5,6 +5,8 @@ import org.specs2.runner.JUnitRunner
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.configuration.ActorSystemRegistry
 import akka.actor.ActorRef
+import org.specs2.mutable.After
+import akka.actor.ActorSystem
 
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
@@ -13,7 +15,7 @@ class NewLeaderSpec extends SpecificationWithJUnit {
     val akkaPort = 2552
     val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
 
-    "be started in" in {
+    "be started in" in new stopActorSystem {
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
     val ip = "0.0.0.0"
@@ -24,7 +26,7 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       leaderActor !== null
     }
 
-    "detect if all nodes are ready " in {
+    "detect if all nodes are ready " in new stopActorSystem {
       NodeAddresses.clear
       leader2.start
       leader2.executionStarted === false
@@ -41,6 +43,23 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       nodeActors.head.path.toString === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
 
     }
+    
+//    ActorSystemRegistry.retrieve("SignalCollect").getOrElse()
+  }
+  
+}
 
+trait stopActorSystem extends After {
+  def after = {
+    ActorSystemRegistry.retrieve("SignalCollect") match {
+      case	Some(system) => clearSystem(system)
+      case None => 
+    }
+    
+  }
+  
+  def clearSystem(system: ActorSystem) {
+    ActorSystemRegistry.remove(system)
+    system.shutdown
   }
 }
