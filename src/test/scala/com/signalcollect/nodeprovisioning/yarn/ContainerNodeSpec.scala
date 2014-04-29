@@ -37,10 +37,13 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
    }
    
    "wait for shutdown message" in {
+      ShutdownHelper.reset
+      ShutdownHelper.isShutdownNow === false
       val container = new ContainerNode(0)
       container.waitForTermination
       container.terminated === false
       container.getShutdownActor ! "shutdown"
+      Thread.sleep(1000)
       container.terminated === true
    }
  }

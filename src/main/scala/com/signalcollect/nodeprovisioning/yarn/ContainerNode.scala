@@ -8,6 +8,9 @@ import com.signalcollect.nodeprovisioning.AkkaHelper
 import akka.actor.ActorRef
 import akka.actor.Actor
 import akka.actor.Props
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.async.Async.{ async, await }
 
 
 class ContainerNode(id: Int, baseport: Int = 2552,  kryoRegistrations: List[String] = Nil, kryoInit: String = "com.signalcollect.configuration.KryoInit") {
@@ -21,7 +24,12 @@ class ContainerNode(id: Int, baseport: Int = 2552,  kryoRegistrations: List[Stri
   }
     
   def waitForTermination {
-    
+    async {
+    while(!ShutdownHelper.isShutdownNow){
+      Thread.sleep(100)
+    }
+    terminated = true
+    }
   }
   
   def startActorSystem: ActorSystem = {
@@ -67,5 +75,11 @@ object ShutdownHelper {
   
   def isShutdownNow: Boolean = {
     shutdownNow
+  }
+  
+  def reset {
+    synchronized {
+      shutdownNow = false
+    }
   }
 }
