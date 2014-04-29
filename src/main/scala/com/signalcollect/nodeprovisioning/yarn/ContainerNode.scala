@@ -11,25 +11,45 @@ import akka.actor.Props
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
+import com.signalcollect.nodeprovisioning.DefaultNodeActor
+import com.signalcollect.nodeprovisioning.NodeActorCreator
 
 
-class ContainerNode(id: Int, baseport: Int = 2552,  kryoRegistrations: List[String] = Nil, kryoInit: String = "com.signalcollect.configuration.KryoInit") {
-  val system = ActorSystemRegistry.retrieve("Signval container = new ContainerNode(0)alCollect").getOrElse(startActorSystem)
-  val akkaPort = baseport + id + 1
+class ContainerNode(id: Int,
+    numberOfNodes: Int,
+    leaderIp: String,
+    basePort: Int = 2552,
+    kryoRegistrations: List[String] = Nil,
+    kryoInit: String = "com.signalcollect.configuration.KryoInit") {
+  val akkaPort = basePort + id + 1
+  val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
+  val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
+  val shutdownActor = system.actorOf(Props[ShutdownActor], "shutdownactor")
+  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None)
+  val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
+    nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
   
   var terminated = false
   
   def getShutdownActor(): ActorRef = {
-    system.actorOf(Props[ShutdownActor], "shutdownactor")
+    shutdownActor
+  }
+  
+  def getNodeActor(): ActorRef = {
+    nodeActor
+  }
+  
+  def getLeaderActor(): ActorRef = {
+    system.actorFor(leaderAddress)
   }
     
   def start {
-    async ({
+    async {
     while(!ShutdownHelper.isShutdownNow){
       Thread.sleep(100)
     }
     terminated = true
-    })
+    }
   }
   
   def startActorSystem: ActorSystem = {
@@ -58,9 +78,6 @@ class ShutdownActor extends Actor {
   override def receive = {
     case "shutdown" => ShutdownHelper.shutdown
     case whatever => println("received unexpected message")
-  }
-  def test {
-
   }
 }
 
