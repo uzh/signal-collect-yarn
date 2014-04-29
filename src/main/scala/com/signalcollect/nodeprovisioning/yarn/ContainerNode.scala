@@ -14,46 +14,49 @@ import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.signalcollect.nodeprovisioning.NodeActorCreator
 
-
 class ContainerNode(id: Int,
-    numberOfNodes: Int,
-    leaderIp: String,
-    basePort: Int = 2552,
-    kryoRegistrations: List[String] = Nil,
-    kryoInit: String = "com.signalcollect.configuration.KryoInit") {
+  numberOfNodes: Int,
+  leaderIp: String,
+  basePort: Int = 2552,
+  kryoRegistrations: List[String] = Nil,
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") {
+
   val akkaPort = basePort + id + 1
   val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
-  val shutdownActor = system.actorOf(Props[ShutdownActor], "shutdownactor")
+  val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
   val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None)
   val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
     nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
-  
+
   var terminated = false
-  
+
   def getShutdownActor(): ActorRef = {
     shutdownActor
   }
-  
+
   def getNodeActor(): ActorRef = {
     nodeActor
   }
-  
+
   def getLeaderActor(): ActorRef = {
     system.actorFor(leaderAddress)
   }
-    
+
   def start {
     async {
-    while(!ShutdownHelper.isShutdownNow){
-      Thread.sleep(100)
-    }
-    terminated = true
+      while (!ShutdownHelper.isShutdownNow) {
+        Thread.sleep(100)
+      }
+      terminated = true
     }
   }
   
+  def register {
+    getLeaderActor ! AkkaHelper.getRemoteAddress(nodeActor, system)
+  }
+
   def startActorSystem: ActorSystem = {
-    println("start Actorsystem")
     try {
       val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
       ActorSystemRegistry.register(system)
@@ -64,7 +67,7 @@ class ContainerNode(id: Int,
       }
     }
   }
-  
+
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
     akkaMessageCompression = true,
     serializeMessages = true,
@@ -83,17 +86,17 @@ class ShutdownActor extends Actor {
 
 object ShutdownHelper {
   private var shutdownNow = false
-  
+
   def shutdown = {
     synchronized {
       shutdownNow = true
     }
   }
-  
+
   def isShutdownNow: Boolean = {
     shutdownNow
   }
-  
+
   def reset {
     synchronized {
       shutdownNow = false
