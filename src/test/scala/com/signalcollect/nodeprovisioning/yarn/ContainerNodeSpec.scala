@@ -6,12 +6,12 @@ import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.configuration.ActorSystemRegistry
 
 @RunWith(classOf[JUnitRunner])
-class ContainerNodeSpec extends SpecificationWithJUnit with StopActorSystemAfter {
+class ContainerNodeSpec extends SpecificationWithJUnit {
  "ContainerNode creation" should {
-//   "be created" in  {
-//    val container = new ContainerNode(0)
-//    container must not be None
-//   }
+   "be created" in  {
+    val container = new ContainerNode(0)
+    container must not be None
+   }
    
    "container node should start actor system" in  {
      val id = 0
@@ -22,12 +22,27 @@ class ContainerNodeSpec extends SpecificationWithJUnit with StopActorSystemAfter
     
    }
    
+   "create shutdown actor" in {
+     val container = new ContainerNode(0)
+     val actor = container.getShutdownActor
+     actor must not be None	
+   }
+   
    "receive shutdown message" in  {
      val container = new ContainerNode(0)
      container must not be None
+     val actor = container.getShutdownActor 
+     actor ! "shutdown"
+     ShutdownHelper.isShutdownNow === true
    }
    
+   "wait for shutdown message" in {
+      val container = new ContainerNode(0)
+      container.waitForTermination
+      container.terminated === false
+      container.getShutdownActor ! "shutdown"
+      container.terminated === true
+   }
  }
- 
 
 }

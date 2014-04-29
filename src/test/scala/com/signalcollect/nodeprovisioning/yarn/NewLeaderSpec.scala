@@ -10,7 +10,7 @@ import akka.actor.ActorSystem
 import org.specs2.specification.AfterExample
 
 @RunWith(classOf[JUnitRunner])
-class NewLeaderSpec extends SpecificationWithJUnit with StopActorSystemAfter {
+class NewLeaderSpec extends SpecificationWithJUnit {
 
   "Leader" should {
     val akkaPort = 2552
@@ -49,9 +49,8 @@ class NewLeaderSpec extends SpecificationWithJUnit with StopActorSystemAfter {
   
 }
 
-trait StopActorSystemAfter extends AfterExample {
-  def after = {
-    println("after")
+object ActorSystemStopper {
+  def stop = {
     ActorSystemRegistry.retrieve("SignalCollect") match {
       case	Some(system) => clearSystem(system)
       case None => println("no actor system to shutdown")
