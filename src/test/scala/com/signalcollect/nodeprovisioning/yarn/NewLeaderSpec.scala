@@ -7,15 +7,16 @@ import com.signalcollect.configuration.ActorSystemRegistry
 import akka.actor.ActorRef
 import org.specs2.mutable.After
 import akka.actor.ActorSystem
+import org.specs2.specification.AfterExample
 
 @RunWith(classOf[JUnitRunner])
-class NewLeaderSpec extends SpecificationWithJUnit {
+class NewLeaderSpec extends SpecificationWithJUnit with StopActorSystemAfter {
 
   "Leader" should {
     val akkaPort = 2552
     val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
 
-    "be started in" in new stopActorSystem {
+    "be started in" in  {
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
     val ip = "0.0.0.0"
@@ -26,7 +27,7 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       leaderActor !== null
     }
 
-    "detect if all nodes are ready " in new stopActorSystem {
+    "detect if all nodes are ready " in {
       NodeAddresses.clear
       leader2.start
       leader2.executionStarted === false
@@ -44,16 +45,16 @@ class NewLeaderSpec extends SpecificationWithJUnit {
 
     }
     
-//    ActorSystemRegistry.retrieve("SignalCollect").getOrElse()
   }
   
 }
 
-trait stopActorSystem extends After {
+trait StopActorSystemAfter extends AfterExample {
   def after = {
+    println("after")
     ActorSystemRegistry.retrieve("SignalCollect") match {
       case	Some(system) => clearSystem(system)
-      case None => 
+      case None => println("no actor system to shutdown")
     }
     
   }
