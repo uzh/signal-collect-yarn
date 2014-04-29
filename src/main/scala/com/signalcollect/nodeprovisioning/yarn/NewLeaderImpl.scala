@@ -11,16 +11,38 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 import akka.actor.ActorRef
+import com.signalcollect.util.ConfigProvider
+import com.signalcollect.deployment.YarnDeployableAlgorithm
+import scala.collection.JavaConversions._
 
-class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
+class NewLeaderImpl(akkaPort: Int,
+  kryoRegistrations: List[String],
+  numberOfNodes: Int,
+
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   var executionStarted = false
+  var executionFinished = false
   def start {
     async {
       waitForAllNodes
       executionStarted = true
-      
+      startExecution
+      executionFinished = true
+    }
+  }
+
+  def startExecution {
+    val algorithm = ConfigProvider.config.getString("deployment.algorithm.class")
+    val parameters = ConfigProvider.config.getConfig("deployment.algorithm.parameters").entrySet.map {
+      entry => (entry.getKey, entry.getValue.unwrapped.toString)
+    }.toMap
+    try {
+      val nodeActors = getNodeActors.toArray
+      val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[YarnDeployableAlgorithm]
+      algorithmObject.execute(parameters, nodeActors)
+    } finally {
     }
   }
 
@@ -59,7 +81,7 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNode
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
     port = akkaPort)
-    
+
   def getNodeActors: List[ActorRef] = {
     val nodeActors = NodeAddresses.getAll.map(nodeAddress => system.actorFor(nodeAddress))
     nodeActors
@@ -69,12 +91,14 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNode
 class LeaderActor extends Actor {
   override def receive = {
     case address: String => NodeAddresses.add(address)
-    case whatever => println("received unexpected message")
+    case actor: ActorRef => println("received actorRef")
+    case _ => println("received unexpected message")
   }
   def test {
 
   }
 }
+
 
 object NodeAddresses {
   private var addresses: List[String] = Nil
