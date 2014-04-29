@@ -47,7 +47,7 @@ class ContainerNode(id: Int,
   val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
     nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
 
-  var terminated = false
+  private var terminated = false
 
   def getShutdownActor(): ActorRef = {
     shutdownActor
@@ -60,30 +60,27 @@ class ContainerNode(id: Int,
   def getLeaderActor(): ActorRef = {
     system.actorFor(leaderAddress)
   }
+  
+  def isTerminated: Boolean = terminated
 
   def start {
     async {
-      while (!ShutdownHelper.isShutdownNow) {
+      while (!ShutdownHelper.shuttingdown) {
         Thread.sleep(100)
       }
       terminated = true
     }
   }
-  
+
   def register {
     getLeaderActor ! AkkaHelper.getRemoteAddress(nodeActor, system)
   }
 
   def startActorSystem: ActorSystem = {
-    try {
-      val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
-      ActorSystemRegistry.register(system)
-      system
-    } catch {
-      case e: Exception => {
-        throw e
-      }
-    }
+    val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
+    ActorSystemRegistry.register(system)
+    system
+
   }
 
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
@@ -111,7 +108,7 @@ object ShutdownHelper {
     }
   }
 
-  def isShutdownNow: Boolean = {
+  def shuttingdown: Boolean = {
     shutdownNow
   }
 

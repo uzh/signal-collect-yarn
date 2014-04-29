@@ -49,17 +49,17 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
       container must not be None
       val actor = container.getShutdownActor
       actor ! "shutdown"
-      ShutdownHelper.isShutdownNow === true
+      ShutdownHelper.shuttingdown === true
     }
 
     "wait for shutdown message" in new ContainerScope {
       ShutdownHelper.reset
-      ShutdownHelper.isShutdownNow === false
+      ShutdownHelper.shuttingdown === false
       container.start
-      container.terminated === false
+      container.isTerminated === false
       container.getShutdownActor ! "shutdown"
       Thread.sleep(1000)
-      container.terminated === true
+      container.isTerminated === true
     }
 
     "get NodeActor" in new ContainerScope {
