@@ -8,26 +8,39 @@ import akka.actor.ActorRef
 import org.specs2.mutable.After
 import akka.actor.ActorSystem
 import org.specs2.specification.AfterExample
+import org.specs2.specification.Scope
+import java.net.InetAddress
 
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
-
   "Leader" should {
-    val akkaPort = 2552
-    val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
+	  sequential
 
-    "be started in" in  {
+    "be started in" in new StopActorSystemAfter {
+	    println("test1")
+      val akkaPort = 2552
+  
+      val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
-    val ip = "0.0.0.0"
-    val id = 0
-    val leader2 = new NewLeaderImpl(akkaPort, Nil, 1)
-    val leaderActor: ActorRef = leader2.getActorRef()
-    "create LeaderActor" in {
-      leaderActor !== null
+
+    "create LeaderActor" in new StopActorSystemAfter {
+      println("test2")
+      val akkaPort = 2552
+      val ip = "0.0.0.0"
+      val id = 0
+      val leader2 = new NewLeaderImpl(akkaPort, Nil, 1)
+      val leaderActor: ActorRef = leader2.getActorRef()
+      leaderActor must not be None
     }
 
-    "detect if all nodes are ready " in {
+    "detect if all nodes are ready " in new StopActorSystemAfter {
+      println("test3")
+      val akkaPort = 2552
+      val ip = "0.0.0.0"
+      val id = 0
+      val leader2 = new NewLeaderImpl(akkaPort, Nil, 1)
+      val leaderActor: ActorRef = leader2.getActorRef()
       NodeAddresses.clear
       leader2.start
       leader2.executionStarted === false
@@ -44,20 +57,20 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       nodeActors.head.path.toString === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
 
     }
-    
+
   }
-  
+
 }
 
-object ActorSystemStopper {
-  def stop = {
+trait StopActorSystemAfter extends Scope {
+  def after = {
     ActorSystemRegistry.retrieve("SignalCollect") match {
-      case	Some(system) => clearSystem(system)
-      case None => println("no actor system to shutdown")
+      case Some(system) => clearSystem(system)
+      case None => 
     }
-    
+
   }
-  
+
   def clearSystem(system: ActorSystem) {
     ActorSystemRegistry.remove(system)
     system.shutdown

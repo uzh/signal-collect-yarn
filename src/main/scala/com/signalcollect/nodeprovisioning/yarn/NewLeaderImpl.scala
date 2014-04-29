@@ -16,6 +16,7 @@ import scala.async.Async.{ async, await }
 
 class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNodes: Int, kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
+  val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   var executionStarted = false
   def start {
     async {
@@ -26,7 +27,7 @@ class NewLeaderImpl(akkaPort: Int, kryoRegistrations: List[String], numberOfNode
   }
 
   def getActorRef(): ActorRef = {
-    system.actorOf(Props[LeaderActor], "leaderactor")
+    leaderactor
   }
 
   def startActorSystem: ActorSystem = {
