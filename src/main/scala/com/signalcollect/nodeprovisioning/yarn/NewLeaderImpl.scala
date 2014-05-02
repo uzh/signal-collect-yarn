@@ -45,7 +45,6 @@ class NewLeaderImpl(akkaPort: Int,
   def start {
     async {
       waitForAllNodes
-      executionStarted = true
       startExecution
       executionFinished = true
     }
@@ -85,11 +84,16 @@ class NewLeaderImpl(akkaPort: Int,
     while (!allNodesRunning) {
       Thread.sleep(100)
     }
+    executionStarted = true
   }
 
   def allNodesRunning: Boolean = {
-    val nodesRunning = NodeAddresses.getNumberOfNodes == numberOfNodes
+    val nodesRunning = ActorAddresses.getNumberOfNodes == numberOfNodes
     nodesRunning
+  }
+
+  def shutdownAllNodes {
+    getShutdownActors.foreach(_ ! "shutdown")
   }
 
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
@@ -101,43 +105,64 @@ class NewLeaderImpl(akkaPort: Int,
     port = akkaPort)
 
   def getNodeActors: List[ActorRef] = {
-    val nodeActors = NodeAddresses.getAll.map(nodeAddress => system.actorFor(nodeAddress))
+    val nodeActors = ActorAddresses.getNodeActorAddresses.map(nodeAddress => system.actorFor(nodeAddress))
     nodeActors
+  }
+  def getShutdownActors: List[ActorRef] = {
+    val shutdownActors = ActorAddresses.getShutdownAddresses.map(address => system.actorFor(address))
+    shutdownActors
   }
 }
 
 class LeaderActor extends Actor {
   override def receive = {
-    case address: String => NodeAddresses.add(address)
-    case actor: ActorRef => println("received actorRef")
+    case address: String => filterAddress(address)
     case _ => println("received unexpected message")
   }
-  def test {
 
+  def filterAddress(address: String) {
+    address match {
+      case nodeactor if nodeactor.contains("NodeActor") => ActorAddresses.addNodeActorAddress(address)
+      case shutdown if shutdown.contains("shutdown") => ActorAddresses.addShutdownAddress(address)
+      case _ =>
+    }
   }
 }
 
-
-object NodeAddresses {
-  private var addresses: List[String] = Nil
-  def getAll: List[String] = {
+object ActorAddresses {
+  private var nodeActorAddresses: List[String] = Nil
+  private var shutdownAddresses: List[String] = Nil
+  def getNodeActorAddresses: List[String] = {
     synchronized {
-      addresses
+      nodeActorAddresses
     }
   }
-  def add(address: String) {
+  def getShutdownAddresses: List[String] = {
     synchronized {
-      addresses = address :: addresses
+      shutdownAddresses
+    }
+  }
+  def addNodeActorAddress(address: String) {
+    synchronized {
+      (
+        nodeActorAddresses = address :: nodeActorAddresses)
+    }
+  }
+  def addShutdownAddress(address: String) {
+    synchronized {
+      (
+        shutdownAddresses = address :: shutdownAddresses)
     }
   }
   def getNumberOfNodes: Int = {
     synchronized {
-      addresses.size
+      nodeActorAddresses.size
     }
   }
   def clear = {
     synchronized {
-      addresses = Nil
+      nodeActorAddresses = Nil
+      shutdownAddresses = Nil
     }
   }
 }

@@ -29,11 +29,14 @@ import org.specs2.specification.AfterExample
 import org.specs2.specification.Scope
 import java.net.InetAddress
 import akka.actor.Props
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.async.Async.{ async, await }
 
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
   "Leader" should {
-    sequential
+    sequential //this is preventing the tests from being executed parallel
 
     "be started in" in new StopActorSystemAfter {
       val akkaPort = 2552
@@ -47,8 +50,10 @@ class NewLeaderSpec extends SpecificationWithJUnit {
 
     "detect if all nodes are ready " in new LeaderScope {
 
-      NodeAddresses.clear
-      leader.start
+      ActorAddresses.clear
+      async { //is needed because it is blocking
+        leader.waitForAllNodes
+      }
       leader.executionStarted === false
       leader.allNodesRunning === false
       val address = s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
@@ -62,12 +67,38 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       nodeActors must not be empty
       nodeActors.head.path.toString === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
     }
-    
-    "receive ContainerHost" in new LeaderScope {
-      leaderActor ! ActorSystemRegistry.retrieve("SignalCollect").get.actorOf(Props[ShutdownActor], s"shutdownactor$id")
+
+    "filter address on DefaultNodeActor" in new LeaderScope {
+      ActorAddresses.clear
+      async { //is needed because wait is blocking
+        leader.waitForAllNodes
+      }
+      val invalidAddress = "akka://SignalCollect@invalid"
+      leaderActor ! invalidAddress
+      ActorAddresses.getNodeActorAddresses.isEmpty === true
+    }
+
+    "save shutdown address" in new LeaderScope {
+      ActorAddresses.clear
+      async { //is needed because wait is blocking
+        leader.waitForAllNodes
+      }
+      val shutdownAddress = s"akka://SignalCollect@$ip:2553/user/shutdownactor$id"
+      leaderActor ! shutdownAddress
+      ActorAddresses.getShutdownAddresses.isEmpty === false
     }
     
-    
+    "clear ActorAddresses" in new LeaderScope {
+      ActorAddresses.clear
+      ActorAddresses.getNodeActorAddresses.isEmpty === true
+      ActorAddresses.getShutdownAddresses.isEmpty === true
+    }
+  }
+
+  //integration of leader and container
+  "Leader and ContainerNode" should {
+
+    sequential //this is preventing the tests from being executed parallel
     "start execution when all registered" in new LeaderContainerScope {
       container.register
       Thread.sleep(1000)
@@ -78,6 +109,28 @@ class NewLeaderSpec extends SpecificationWithJUnit {
         cnt += 1
       }
       leader.executionFinished === true
+    }
+    
+    "get shutdownActors" in new LeaderContainerScope {
+      container.register
+      Thread.sleep(1000)
+      leader.getShutdownActors.size ===1
+      leader.getShutdownActors.head.path.toString.contains("shutdown") === true
+    }
+
+    "shutdown after execution" in new LeaderContainerScope {
+      container.register
+      Thread.sleep(1000)
+      leader.executionStarted === true
+      var cnt = 0
+      while (!leader.executionFinished && cnt < 100) {
+        Thread.sleep(100)
+        cnt += 1
+      }
+//      leader.shutdownAllNodes
+      leader.getShutdownActors.head ! "fwn"
+      Thread.sleep(1000)
+      ShutdownHelper.shuttingdown === true
     }
   }
 
@@ -103,9 +156,9 @@ trait LeaderScope extends StopActorSystemAfter {
   val id = 0
   val leader = new NewLeaderImpl(akkaPort, Nil, 1)
   val leaderActor: ActorRef = leader.getActorRef()
-  
+
   abstract override def after {
     super.after
-    NodeAddresses.clear
+    ActorAddresses.clear
   }
 }

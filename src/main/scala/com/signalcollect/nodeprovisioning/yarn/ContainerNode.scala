@@ -74,6 +74,7 @@ class ContainerNode(id: Int,
 
   def register {
     getLeaderActor ! AkkaHelper.getRemoteAddress(nodeActor, system)
+    getLeaderActor ! AkkaHelper.getRemoteAddress(shutdownActor, system)
   }
 
   def startActorSystem: ActorSystem = {

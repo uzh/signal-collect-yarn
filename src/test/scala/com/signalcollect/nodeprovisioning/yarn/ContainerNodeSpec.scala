@@ -73,7 +73,8 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
     
     "register with leader" in new LeaderContainerScope{
       container.register
-      NodeAddresses.getAll.exists(_ .contains("DefaultNodeActor")) === true
+      ActorAddresses.getNodeActorAddresses.exists(_ .contains("DefaultNodeActor")) === true
+      ActorAddresses.getShutdownAddresses.exists(_ .contains("shutdown")) === true
     }
   }
 
@@ -85,7 +86,7 @@ trait ContainerScope extends StopActorSystemAfter {
 
 }
 trait LeaderContainerScope extends StopActorSystemAfter {
-  NodeAddresses.clear
+  ActorAddresses.clear
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
   val leader = new NewLeaderImpl(2552, Nil, 1)
   leader.start
@@ -93,7 +94,7 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   
   abstract override def  after {
     super.after
-    NodeAddresses.clear
+    ActorAddresses.clear
   }
 
 }
