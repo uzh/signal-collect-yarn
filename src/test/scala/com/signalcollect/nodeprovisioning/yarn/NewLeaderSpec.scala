@@ -32,6 +32,7 @@ import akka.actor.Props
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
+import com.signalcollect.nodeprovisioning.AkkaHelper
 
 @RunWith(classOf[JUnitRunner])
 class NewLeaderSpec extends SpecificationWithJUnit {
@@ -54,13 +55,13 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       async { //is needed because it is blocking
         leader.waitForAllNodes
       }
-      leader.executionStarted === false
+      leader.isExecutionStarted === false
       leader.allNodesRunning === false
       val address = s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
       leaderActor ! address
       Thread.sleep(1000)
       leader.allNodesRunning === true
-      leader.executionStarted === true
+      leader.isExecutionStarted === true
 
       leader.getNodeActors must not(throwAn[Exception])
       val nodeActors = leader.getNodeActors
@@ -87,7 +88,7 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       leaderActor ! shutdownAddress
       ActorAddresses.getShutdownAddresses.isEmpty === false
     }
-    
+
     "clear ActorAddresses" in new LeaderScope {
       ActorAddresses.clear
       ActorAddresses.getNodeActorAddresses.isEmpty === true
@@ -102,33 +103,34 @@ class NewLeaderSpec extends SpecificationWithJUnit {
     "start execution when all registered" in new LeaderContainerScope {
       container.register
       Thread.sleep(1000)
-      leader.executionStarted === true
+      leader.isExecutionStarted === true
       var cnt = 0
-      while (!leader.executionFinished && cnt < 100) {
+      while (!leader.isExecutionFinished && cnt < 1000) {
         Thread.sleep(100)
         cnt += 1
       }
-      leader.executionFinished === true
+      leader.isExecutionFinished === true
     }
-    
+
     "get shutdownActors" in new LeaderContainerScope {
       container.register
       Thread.sleep(1000)
-      leader.getShutdownActors.size ===1
+      leader.getShutdownActors.size === 1
       leader.getShutdownActors.head.path.toString.contains("shutdown") === true
     }
 
     "shutdown after execution" in new LeaderContainerScope {
       container.register
       Thread.sleep(1000)
-      leader.executionStarted === true
+      leader.isExecutionStarted === true
       var cnt = 0
-      while (!leader.executionFinished && cnt < 100) {
+      while (!leader.isExecutionFinished && cnt < 1000) {
         Thread.sleep(100)
         cnt += 1
       }
-//      leader.shutdownAllNodes
-      leader.getShutdownActors.head ! "fwn"
+      val shutdownActor = leader.getShutdownActors.head
+      println(shutdownActor.isTerminated)
+      shutdownActor ! "shutdown"
       Thread.sleep(1000)
       ShutdownHelper.shuttingdown === true
     }
@@ -145,14 +147,16 @@ trait StopActorSystemAfter extends After {
   }
 
   def clearSystem(system: ActorSystem) {
+	system.shutdown
+	system.awaitTermination
     ActorSystemRegistry.remove(system)
-    system.shutdown
+    
   }
 }
 
 trait LeaderScope extends StopActorSystemAfter {
   val akkaPort = 2552
-  val ip = InetAddress.getLocalHost().getHostAddress()
+  val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
   val leader = new NewLeaderImpl(akkaPort, Nil, 1)
   val leaderActor: ActorRef = leader.getActorRef()

@@ -27,7 +27,7 @@ import akka.actor.ActorRef
 class PageRankExample extends YarnDeployableAlgorithm {
   def execute(parameters: Map[String, String], nodeActors: Array[ActorRef]) {
     println(s"Received parameters $parameters")
-    val graph = GraphBuilder.withPreallocatedNodes(nodeActors).build
+    val graph = GraphBuilder.withPreallocatedNodes(nodeActors).withShutdownActorSystem(false).build
     graph.addVertex(new PageRankVertex(1))
     graph.addVertex(new PageRankVertex(2))
     graph.addVertex(new PageRankVertex(3))

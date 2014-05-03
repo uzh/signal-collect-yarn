@@ -32,6 +32,7 @@ import akka.actor.ActorRef
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.YarnDeployableAlgorithm
 import scala.collection.JavaConversions._
+import com.signalcollect.nodeprovisioning.AkkaHelper
 
 class NewLeaderImpl(akkaPort: Int,
   kryoRegistrations: List[String],
@@ -40,8 +41,12 @@ class NewLeaderImpl(akkaPort: Int,
   kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
-  var executionStarted = false
-  var executionFinished = false
+  private var executionStarted = false
+  private var executionFinished = false
+  
+  def isExecutionStarted = executionStarted
+  def isExecutionFinished = executionFinished
+  
   def start {
     async {
       waitForAllNodes
@@ -108,10 +113,15 @@ class NewLeaderImpl(akkaPort: Int,
     val nodeActors = ActorAddresses.getNodeActorAddresses.map(nodeAddress => system.actorFor(nodeAddress))
     nodeActors
   }
+  
   def getShutdownActors: List[ActorRef] = {
+    println(system)
     val shutdownActors = ActorAddresses.getShutdownAddresses.map(address => system.actorFor(address))
+    println(AkkaHelper.getRemoteAddress(shutdownActors.head, system))
     shutdownActors
   }
+  
+  
 }
 
 class LeaderActor extends Actor {

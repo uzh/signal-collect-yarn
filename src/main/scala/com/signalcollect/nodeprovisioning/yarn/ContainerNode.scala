@@ -1,4 +1,4 @@
-/*
+/**
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
@@ -43,7 +43,7 @@ class ContainerNode(id: Int,
   val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
-  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None)
+  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None,false)
   val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
     nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
 
@@ -81,7 +81,6 @@ class ContainerNode(id: Int,
     val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
     ActorSystemRegistry.register(system)
     system
-
   }
 
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
