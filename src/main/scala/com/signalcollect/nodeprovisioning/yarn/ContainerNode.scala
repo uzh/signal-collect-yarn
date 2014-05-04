@@ -32,18 +32,22 @@ import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.signalcollect.nodeprovisioning.NodeActorCreator
 
-class ContainerNode(id: Int,
+trait ContainerNode {
+  def start
+}
+
+class DefaultContainerNode(id: Int,
   numberOfNodes: Int,
   leaderIp: String,
   basePort: Int = 2552,
   kryoRegistrations: List[String] = Nil,
-  kryoInit: String = "com.signalcollect.configuration.KryoInit") {
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends ContainerNode{
 
   val akkaPort = basePort + id + 1
   val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
-  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None,false)
+  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None, false)
   val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
     nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
 
@@ -60,21 +64,35 @@ class ContainerNode(id: Int,
   def getLeaderActor(): ActorRef = {
     system.actorFor(leaderAddress)
   }
-  
+
   def isTerminated: Boolean = terminated
 
   def start {
     async {
-      while (!ShutdownHelper.shuttingdown) {
-        Thread.sleep(100)
-      }
-      terminated = true
+      register
+      waitForTermination
+      shutdown
     }
   }
 
   def register {
     getLeaderActor ! AkkaHelper.getRemoteAddress(nodeActor, system)
     getLeaderActor ! AkkaHelper.getRemoteAddress(shutdownActor, system)
+  }
+
+  def waitForTermination {
+      while (!ShutdownHelper.shuttingdown) {
+        Thread.sleep(100)
+      }
+      terminated = true
+  }
+
+  def shutdown {
+    if (!system.isTerminated) {
+      system.shutdown
+      system.awaitTermination
+      ActorSystemRegistry.remove(system)
+    }
   }
 
   def startActorSystem: ActorSystem = {

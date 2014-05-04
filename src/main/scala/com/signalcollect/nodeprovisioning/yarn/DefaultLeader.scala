@@ -34,24 +34,24 @@ import com.signalcollect.deployment.YarnDeployableAlgorithm
 import scala.collection.JavaConversions._
 import com.signalcollect.nodeprovisioning.AkkaHelper
 
-class NewLeaderImpl(akkaPort: Int,
+class DefaultLeader(basePort: Int,
   kryoRegistrations: List[String],
   numberOfNodes: Int,
-
   kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   private var executionStarted = false
   private var executionFinished = false
-  
+
   def isExecutionStarted = executionStarted
   def isExecutionFinished = executionFinished
-  
+
   def start {
     async {
       waitForAllNodes
       startExecution
       executionFinished = true
+      shutdown
     }
   }
 
@@ -68,13 +68,22 @@ class NewLeaderImpl(akkaPort: Int,
     }
   }
 
+  def shutdown {
+    val shutdownActor = getShutdownActors.foreach(_ ! "shutdown")
+    if (!system.isTerminated) {
+      system.shutdown
+      system.awaitTermination
+      ActorSystemRegistry.remove(system)
+    }
+  }
+
   def getActorRef(): ActorRef = {
     leaderactor
   }
 
   def startActorSystem: ActorSystem = {
     try {
-      val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
+      val system = ActorSystem("SignalCollect", akkaConfig(basePort, kryoRegistrations))
       ActorSystemRegistry.register(system)
       system
     } catch {
@@ -94,7 +103,7 @@ class NewLeaderImpl(akkaPort: Int,
 
   def allNodesRunning: Boolean = {
     ActorAddresses.getNumberOfNodes == numberOfNodes
-    
+
   }
 
   def shutdownAllNodes {
@@ -113,13 +122,12 @@ class NewLeaderImpl(akkaPort: Int,
     val nodeActors = ActorAddresses.getNodeActorAddresses.map(nodeAddress => system.actorFor(nodeAddress))
     nodeActors
   }
-  
+
   def getShutdownActors: List[ActorRef] = {
     val shutdownActors = ActorAddresses.getShutdownAddresses.map(address => system.actorFor(address))
     shutdownActors
   }
-  
-  
+
 }
 
 class LeaderActor extends Actor {
