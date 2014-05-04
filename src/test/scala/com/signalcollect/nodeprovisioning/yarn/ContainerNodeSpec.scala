@@ -30,7 +30,6 @@ class ContainerNodeSpec extends SpecificationWithJUnit {
   "ContainerNode creation" should {
     sequential
     "be created" in new ContainerScope {
-      println("test")
       container must not be None
     }
 

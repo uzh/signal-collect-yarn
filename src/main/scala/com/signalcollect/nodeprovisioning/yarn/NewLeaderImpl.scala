@@ -1,4 +1,4 @@
-/*
+/**
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
@@ -93,8 +93,8 @@ class NewLeaderImpl(akkaPort: Int,
   }
 
   def allNodesRunning: Boolean = {
-    val nodesRunning = ActorAddresses.getNumberOfNodes == numberOfNodes
-    nodesRunning
+    ActorAddresses.getNumberOfNodes == numberOfNodes
+    
   }
 
   def shutdownAllNodes {
@@ -115,9 +115,7 @@ class NewLeaderImpl(akkaPort: Int,
   }
   
   def getShutdownActors: List[ActorRef] = {
-    println(system)
     val shutdownActors = ActorAddresses.getShutdownAddresses.map(address => system.actorFor(address))
-    println(AkkaHelper.getRemoteAddress(shutdownActors.head, system))
     shutdownActors
   }
   

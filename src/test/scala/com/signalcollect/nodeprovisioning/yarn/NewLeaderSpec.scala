@@ -1,4 +1,4 @@
-/*
+/**
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
@@ -129,7 +129,6 @@ class NewLeaderSpec extends SpecificationWithJUnit {
         cnt += 1
       }
       val shutdownActor = leader.getShutdownActors.head
-      println(shutdownActor.isTerminated)
       shutdownActor ! "shutdown"
       Thread.sleep(1000)
       ShutdownHelper.shuttingdown === true
