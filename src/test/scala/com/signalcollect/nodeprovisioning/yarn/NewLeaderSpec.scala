@@ -41,7 +41,7 @@ class NewLeaderSpec extends SpecificationWithJUnit {
 
     "be started in" in new StopActorSystemAfter {
       val akkaPort = 2552
-      val leader: NewLeader = new NewLeaderImpl(akkaPort, Nil, 1)
+      val leader: NewLeader = new DefaultLeader(akkaPort, Nil, 1)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
@@ -100,39 +100,24 @@ class NewLeaderSpec extends SpecificationWithJUnit {
   "Leader and ContainerNode" should {
 
     sequential //this is preventing the tests from being executed parallel
-    "start execution when all registered" in new LeaderContainerScope {
-      container.register
-      Thread.sleep(1000)
-      leader.isExecutionStarted === true
-      var cnt = 0
-      while (!leader.isExecutionFinished && cnt < 1000) {
-        Thread.sleep(100)
-        cnt += 1
-      }
+    "start execution when all nodes are registered" in new Execution {
       leader.isExecutionFinished === true
     }
 
     "get shutdownActors" in new LeaderContainerScope {
-      container.register
       Thread.sleep(1000)
       leader.getShutdownActors.size === 1
       leader.getShutdownActors.head.path.toString.contains("shutdown") === true
     }
 
-    "shutdown after execution" in new LeaderContainerScope {
-      container.register
-      Thread.sleep(1000)
-      leader.isExecutionStarted === true
-      var cnt = 0
-      while (!leader.isExecutionFinished && cnt < 1000) {
-        Thread.sleep(100)
-        cnt += 1
-      }
-      val shutdownActor = leader.getShutdownActors.head
-      shutdownActor ! "shutdown"
-      Thread.sleep(1000)
+    "shutdown after execution" in new Execution {
       ShutdownHelper.shuttingdown === true
     }
+
+    "shutdown actorsystem after execution" in new Execution {
+      ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
+    }
+
   }
 
 }
@@ -146,10 +131,10 @@ trait StopActorSystemAfter extends After {
   }
 
   def clearSystem(system: ActorSystem) {
-	system.shutdown
-	system.awaitTermination
+    system.shutdown
+    system.awaitTermination
     ActorSystemRegistry.remove(system)
-    
+
   }
 }
 
@@ -157,11 +142,21 @@ trait LeaderScope extends StopActorSystemAfter {
   val akkaPort = 2552
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
-  val leader = new NewLeaderImpl(akkaPort, Nil, 1)
+  val leader = new DefaultLeader(akkaPort, Nil, 1)
   val leaderActor: ActorRef = leader.getActorRef()
 
   abstract override def after {
     super.after
     ActorAddresses.clear
   }
+}
+
+trait Execution extends LeaderContainerScope {
+  Thread.sleep(1000)
+  var cnt = 0
+  while (!leader.isExecutionFinished && cnt < 1000) {
+    Thread.sleep(100)
+    cnt += 1
+  }
+  Thread.sleep(1000)
 }
