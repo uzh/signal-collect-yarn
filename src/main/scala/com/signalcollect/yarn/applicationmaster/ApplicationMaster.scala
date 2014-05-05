@@ -36,6 +36,7 @@ import com.signalcollect.yarn.deployment.YarnClientCreator
 import java.io.File
 import org.apache.hadoop.fs.Path
 import com.signalcollect.util.ConfigProvider
+import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
 
 object ApplicationMaster extends App with LogHelper {
   var config: Configuration = new YarnConfiguration()
@@ -46,11 +47,12 @@ object ApplicationMaster extends App with LogHelper {
 
   val allocListener = new RMCallbackHandler(nodeManagerClient)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
-
+  lazy val leader = LeaderCreator.getLeader
   run
 
   def run() {
     initApplicationMaster
+    leader.start
     startContainers
     waitAndStopApplicationMaster
   }
@@ -105,7 +107,7 @@ object ApplicationMaster extends App with LogHelper {
   
   private def waitFinish: Unit = {
     try {
-      while (!ContainerRegistry.isFinished) {
+      while (!leader.isExecutionFinished) {
         Thread.sleep(100)
       }
     } catch {

@@ -47,24 +47,6 @@ class NMCallbackHandler
     allServiceResponse: java.util.Map[String, ByteBuffer]) {
     log.info("onContainerStarted")
     ContainerRegistry.containerStarted()
-    if (ContainerRegistry.allStarted) {
-      val containerNodes = ContainerRegistry.getContainerNodes
-      val numberOfContainers = ConfigProvider.config.getInt("deployment.numberOfNodes")
-      val akkaPort = ConfigProvider.config.getInt("deployment.akka.port")
-      Thread.sleep(15000) // make sure all other nodes are ready
-      val leader = new Leader(containerNodes, akkaPort, List[String]())
-      try {
-      leader.startExecution
-        
-      } catch {
-        case e: Exception => {
-          throw e
-        }
-      } finally {
-        leader.stopExecution
-      }
-
-    }
   }
 
   override def onStartContainerError(containerId: ContainerId, t: Throwable) {
