@@ -57,7 +57,6 @@ libraryDependencies ++= Seq(
  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager-custom" % hadoopVersion % "compile",
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager-custom" % hadoopVersion % "compile",
   "org.apache.hadoop" % "yarn-server-tests-custom" % hadoopVersion,
-  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.2" % "compile" force(),
   "log4j" % "log4j" % "1.2.17" % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.3"  % "test",
