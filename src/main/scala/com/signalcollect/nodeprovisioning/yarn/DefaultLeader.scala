@@ -119,6 +119,7 @@ class DefaultLeader(basePort: Int,
     port = akkaPort)
 
   def getNodeActors: List[ActorRef] = {
+    println("get Node actors called")
     val nodeActors = ActorAddresses.getNodeActorAddresses.map(nodeAddress => system.actorFor(nodeAddress))
     nodeActors
   }

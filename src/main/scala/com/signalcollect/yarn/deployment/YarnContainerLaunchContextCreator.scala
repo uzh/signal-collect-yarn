@@ -1,4 +1,4 @@
-/*
+/**
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich

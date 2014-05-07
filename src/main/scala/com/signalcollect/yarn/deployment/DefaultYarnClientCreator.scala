@@ -32,8 +32,8 @@ class DefaultYarnClientCreator extends YarnClientCreatorImpl with LogHelper{
   
   protected def isValidConfig(config: Config): Boolean = {
     if (config == null) false
-    else if (config.hasPath("deployment.yarn.resourcemanager.host") &&
-      config.hasPath("deployment.yarn.resourcemanager.address") &&
+    else if (config.hasPath("deployment.hadoop-overrides.yarn.resourcemanager.host") &&
+      config.hasPath("deployment.hadoop-overrides.yarn.resourcemanager.address") &&
       config.hasPath("deployment.memory") &&
       config.hasPath("deployment.applicationName")) true
     else false
@@ -41,9 +41,15 @@ class DefaultYarnClientCreator extends YarnClientCreatorImpl with LogHelper{
 
   def createYarnClient: YarnClient = {
     if (!isValidConfig(config)) throw new IllegalArgumentException()
-    val yarnOverrides = config.getConfig("deployment.yarn").entrySet().iterator()
+    val yarnOverrides = config.getConfig("deployment.hadoop-overrides").entrySet().iterator()
     val yarnConfig = new YarnConfiguration()
-    yarnOverrides.foreach(e => yarnConfig.set("yarn." + e.getKey(), e.getValue().unwrapped().toString()))
+    yarnConfig.set("fs.hdfs.impl", 
+        classOf[org.apache.hadoop.hdfs.DistributedFileSystem].getName()
+    )
+    yarnConfig.set("fs.file.impl",
+        classOf[org.apache.hadoop.fs.LocalFileSystem].getName()
+    )
+    yarnOverrides.foreach(e => yarnConfig.set(e.getKey(), e.getValue().unwrapped().toString()))
     yarnConfig.reloadConfiguration()
     createYarnClient(yarnConfig)
   }

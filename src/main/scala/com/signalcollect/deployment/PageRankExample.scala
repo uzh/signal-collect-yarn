@@ -1,4 +1,4 @@
-/*
+/**
  *  @author Philip Stutz
  *
  *  Copyright 2014 University of Zurich
