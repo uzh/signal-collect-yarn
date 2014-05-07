@@ -24,7 +24,9 @@ import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ContainerInfoSpec() extends SpecificationWithJUnit {
+  sequential
   "ContainerNode" should {
+    println("ContainerInfoSpec")
     val ip = "0.0.0.0"
     val id = 0
     val basePort = 2552

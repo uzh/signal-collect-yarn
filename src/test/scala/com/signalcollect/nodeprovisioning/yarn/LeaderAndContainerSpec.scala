@@ -35,25 +35,30 @@ import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.AkkaHelper
 
 @RunWith(classOf[JUnitRunner])
-class NewLeaderSpec extends SpecificationWithJUnit {
+class LeaderAndContainerSpec extends SpecificationWithJUnit {
+  sequential
   "Leader" should {
+    println("leaderSpec")
     sequential //this is preventing the tests from being executed parallel
 
     "be started in" in new StopActorSystemAfter {
+      println("be started in")
       val akkaPort = 2552
       val leader: NewLeader = new DefaultLeader(akkaPort, Nil, 1)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
     "create LeaderActor" in new LeaderScope {
+      println("create LeaderActor")
       leaderActor.path.toString.contains("leaderactor")
     }
 
     "detect if all nodes are ready " in new LeaderScope {
-
+      println("detect if all nodes are ready ")
       ActorAddresses.clear
       async { //is needed because it is blocking
         leader.waitForAllNodes
+        println("async over")
       }
       leader.isExecutionStarted === false
       leader.allNodesRunning === false
@@ -63,13 +68,13 @@ class NewLeaderSpec extends SpecificationWithJUnit {
       leader.allNodesRunning === true
       leader.isExecutionStarted === true
 
-      leader.getNodeActors must not(throwAn[Exception])
-      val nodeActors = leader.getNodeActors
+      val nodeActors = ActorAddresses.getNodeActorAddresses
       nodeActors must not be empty
-      nodeActors.head.path.toString === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
+      nodeActors.head === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
     }
 
     "filter address on DefaultNodeActor" in new LeaderScope {
+      println("filter address on DefaultNodeActor")
       ActorAddresses.clear
       async { //is needed because wait is blocking
         leader.waitForAllNodes
@@ -80,50 +85,124 @@ class NewLeaderSpec extends SpecificationWithJUnit {
     }
 
     "save shutdown address" in new LeaderScope {
+      println("save shutdown address")
       ActorAddresses.clear
       async { //is needed because wait is blocking
         leader.waitForAllNodes
       }
       val shutdownAddress = s"akka://SignalCollect@$ip:2553/user/shutdownactor$id"
       leaderActor ! shutdownAddress
+      Thread.sleep(1000)
       ActorAddresses.getShutdownAddresses.isEmpty === false
     }
 
     "clear ActorAddresses" in new LeaderScope {
+      println("clear ActorAddresses")
       ActorAddresses.clear
       ActorAddresses.getNodeActorAddresses.isEmpty === true
       ActorAddresses.getShutdownAddresses.isEmpty === true
     }
+
   }
 
   //integration of leader and container
   "Leader and ContainerNode" should {
 
     sequential //this is preventing the tests from being executed parallel
-    "start execution when all nodes are registered" in new Execution {
+        "start execution when all nodes are registered" in new Execution {
+      println("start execution when all nodes are registered")
       leader.isExecutionFinished === true
     }
 
     "get shutdownActors" in new LeaderContainerScope {
+      println("get shutdownActors")
       Thread.sleep(1000)
       leader.getShutdownActors.size === 1
       leader.getShutdownActors.head.path.toString.contains("shutdown") === true
     }
 
     "shutdown after execution" in new Execution {
+      println("shutdown after execution")
       ShutdownHelper.shuttingdown === true
     }
 
     "shutdown actorsystem after execution" in new Execution {
+      println("shutdown actorsystem after execution")
+      ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
+    }
+    
+    
+
+  }
+  "ContainerNode creation" should {
+    println("ContainerNodeSpec")
+    sequential
+    "be created" in new ContainerScope {
+      println("be created")
+      container must not be None
+    }
+    "container node should start actor system" in new ContainerScope {
+      println("container node should start actor system")
+      container must not be None
+      ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
+
+    }
+
+    "create shutdown actor" in new ContainerScope {
+      println("create shutdown actor")
+      val actor = container.getShutdownActor
+      actor must not be None
+    }
+
+    "receive shutdown message" in new ContainerScope {
+      println("receive shutdown message")
+      ShutdownHelper.reset
+      container must not be None
+      val actor = container.getShutdownActor
+      actor ! "shutdown"
+      Thread.sleep(1000)
+      ShutdownHelper.shuttingdown === true
+    }
+
+    "wait for shutdown message" in new ContainerScope {
+      println("wait for shutdown message")
+      ShutdownHelper.reset
+      ShutdownHelper.shuttingdown === false
+      async{
+    	  container.waitForTermination
+      }
+      container.isTerminated === false
+      container.getShutdownActor ! "shutdown"
+      Thread.sleep(1000)
+      container.isTerminated === true
+      container.shutdown
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
     }
 
+    "get NodeActor" in new ContainerScope {
+      container.getNodeActor must not be None
+    }
+
+    "get LeaderActor" in new LeaderContainerScope {
+      println("get LeaderActor")
+      val leaderActor = container.getLeaderActor
+      leaderActor.path.toString === "akka://SignalCollect/user/leaderactor"
+    }
+    
+    "register with leader" in new LeaderContainerScope{
+      println("register with leader")
+      container.register
+      Thread.sleep(1000)
+      ActorAddresses.getNodeActorAddresses.exists(_ .contains("DefaultNodeActor")) === true
+      ActorAddresses.getShutdownAddresses.exists(_ .contains("shutdown")) === true
+    }
   }
 
 }
 
 trait StopActorSystemAfter extends After {
   override def after = {
+    println("stop actor system")
     ActorSystemRegistry.retrieve("SignalCollect") match {
       case Some(system) => clearSystem(system)
       case None =>
@@ -148,10 +227,12 @@ trait LeaderScope extends StopActorSystemAfter {
   abstract override def after {
     super.after
     ActorAddresses.clear
+    ShutdownHelper.reset
   }
 }
 
 trait Execution extends LeaderContainerScope {
+  println("execution")
   Thread.sleep(1000)
   var cnt = 0
   while (!leader.isExecutionFinished && cnt < 1000) {
@@ -160,3 +241,26 @@ trait Execution extends LeaderContainerScope {
   }
   Thread.sleep(1000)
 }
+
+trait ContainerScope extends StopActorSystemAfter {
+  val leaderIp = InetAddress.getLocalHost().getHostAddress()
+  val container = new DefaultContainerNode(0, 1, leaderIp)
+
+}
+trait LeaderContainerScope extends StopActorSystemAfter {
+  ActorAddresses.clear
+  ShutdownHelper.reset
+  val leaderIp = InetAddress.getLocalHost().getHostAddress()
+  val leader = new DefaultLeader(2552, Nil, 1)
+  leader.start
+  val container = new DefaultContainerNode(0, 1, leaderIp)
+  container.start
+  
+  abstract override def  after {
+    super.after
+    ActorAddresses.clear
+    ShutdownHelper.reset
+  }
+
+}
+
