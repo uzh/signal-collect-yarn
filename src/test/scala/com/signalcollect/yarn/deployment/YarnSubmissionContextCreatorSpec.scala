@@ -24,11 +24,13 @@ import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
+import com.signalcollect.util.ConfigProvider
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
-  "YarnSubmissionContextFactory" should {
-    val config = ConfigFactory.load("test-deployment")
+  "YarnSubmissionContextCreator" should {
+    println("Test executing now: YarnSubmissionContextCreator")
+    val config = ConfigProvider.config
     lazy val yarnClient = YarnClientCreator.yarnClient
     lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
     "call Factory" in {

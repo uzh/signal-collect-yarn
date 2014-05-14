@@ -38,11 +38,11 @@ import com.signalcollect.nodeprovisioning.AkkaHelper
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
   sequential
   "Leader" should {
-    println("leaderSpec")
+    println("Test executing now: LeaderAndContainerSpec")
     sequential //this is preventing the tests from being executed parallel
 
-    "be started in" in new StopActorSystemAfter {
-      println("be started in")
+    "be started" in new StopActorSystemAfter {
+      println("be started")
       val akkaPort = 2552
       val leader: NewLeader = new DefaultLeader(akkaPort, Nil, 1)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
@@ -135,7 +135,6 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
 
   }
   "ContainerNode creation" should {
-    println("ContainerNodeSpec")
     sequential
     "be created" in new ContainerScope {
       println("be created")

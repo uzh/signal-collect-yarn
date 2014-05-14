@@ -134,7 +134,7 @@ public class JarUtility {
 			String class_file = klass.getName().replaceAll("\\.", "/")
 					+ ".class";
 			try {
-				for (Enumeration itr = loader.getResources(class_file); itr
+				for (Enumeration<URL> itr = loader.getResources(class_file); itr
 						.hasMoreElements();) {
 					URL url = (URL) itr.nextElement();
 					String path = url.getPath();

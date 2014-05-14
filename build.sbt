@@ -8,7 +8,7 @@ version := "1.0-SNAPSHOT"
 
 organization := "com.signalcollect"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 val hadoopVersion = "2.3.0"
 
@@ -58,6 +58,7 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager-custom" % hadoopVersion % "compile",
   "org.apache.hadoop" % "yarn-server-tests-custom" % hadoopVersion,
   "org.apache.hadoop" % "hadoop-hdfs-custom" % hadoopVersion,
+  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.2" % "compile",
   "log4j" % "log4j" % "1.2.17" % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.3"  % "test",
