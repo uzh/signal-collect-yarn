@@ -21,7 +21,7 @@ package com.signalcollect.yarn.deployment
 import com.signalcollect.util.ConfigProvider
 import java.io.File
 
-object TestLaunchSettings {
+object LaunchSettingsCreator {
   def getSettingsForClass(klass: Class[_]): LaunchSettings = {
     val config = ConfigProvider.config
     val createJarOnTheFly = config.getBoolean("deployment.testing.createJarOnTheFly")
