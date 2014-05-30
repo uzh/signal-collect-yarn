@@ -39,7 +39,7 @@ import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
 
 object ApplicationMaster extends App with LogHelper {
-  var config: Configuration = new YarnConfiguration()
+  var config: Configuration = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   val containerListener = new NMCallbackHandler()

@@ -28,7 +28,7 @@ import java.io.FileOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import org.apache.hadoop.conf.Configuration
-import com.signalcollect.util.JarUploader
+import com.signalcollect.util.FileUploader
 
 object MiniCluster {
   lazy val cluster = startCluster()

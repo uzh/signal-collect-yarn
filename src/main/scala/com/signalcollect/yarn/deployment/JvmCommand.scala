@@ -33,11 +33,12 @@ class JvmCommand(settings: LaunchSettings) extends LogHelper {
   val logDir = settings.logDir
   val mainClass = settings.mainClass
   val arguments: String = settings.arguments.mkString(" ")
+  val jvmArguments = settings.jvmArguments
 
   def getCommand: String = {
 
     val command = s"${javaHome}/bin/java -cp $classpath" +
-      s" -Xmx${memory}M -XX:+AggressiveOpts -XX:+AlwaysPreTouch -XX:+UseNUMA -XX:-UseBiasedLocking -XX:MaxInlineSize=1024 $mainClass $arguments" +
+      s" -Xmx${memory}M -Xms${memory}m $jvmArguments  $mainClass $arguments" +
       s" 1> ${logDir}/${mainClass}.stdout" +
       s" 2> ${logDir}/${mainClass}.stderr"
     log.info("launchCommand for Container created:" + command)
@@ -50,7 +51,8 @@ class LaunchSettings(val memory: Int = ConfigProvider.config.getInt("deployment.
   val mainClass: String = ConfigProvider.config.getString("deployment.mainClass"),
   val pathsToJars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
   val arguments: List[String] = List[String](),
-  val useDefaultYarnClientCreator: Boolean = false) {
+  val useDefaultYarnClientCreator: Boolean = false,
+  val jvmArguments: String = "-XX:+AggressiveOpts -XX:+AlwaysPreTouch -XX:+UseNUMA -XX:-UseBiasedLocking -XX:MaxInlineSize=1024") {
   val javaHome = Environment.JAVA_HOME.$()
   val classpath = createClassPath
   val logDir = ApplicationConstants.LOG_DIR_EXPANSION_VAR

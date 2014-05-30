@@ -18,21 +18,22 @@
  */
 package com.signalcollect.nodeprovisioning.yarn
 
+import java.net.InetAddress
+import scala.async.Async.async
+import scala.async.Async.await
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
 import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
-import org.specs2.mutable.SpecificationWithJUnit
-import com.signalcollect.configuration.ActorSystemRegistry
-import akka.actor.ActorRef
 import org.specs2.mutable.After
-import akka.actor.ActorSystem
+import org.specs2.mutable.SpecificationWithJUnit
+import org.specs2.runner.JUnitRunner
 import org.specs2.specification.AfterExample
 import org.specs2.specification.Scope
-import java.net.InetAddress
-import akka.actor.Props
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.async.Async.{ async, await }
-import com.signalcollect.nodeprovisioning.AkkaHelper
+import com.signalcollect.configuration.ActorSystemRegistry
+import akka.actor.ActorRef
+import akka.actor.ActorSystem
+import com.signalcollect.util.ConfigProvider
+import scala.collection.JavaConversions._
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
@@ -44,7 +45,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "be started" in new StopActorSystemAfter {
       println("be started")
       val akkaPort = 2552
-      val leader: NewLeader = new DefaultLeader(akkaPort, Nil, 1)
+      val leader: NewLeader = LeaderCreator.getLeader
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
@@ -220,7 +221,8 @@ trait LeaderScope extends StopActorSystemAfter {
   val akkaPort = 2552
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
-  val leader = new DefaultLeader(akkaPort, Nil, 1)
+  val config = ConfigProvider.config
+  val leader = LeaderCreator.getLeader.asInstanceOf[DefaultLeader]
   val leaderActor: ActorRef = leader.getActorRef()
 
   abstract override def after {

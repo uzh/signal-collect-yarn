@@ -26,14 +26,14 @@ import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.util.Records
 
-import com.signalcollect.util.JarUploader
-import com.signalcollect.util.JarUploader
+import com.signalcollect.util.FileUploader
+import com.signalcollect.util.FileUploader
 
 class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings) {
   
   def createLaunchContext(applicationId: String): ContainerLaunchContext = {
     val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
-    val jarResource = createLocalResourceForJar(applicationId)
+    val jarResource = uploadFiles(applicationId)
     launchContext.setLocalResources(jarResource)
 
     val commands = createCommand
@@ -48,10 +48,10 @@ class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings) {
     List(command)
   }
 
-  private def createLocalResourceForJar(applicationId: String): HashMap[String, LocalResource] = {
+  private def uploadFiles(applicationId: String): HashMap[String, LocalResource] = {
     
-    val uploader = new JarUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator)
-    uploader.uploadJars()
+    val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator)
+    uploader.uploadFiles()
   }
   
   

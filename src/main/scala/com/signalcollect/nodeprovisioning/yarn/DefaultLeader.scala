@@ -63,8 +63,14 @@ class DefaultLeader(basePort: Int,
     try {
       val nodeActors = getNodeActors.toArray
       val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[YarnDeployableAlgorithm]
+      println(s"start algorithm: $algorithm")
       algorithmObject.execute(parameters, nodeActors)
-    } finally {
+    } 
+    catch {
+      case e: Throwable => e.printStackTrace
+    }
+    finally {
+     
     }
   }
 

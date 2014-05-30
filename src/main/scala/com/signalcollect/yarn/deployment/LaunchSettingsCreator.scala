@@ -20,6 +20,7 @@ package com.signalcollect.yarn.deployment
 
 import com.signalcollect.util.ConfigProvider
 import java.io.File
+import collection.JavaConversions._
 
 object LaunchSettingsCreator {
   def getSettingsForClass(klass: Class[_]): LaunchSettings = {
@@ -27,26 +28,29 @@ object LaunchSettingsCreator {
     val createJarOnTheFly = config.getBoolean("deployment.testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("deployment.testing.useMiniCluster")
     val memory = config.getInt("deployment.memory")
+    val filesToUpload = config.getStringList("deployment.setup.copy-files").toList
+    
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("deployment.testing.dependency")
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/yarn-site.xml"
       println(" site xml is" + dummySiteXml)
-      val jars = List(pathToJar, pathToDependencies, dummySiteXml)
-      new LaunchSettings(pathsToJars = jars)
+      val files = List(pathToJar, pathToDependencies, dummySiteXml) ::: filesToUpload
+      new LaunchSettings(pathsToJars = files)
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/yarn-site.xml"
-      val mainJar = config.getString("deployment.pathToJar")
-      println(" site xml is" + dummySiteXml)
-      new LaunchSettings(pathsToJars = List(dummySiteXml, mainJar))
+      val pathToJar = config.getString("deployment.pathToJar")
+      val files = List(dummySiteXml, pathToJar) ::: filesToUpload
+      new LaunchSettings(pathsToJars = files)
 
     } else if(createJarOnTheFly) {
        val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("deployment.testing.dependency")
-      val jars = List(pathToJar, pathToDependencies)
+      val jars = List(pathToJar, pathToDependencies) ::: filesToUpload
       new LaunchSettings(pathsToJars = jars)
     } else {
-      new LaunchSettings()
+      val pathToJar = config.getString("deployment.pathToJar")
+      new LaunchSettings(jvmArguments = config.getString("deployment.jvmArguments"))
     }
   }
 }
