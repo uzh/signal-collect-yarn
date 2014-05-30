@@ -31,17 +31,16 @@ import java.util.HashMap
 import com.signalcollect.yarn.deployment.MiniCluster
 import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
 
-class JarUploader(applicationId: String, 
-  jars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
+class FileUploader(applicationId: String, 
+  files: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")), 
   useDefaultYarnClient: Boolean = false) {
-	println("files to upload are:" + jars)
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
   if(useDefaultYarnClient) YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
 
-  def uploadJars(): HashMap[String, LocalResource] = {
+  def uploadFiles(): HashMap[String, LocalResource] = {
     val filesToUpload = getFiles()
     filesToUpload.foreach(jar => {
       val resource = prepareAndUploadFile(jar)
@@ -51,12 +50,12 @@ class JarUploader(applicationId: String,
   }
 
   private def getFiles(): List[String] = {
-      jars
+      files
   }
 
-  private def prepareAndUploadFile(jar: String): (String, LocalResource) = {
-    val jarName = jar.split("/").last
-    val src = getSource(jar,jarName)
+  private def prepareAndUploadFile(srcPath: String): (String, LocalResource) = {
+    val jarName = srcPath.split("/").last
+    val src = getSource(srcPath,jarName)
     val pathSuffix = getPathSuffix(jarName)
     val dest = new Path(fs.getHomeDirectory(), pathSuffix)
     uploadFile(jarName, src, dest)
@@ -79,7 +78,7 @@ class JarUploader(applicationId: String,
   }
   
   private def getPathSuffix(fileName: String): String = {
-      config.getString("deployment.applicationName") + "/" + applicationId + s"/${fileName}"
+      config.getString("deployment.hdfspath") + "/" + applicationId + s"/${fileName}"
     
     
   }
