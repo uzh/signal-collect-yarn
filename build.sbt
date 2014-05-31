@@ -8,7 +8,7 @@ version := "1.0-SNAPSHOT"
 
 organization := "com.signalcollect"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.0"
 
 val hadoopVersion = "2.3.0"
 

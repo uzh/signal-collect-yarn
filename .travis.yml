@@ -2,4 +2,4 @@ language: scala
 install: 
    - sbt clean assembly
 scala:
-   - 2.10.4
+   - 2.11.0
