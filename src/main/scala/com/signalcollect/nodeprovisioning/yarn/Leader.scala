@@ -18,7 +18,7 @@
  */
 package com.signalcollect.nodeprovisioning.yarn
 
-trait NewLeader {
+trait Leader {
   def start
   def isExecutionStarted: Boolean
   def isExecutionFinished: Boolean
