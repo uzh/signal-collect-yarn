@@ -73,6 +73,7 @@ class FileUploader(applicationId: String,
   }
 
   private def uploadAndGetFileStatus(src: Path, dest: Path): FileStatus = {
+    println(s"uploading file from $src to $dest")
     fs.copyFromLocalFile(false, true, src, dest)
     fs.getFileStatus(dest)
   }

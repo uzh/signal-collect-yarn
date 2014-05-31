@@ -46,11 +46,12 @@ object LaunchSettingsCreator {
     } else if(createJarOnTheFly) {
        val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("deployment.testing.dependency")
-      val jars = List(pathToJar, pathToDependencies) ::: filesToUpload
-      new LaunchSettings(pathsToJars = jars)
+      val files = List(pathToJar, pathToDependencies) ::: filesToUpload
+      new LaunchSettings(pathsToJars = files)
     } else {
       val pathToJar = config.getString("deployment.pathToJar")
-      new LaunchSettings(jvmArguments = config.getString("deployment.jvmArguments"))
+      val files = pathToJar :: filesToUpload
+      new LaunchSettings(jvmArguments = config.getString("deployment.jvmArguments"), pathsToJars = files)
     }
   }
 }
