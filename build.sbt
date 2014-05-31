@@ -47,8 +47,8 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 /** Dependencies */
 libraryDependencies ++= Seq(  
   "com.google.protobuf" % "protobuf-java" % "2.4.1" force(),
-  "org.scala-lang.modules" %% "scala-async" % "0.9.0",
-  "org.scala-lang" % "scala-library" % "2.10.3" % "compile",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.1",
+  "org.scala-lang" % "scala-library" % "2.11.0" % "compile",
  ("org.apache.hadoop" % "hadoop-common-custom" % hadoopVersion % "compile").
    exclude("commons-beanutils", "commons-beanutils-core"),
   "org.apache.hadoop" % "hadoop-yarn-common-custom" % hadoopVersion % "compile",
@@ -58,11 +58,11 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager-custom" % hadoopVersion % "compile",
   "org.apache.hadoop" % "yarn-server-tests-custom" % hadoopVersion,
   "org.apache.hadoop" % "hadoop-hdfs-custom" % hadoopVersion,
-  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.2" % "compile",
+  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.4" % "compile",
   "log4j" % "log4j" % "1.2.17" % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
-  "org.specs2" %% "specs2" % "2.3.3"  % "test",
-  "com.typesafe.akka" %% "akka-remote" % "2.1.4" force(),
+  "org.specs2" %% "specs2" % "2.3.11"  % "test",
+  "com.typesafe.akka" %% "akka-remote" % "2.3.2" force(),
   "io.netty" % "netty" % "3.5.8.Final" force()
 )
 

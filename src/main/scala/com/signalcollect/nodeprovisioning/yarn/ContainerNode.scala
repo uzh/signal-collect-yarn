@@ -30,7 +30,6 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
-import com.signalcollect.nodeprovisioning.NodeActorCreator
 
 trait ContainerNode {
   def start
@@ -47,9 +46,10 @@ class DefaultContainerNode(id: Int,
   val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
-  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None, false)
-  val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
-    nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
+  val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, 0, 1, None), name = id.toString + "DefaultNodeActor")
+//  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None, false)
+//  val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
+//    nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
 
   private var terminated = false
 
@@ -100,9 +100,8 @@ class DefaultContainerNode(id: Int,
     ActorSystemRegistry.register(system)
     system
   }
-
+  
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
-    akkaMessageCompression = true,
     serializeMessages = true,
     loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,

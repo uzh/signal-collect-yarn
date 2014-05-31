@@ -20,7 +20,8 @@
 package com.signalcollect.deployment
 
 import akka.actor.ActorRef
+import akka.actor.ActorSystem
 
 trait YarnDeployableAlgorithm {
-  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef])
+  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None)
 }

@@ -37,7 +37,7 @@ import com.signalcollect.nodeprovisioning.AkkaHelper
 class DefaultLeader(basePort: Int,
   kryoRegistrations: List[String],
   numberOfNodes: Int,
-  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends NewLeader with LogHelper {
+  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   private var executionStarted = false
@@ -64,7 +64,7 @@ class DefaultLeader(basePort: Int,
       val nodeActors = getNodeActors.toArray
       val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[YarnDeployableAlgorithm]
       println(s"start algorithm: $algorithm")
-      algorithmObject.execute(parameters, nodeActors)
+      algorithmObject.execute(parameters, nodeActors, Some(system))
     } 
     catch {
       case e: Throwable => e.printStackTrace
@@ -117,7 +117,6 @@ class DefaultLeader(basePort: Int,
   }
 
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
-    akkaMessageCompression = true,
     serializeMessages = true,
     loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,

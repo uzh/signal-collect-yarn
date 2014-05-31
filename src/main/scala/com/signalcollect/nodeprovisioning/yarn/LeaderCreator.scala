@@ -4,7 +4,7 @@ import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._
 
 object LeaderCreator {
-  def getLeader(): NewLeader = {
+  def getLeader(): Leader = {
     val config = ConfigProvider.config
     val baseport = config.getInt("deployment.akka.port")
     val kryoRegistration: List[String] =

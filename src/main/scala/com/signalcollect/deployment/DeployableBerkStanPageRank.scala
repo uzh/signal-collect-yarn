@@ -3,18 +3,19 @@ package com.signalcollect.deployment
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader
-
 import com.signalcollect.Graph
 import com.signalcollect.GraphBuilder
 import com.signalcollect.examples.PageRankEdge
 import com.signalcollect.examples.PageRankVertex
-
 import akka.actor.ActorRef
+import akka.actor.ActorSystem
 
 class DeployableBerkStanPageRank extends YarnDeployableAlgorithm {
-  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef]) {
-    try {
-      val graph = GraphBuilder.withPreallocatedNodes(nodeActors).withShutdownActorSystem(false).build
+  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None) {
+      val graphBuilder = if (actorSystem.isDefined)
+        GraphBuilder.withActorSystem(actorSystem.get)
+        else GraphBuilder
+      val graph =graphBuilder.withPreallocatedNodes(nodeActors).build
       val filename = parameters.get("filename").getOrElse("web-BerkStan.txt")
       val in = new BufferedReader(new InputStreamReader(new FileInputStream(filename)))
       var line = in.readLine
@@ -35,9 +36,6 @@ class DeployableBerkStanPageRank extends YarnDeployableAlgorithm {
       val stats = graph.execute
       println(stats)
       graph.shutdown
-    } catch {
-      case e: Exception => e.printStackTrace()
-    }
   }
   def addVerticesAndEdge(source: Int, target: Int, graph: Graph[Any, Any]) {
     graph.addVertex(new PageRankVertex(source))

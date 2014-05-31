@@ -23,11 +23,14 @@ import com.signalcollect.GraphBuilder
 import com.signalcollect.examples.PageRankVertex
 import com.signalcollect.examples.PageRankEdge
 import akka.actor.ActorRef
+import akka.actor.ActorSystem
 
 class PageRankExample extends YarnDeployableAlgorithm {
-  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef]) {
-    println(s"Received parameters $parameters")
-    val graph = GraphBuilder.withPreallocatedNodes(nodeActors).withShutdownActorSystem(false).build
+  def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None) {
+    val graphBuilder = if (actorSystem.isDefined)
+      GraphBuilder.withActorSystem(actorSystem.get)
+    else GraphBuilder
+    val graph = graphBuilder.withPreallocatedNodes(nodeActors).build
     graph.addVertex(new PageRankVertex(1))
     graph.addVertex(new PageRankVertex(2))
     graph.addVertex(new PageRankVertex(3))

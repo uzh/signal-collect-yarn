@@ -45,7 +45,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "be started" in new StopActorSystemAfter {
       println("be started")
       val akkaPort = 2552
-      val leader: NewLeader = LeaderCreator.getLeader
+      val leader: Leader = LeaderCreator.getLeader
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
