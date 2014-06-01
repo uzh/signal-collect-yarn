@@ -38,14 +38,14 @@ class ContainerInfoSpec() extends SpecificationWithJUnit {
     }
 
     "create actorAddress" in {
-      node.actorAddress === s"""akka://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
+      node.actorAddress === s"""akka.tcp://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
     }
 
     "create node with other baseport" in {
       val otherPort = 1111
       val port = otherPort + 1
       val node = new ContainerInfo(ip = ip, id = id, basePort = otherPort)
-      node.actorAddress === s"""akka://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
+      node.actorAddress === s"""akka.tcp://SignalCollect@$ip:$port/user/DefaultNodeActor$id"""
     }
 
   }

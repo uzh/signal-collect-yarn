@@ -43,7 +43,7 @@ class DefaultContainerNode(id: Int,
   kryoInit: String = "com.signalcollect.configuration.KryoInit") extends ContainerNode{
 
   val akkaPort = basePort + id + 1
-  val leaderAddress = s"akka://SignalCollect@$leaderIp:$basePort/user/leaderactor"
+  val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
   val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, 0, 1, None), name = id.toString + "DefaultNodeActor")

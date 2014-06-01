@@ -63,7 +63,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       }
       leader.isExecutionStarted === false
       leader.allNodesRunning === false
-      val address = s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
+      val address = s"akka.tcp://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
       leaderActor ! address
       Thread.sleep(1000)
       leader.allNodesRunning === true
@@ -71,7 +71,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
 
       val nodeActors = ActorAddresses.getNodeActorAddresses
       nodeActors must not be empty
-      nodeActors.head === s"akka://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
+      nodeActors.head === s"akka.tcp://SignalCollect@$ip:2553/user/DefaultNodeActor$id"
     }
 
     "filter address on DefaultNodeActor" in new LeaderScope {
@@ -80,7 +80,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       async { //is needed because wait is blocking
         leader.waitForAllNodes
       }
-      val invalidAddress = "akka://SignalCollect@invalid"
+      val invalidAddress = "akka.tcp://SignalCollect@invalid"
       leaderActor ! invalidAddress
       ActorAddresses.getNodeActorAddresses.isEmpty === true
     }
@@ -91,7 +91,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       async { //is needed because wait is blocking
         leader.waitForAllNodes
       }
-      val shutdownAddress = s"akka://SignalCollect@$ip:2553/user/shutdownactor$id"
+      val shutdownAddress = s"akka.tcp://SignalCollect@$ip:2553/user/shutdownactor$id"
       leaderActor ! shutdownAddress
       Thread.sleep(1000)
       ActorAddresses.getShutdownAddresses.isEmpty === false
@@ -186,7 +186,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "get LeaderActor" in new LeaderContainerScope {
       println("get LeaderActor")
       val leaderActor = container.getLeaderActor
-      leaderActor.path.toString === "akka://SignalCollect/user/leaderactor"
+      leaderActor.path.toString === "akka.tcp://SignalCollect/user/leaderactor"
     }
     
     "register with leader" in new LeaderContainerScope{
