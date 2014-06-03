@@ -252,16 +252,18 @@ trait Execution extends LeaderContainerScope {
 
 trait ContainerScope extends StopActorSystemAfter {
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val container = new DefaultContainerNode(0, 1, leaderIp)
+  val akkaConfig = AkkaConfigCreator.getConfig(2552)
+  val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
 
 }
 trait LeaderContainerScope extends StopActorSystemAfter {
   ActorAddresses.clear
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val leader = new DefaultLeader(2552, Nil, 1)
+  val leader = new DefaultLeader(1)
   leader.start
-  val container = new DefaultContainerNode(0, 1, leaderIp)
+  val akkaConfig = AkkaConfigCreator.getConfig(2552)
+  val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
   container.start
 
   abstract override def after {

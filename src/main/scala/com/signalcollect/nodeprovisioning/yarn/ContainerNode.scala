@@ -30,6 +30,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
+import com.typesafe.config.Config
 
 trait ContainerNode {
   def start
@@ -38,11 +39,9 @@ trait ContainerNode {
 class DefaultContainerNode(id: Int,
   numberOfNodes: Int,
   leaderIp: String,
-  basePort: Int = 2552,
-  kryoRegistrations: List[String] = Nil,
-  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends ContainerNode{
+  basePort: Int,
+  akkaConfig: Config) extends ContainerNode{
 
-  val akkaPort = basePort + id + 1
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
@@ -96,17 +95,11 @@ class DefaultContainerNode(id: Int,
   }
 
   def startActorSystem: ActorSystem = {
-    val system = ActorSystem("SignalCollect", akkaConfig(akkaPort, kryoRegistrations))
+    val system = ActorSystem("SignalCollect", akkaConfig)
     ActorSystemRegistry.register(system)
     system
   }
-  
-  def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
-    serializeMessages = false,
-    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
-    kryoRegistrations = kryoRegistrations,
-    kryoInitializer = kryoInit,
-    port = akkaPort)
+
 }
 
 class ShutdownActor extends Actor {

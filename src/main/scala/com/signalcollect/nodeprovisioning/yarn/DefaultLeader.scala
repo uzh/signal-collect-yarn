@@ -33,11 +33,13 @@ import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.YarnDeployableAlgorithm
 import scala.collection.JavaConversions._
 import com.signalcollect.nodeprovisioning.AkkaHelper
+import com.typesafe.config.Config
 
-class DefaultLeader(basePort: Int,
-  kryoRegistrations: List[String],
+class DefaultLeader(
+  
   numberOfNodes: Int,
-  kryoInit: String = "com.signalcollect.configuration.KryoInit") extends Leader with LogHelper {
+  akkaConfig: Config = AkkaConfigCreator.getConfig(2552)
+  ) extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   private var executionStarted = false
@@ -89,7 +91,7 @@ class DefaultLeader(basePort: Int,
 
   def startActorSystem: ActorSystem = {
     try {
-      val system = ActorSystem("SignalCollect", akkaConfig(basePort, kryoRegistrations))
+      val system = ActorSystem("SignalCollect", akkaConfig)
       ActorSystemRegistry.register(system)
       system
     } catch {
@@ -115,13 +117,6 @@ class DefaultLeader(basePort: Int,
   def shutdownAllNodes {
     getShutdownActors.foreach(_ ! "shutdown")
   }
-
-  def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
-    serializeMessages = false,
-    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
-    kryoRegistrations = kryoRegistrations,
-    kryoInitializer = kryoInit,
-    port = akkaPort)
 
   def getNodeActors: List[ActorRef] = {
     println("get Node actors called")
