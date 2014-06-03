@@ -63,7 +63,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
   private def startContainer(container: Container) = {
     val containerId = ContainerRegistry.register(container)
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
-    val jarFiles = getJarFilesInCurrentDir()
+    val jarFiles = getJarAndConfFilesInCurrentDir
     val launchSettings = new LaunchSettings(
       pathsToJars = jarFiles,
       arguments = List[String](containerId.toString,leaderIp),
@@ -74,12 +74,12 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
     nodeManagerClient.startContainerAsync(container, ctx)
   }
 
-  private def getJarFilesInCurrentDir(): List[String] = {
+  private def getJarAndConfFilesInCurrentDir(): List[String] = {
     val currentFolder = new File("./")
     val files = currentFolder.listFiles.toList
-    val jarFiles = files.filter(file => file.getAbsolutePath().endsWith(".jar"))
-    val jarPaths = jarFiles.map(_.toString)
-    println(s"jarfiles to uploade are: $jarPaths")
-    jarPaths
+    val allFiles = files.filter(file => file.getAbsolutePath().endsWith(".conf") || file.getAbsolutePath().endsWith(".jar"))
+    val paths = allFiles.map(_.toString)
+    println(s"jarfiles to uploade are: $paths")
+    paths
   }
 }
