@@ -23,5 +23,7 @@ import java.io.File
 
 object ConfigProvider {
   //change name of config you use here
-  val config = ConfigFactory.parseFile(new File("yarn-deployment.conf"))
+  val deployment = ConfigFactory.parseFile(new File("yarn-deployment.conf"))
+  val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
+  val config = deployment.withFallback(testing)
 }
