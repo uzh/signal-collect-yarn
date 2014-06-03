@@ -27,13 +27,17 @@ import akka.actor.ActorSystem
 
 class PageRankExample extends YarnDeployableAlgorithm {
   def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None) {
+    println("create graphbuilder with Actorsystem")
     val graphBuilder = if (actorSystem.isDefined)
       GraphBuilder.withActorSystem(actorSystem.get)
     else GraphBuilder
+    println("add nodeActors to GraphBuilder")
     val graph = graphBuilder.withPreallocatedNodes(nodeActors).build
+    println("add vertices")
     graph.addVertex(new PageRankVertex(1))
     graph.addVertex(new PageRankVertex(2))
     graph.addVertex(new PageRankVertex(3))
+    println("add edges")
     graph.addEdge(1, new PageRankEdge(2))
     graph.addEdge(2, new PageRankEdge(1))
     graph.addEdge(2, new PageRankEdge(3))

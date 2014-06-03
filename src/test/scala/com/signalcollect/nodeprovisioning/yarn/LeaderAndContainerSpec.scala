@@ -34,6 +34,7 @@ import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._
+import scala.concurrent.duration._
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
@@ -110,7 +111,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
   "Leader and ContainerNode" should {
 
     sequential //this is preventing the tests from being executed parallel
-        "start execution when all nodes are registered" in new Execution {
+    "start execution when all nodes are registered" in new Execution {
       println("start execution when all nodes are registered")
       leader.isExecutionFinished === true
     }
@@ -131,8 +132,6 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       println("shutdown actorsystem after execution")
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
     }
-    
-    
 
   }
   "ContainerNode creation" should {
@@ -168,8 +167,8 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       println("wait for shutdown message")
       ShutdownHelper.reset
       ShutdownHelper.shuttingdown === false
-      async{
-    	  container.waitForTermination
+      async {
+        container.waitForTermination
       }
       container.isTerminated === false
       container.getShutdownActor ! "shutdown"
@@ -186,15 +185,15 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "get LeaderActor" in new LeaderContainerScope {
       println("get LeaderActor")
       val leaderActor = container.getLeaderActor
-      leaderActor.path.toString === "akka.tcp://SignalCollect/user/leaderactor"
+      leaderActor.path.toString === "akka://SignalCollect/user/leaderactor"
     }
-    
-    "register with leader" in new LeaderContainerScope{
+
+    "register with leader" in new LeaderContainerScope {
       println("register with leader")
       container.register
       Thread.sleep(1000)
-      ActorAddresses.getNodeActorAddresses.exists(_ .contains("DefaultNodeActor")) === true
-      ActorAddresses.getShutdownAddresses.exists(_ .contains("shutdown")) === true
+      ActorAddresses.getNodeActorAddresses.exists(_.contains("DefaultNodeActor")) === true
+      ActorAddresses.getShutdownAddresses.exists(_.contains("shutdown")) === true
     }
   }
 
@@ -210,9 +209,17 @@ trait StopActorSystemAfter extends After {
   }
 
   def clearSystem(system: ActorSystem) {
-    system.shutdown
-    system.awaitTermination
-    ActorSystemRegistry.remove(system)
+    if (!system.isTerminated) {
+      system.shutdown
+      println("wait for Termination")
+      try {
+       system.awaitTermination(3.seconds)
+      } catch {
+        case e: Exception => println("couldn't wait for shutdown of actorsystem")
+      }
+      println("remove from registry")
+      ActorSystemRegistry.remove(system)
+    }
 
   }
 }
@@ -256,8 +263,8 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   leader.start
   val container = new DefaultContainerNode(0, 1, leaderIp)
   container.start
-  
-  abstract override def  after {
+
+  abstract override def after {
     super.after
     ActorAddresses.clear
     ShutdownHelper.reset

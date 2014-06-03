@@ -117,7 +117,7 @@ class DefaultLeader(basePort: Int,
   }
 
   def akkaConfig(akkaPort: Int, kryoRegistrations: List[String]) = AkkaConfig.get(
-    serializeMessages = true,
+    serializeMessages = false,
     loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
