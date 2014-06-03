@@ -1,5 +1,5 @@
 language: scala
 install:
-   - ls
+   - sbt clean assembly
 scala:
    - 2.11.0
