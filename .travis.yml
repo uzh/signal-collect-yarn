@@ -5,7 +5,7 @@ install:
    - ls
    - cd ../signal-collect
    - ls
-   - git clone git://github.com/uzh/signal-collect.git#scala-2.11-akka-2.3.2-migration
+   - git clone -b scala-2.11-akka-2.3.2-migration https://git@github.com/uzh/signal-collect.git
    - ls
    - cd $TRAVIS_BUILD_DIR
    - ls
