@@ -1,9 +1,14 @@
 language: scala
-install: 
+install:
+   - ls
    - mkdir ../signal-collect
+   - ls
    - cd ../signal-collect
+   - ls
    - git clone git://github.com/uzh/signal-collect.git#scala-2.11-akka-2.3.2-migration
+   - ls
    - cd ../signal-collect-yarn
+   - ls
    - sbt clean assembly
 scala:
    - 2.11.0
