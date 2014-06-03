@@ -86,7 +86,7 @@ class FileUploader(applicationId: String,
   
   private def getSource(jar: String, jarName: String): Path = {
     jarName match {
-      case "yarn-site.xml" => new Path(jar.split("/").init.mkString("/") + "/dummy-yarn-site.xml") 
+      case "dummy-yarn-site.xml" => new Path(jar.split("/").init.mkString("/") + "/dummy-yarn-site.xml") 
       case _ => new Path(jar)
     }
   }

@@ -37,10 +37,12 @@ import java.io.File
 import org.apache.hadoop.fs.Path
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
+import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
 
 object ApplicationMaster extends App with LogHelper {
+  YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
   var config: Configuration = YarnClientCreator.yarnClient.getConfig()
-  val siteXml = new Path("yarn-site.xml") //this is needed for the minicluster
+  val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
