@@ -25,5 +25,5 @@ object ConfigProvider {
   //change name of config you use here
   val deployment = ConfigFactory.parseFile(new File("yarn-deployment.conf"))
   val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
-  val config = deployment.withFallback(testing)
+  val config = testing.withFallback(deployment)
 }
