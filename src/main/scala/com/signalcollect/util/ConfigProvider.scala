@@ -19,8 +19,9 @@
 package com.signalcollect.util
 
 import com.typesafe.config.ConfigFactory
+import java.io.File
 
 object ConfigProvider {
   //change name of config you use here
-  val config = ConfigFactory.load("yarn-deployment")
+  val config = ConfigFactory.parseFile(new File("yarn-deployment.conf"))
 }

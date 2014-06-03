@@ -33,6 +33,7 @@ import com.signalcollect.yarn.deployment.MiniCluster
 import java.nio.file.Path
 import java.io.File
 import com.signalcollect.yarn.deployment.LaunchSettingsCreator
+import com.signalcollect.util.ConfigProvider
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
@@ -41,7 +42,7 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
 
     "run application successfull" in {
       println("Test executing now: ApplicationMasterSpec")
-      val typesafeConfig = ConfigFactory.load("yarn-deployment")
+      val typesafeConfig = ConfigProvider.config 
       val yarnClient = YarnClientCreator.yarnClient
       val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass())
       val client = new YarnDeploymentClient(launchSettings)
