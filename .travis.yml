@@ -1,14 +1,10 @@
 language: scala
 install:
-   - ls
    - mkdir ../signal-collect
-   - ls
    - cd ../signal-collect
-   - ls
    - git clone -b scala-2.11-akka-2.3.2-migration https://git@github.com/uzh/signal-collect.git
-   - ls
+   - sbt clean assembly
    - cd $TRAVIS_BUILD_DIR
-   - ls
    - sbt clean assembly
 scala:
    - 2.11.0
