@@ -29,6 +29,7 @@ object LaunchSettingsCreator {
     val useMiniCluster = config.getBoolean("testing.useMiniCluster")
     val memory = config.getInt("deployment.memory")
     val filesToUpload = config.getStringList("deployment.setup.copy-files").toList
+    val yarnConfigFiles = List("yarn.conf","yarn-testing.conf","deployment.conf")
     
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
@@ -50,7 +51,7 @@ object LaunchSettingsCreator {
       new LaunchSettings(pathsToJars = files)
     } else {
       val pathToJar = config.getString("deployment.pathToJar")
-      val files = pathToJar :: filesToUpload
+      val files = pathToJar :: yarnConfigFiles ::: filesToUpload
       new LaunchSettings(jvmArguments = config.getString("deployment.jvmArguments"), pathsToJars = files)
     }
   }
