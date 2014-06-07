@@ -29,18 +29,8 @@ import com.signalcollect.util.ConfigProvider
 class DefaultYarnClientCreator extends YarnClientCreatorImpl with LogHelper{
   val config = ConfigProvider.config
   override lazy val yarnClient = createYarnClient
-  
-  protected def isValidConfig(config: Config): Boolean = {
-    if (config == null) false
-    else if (config.hasPath("deployment.hadoop-overrides.yarn.resourcemanager.host") &&
-      config.hasPath("deployment.hadoop-overrides.yarn.resourcemanager.address") &&
-      config.hasPath("deployment.memory") &&
-      config.hasPath("deployment.applicationName")) true
-    else false
-  }
 
   def createYarnClient: YarnClient = {
-    if (!isValidConfig(config)) throw new IllegalArgumentException()
     val yarnOverrides = config.getConfig("deployment.hadoop-overrides").entrySet().iterator()
     val yarnConfig = new YarnConfiguration()
     yarnConfig.set("fs.hdfs.impl", 
