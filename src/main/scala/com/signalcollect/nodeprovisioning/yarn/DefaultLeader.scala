@@ -58,8 +58,8 @@ class DefaultLeader(
   }
 
   def startExecution {
-    val algorithm = ConfigProvider.config.getString("deployment.algorithm.class")
-    val parameters = ConfigProvider.config.getConfig("deployment.algorithm.parameters").entrySet.map {
+    val algorithm = ConfigProvider.config.getString("deployment.algorithm")
+    val parameters = ConfigProvider.config.getConfig("deployment.parameters").entrySet.map {
       entry => (entry.getKey, entry.getValue.unwrapped.toString)
     }.toMap
     try {

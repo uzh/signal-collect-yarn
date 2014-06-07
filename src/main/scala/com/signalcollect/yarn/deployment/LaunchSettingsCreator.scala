@@ -28,7 +28,7 @@ object LaunchSettingsCreator {
     val createJarOnTheFly = config.getBoolean("testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("testing.useMiniCluster")
     val memory = config.getInt("deployment.memory")
-    val filesToUpload = config.getStringList("deployment.setup.copy-files").toList
+    val filesToUpload = config.getStringList("deployment.copy-files").toList
     val yarnConfigFiles = List("yarn.conf","yarn-testing.conf","deployment.conf")
     
     if (createJarOnTheFly && useMiniCluster) {
