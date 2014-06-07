@@ -5,4 +5,4 @@ install:
    - cd $TRAVIS_BUILD_DIR
    - sbt clean assembly
 scala:
-   - 2.11.0
+   - 2.11.1
