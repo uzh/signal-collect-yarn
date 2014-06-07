@@ -125,6 +125,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
 
     "shutdown after execution" in new Execution {
       println("shutdown after execution")
+      Thread.sleep(1000)
       ShutdownHelper.shuttingdown === true
     }
 
