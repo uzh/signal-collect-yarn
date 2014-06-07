@@ -8,7 +8,7 @@ version := "1.0-SNAPSHOT"
 
 organization := "com.signalcollect"
 
-scalaVersion := "2.11.0"
+scalaVersion := "2.11.1"
 
 val hadoopVersion = "2.3.0"
 
@@ -47,7 +47,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 /** Dependencies */
 libraryDependencies ++= Seq(  
   "org.scala-lang.modules" %% "scala-async" % "0.9.1",
-  "org.scala-lang" % "scala-library" % "2.11.0" % "compile",
+  "org.scala-lang" % "scala-library" % "2.11.1" % "compile",
  ("org.apache.hadoop" % "hadoop-common" % hadoopVersion % "compile").
    exclude("commons-beanutils", "commons-beanutils-core"),
   "org.apache.hadoop" % "hadoop-yarn-common" % hadoopVersion % "compile",
@@ -55,7 +55,7 @@ libraryDependencies ++= Seq(
   exclude("hadoop-yarn-api", "org.apache.hadoop"),
  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % hadoopVersion % "compile",
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % hadoopVersion % "compile",
-  "org.apache.hadoop" % "yarn-server-tests-custom" % hadoopVersion,
+  "org.apache.hadoop" % "minicluster" % "2.2.0"	,
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion,
   "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.4" % "compile",
   "log4j" % "log4j" % "1.2.17" % "compile",
