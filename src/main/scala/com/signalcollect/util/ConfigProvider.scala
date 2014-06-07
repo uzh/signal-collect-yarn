@@ -35,9 +35,9 @@ object ConfigProvider {
   algorithm = deployment.getString("deployment.algorithm"),
   algorithmParameters= getAlgorithmParameters,
   memoryPerNode= deployment.getInt("deployment.memory-per-node"),
-  numberOfNodes= deployment.getInt("deployment.number-of-odes"),
+  numberOfNodes= deployment.getInt("deployment.number-of-nodes"),
   copyFiles= deployment.getStringList("deployment.copy-files").toList, // list of paths to files
-  clusterType = deployment.getString("deployment.algorithm"))
+  clusterType = deployment.getString("deployment.type"))
   
   def getAlgorithmParameters: Map[String,String] = {
     deployment.getConfig("deployment.algorithm-parameters").entrySet.map {

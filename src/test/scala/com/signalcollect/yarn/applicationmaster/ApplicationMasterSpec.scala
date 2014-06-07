@@ -44,7 +44,7 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
       println("Test executing now: ApplicationMasterSpec")
       val typesafeConfig = ConfigProvider.config 
       val yarnClient = YarnClientCreator.yarnClient
-      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass())
+      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), ConfigProvider.getDeploymentConfiguration)
       val client = new YarnDeploymentClient(launchSettings)
       val application = client.submitApplication()
       var finished = false
