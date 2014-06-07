@@ -20,6 +20,8 @@ package com.signalcollect.util
 
 import com.typesafe.config.ConfigFactory
 import java.io.File
+import com.signalcollect.deployment.DeploymentConfiguration
+import scala.collection.JavaConversions._
 
 object ConfigProvider {
   //change name of config you use here
@@ -27,4 +29,19 @@ object ConfigProvider {
   val yarn = ConfigFactory.parseFile(new File("yarn.conf"))
   val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
   val config = testing.withFallback(yarn).withFallback(deployment)
+  
+  def getDeploymentConfiguration: DeploymentConfiguration = 
+    new DeploymentConfiguration(
+  algorithm = deployment.getString("deployment.algorithm"),
+  algorithmParameters= getAlgorithmParameters,
+  memoryPerNode= deployment.getInt("deployment.memory-per-node"),
+  numberOfNodes= deployment.getInt("deployment.number-of-odes"),
+  copyFiles= deployment.getStringList("deployment.copy-files").toList, // list of paths to files
+  clusterType = deployment.getString("deployment.algorithm"))
+  
+  def getAlgorithmParameters: Map[String,String] = {
+    deployment.getConfig("deployment.algorithm-parameters").entrySet.map {
+      entry => (entry.getKey, entry.getValue.unwrapped.toString)
+    }.toMap
+  }
 }
