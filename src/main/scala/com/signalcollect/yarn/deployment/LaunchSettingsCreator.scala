@@ -25,14 +25,14 @@ import collection.JavaConversions._
 object LaunchSettingsCreator {
   def getSettingsForClass(klass: Class[_]): LaunchSettings = {
     val config = ConfigProvider.config
-    val createJarOnTheFly = config.getBoolean("deployment.testing.createJarOnTheFly")
-    val useMiniCluster = config.getBoolean("deployment.testing.useMiniCluster")
+    val createJarOnTheFly = config.getBoolean("testing.createJarOnTheFly")
+    val useMiniCluster = config.getBoolean("testing.useMiniCluster")
     val memory = config.getInt("deployment.memory")
     val filesToUpload = config.getStringList("deployment.setup.copy-files").toList
     
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
-      val pathToDependencies = config.getString("deployment.testing.dependency")
+      val pathToDependencies = config.getString("testing.dependency")
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       println(" site xml is" + dummySiteXml)
       val files = List(pathToJar, pathToDependencies, dummySiteXml) ::: filesToUpload
@@ -45,7 +45,7 @@ object LaunchSettingsCreator {
 
     } else if(createJarOnTheFly) {
        val pathToJar = JarCreator.createJarFile(klass)
-      val pathToDependencies = config.getString("deployment.testing.dependency")
+      val pathToDependencies = config.getString("testing.dependency")
       val files = List(pathToJar, pathToDependencies) ::: filesToUpload
       new LaunchSettings(pathsToJars = files)
     } else {

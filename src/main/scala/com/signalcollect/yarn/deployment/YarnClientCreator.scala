@@ -47,8 +47,8 @@ object YarnClientCreator {
   }
   
   def createFactory(): YarnClientCreatorImpl = {
-    val useMiniCluster = if (config.hasPath("deployment.testing.useMiniCluster"))
-      config.getBoolean("deployment.testing.useMiniCluster")
+    val useMiniCluster = if (config.hasPath("testing.useMiniCluster"))
+      config.getBoolean("testing.useMiniCluster")
       else false
     
     if (useMiniCluster){
