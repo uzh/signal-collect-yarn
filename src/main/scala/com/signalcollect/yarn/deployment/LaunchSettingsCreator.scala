@@ -36,18 +36,18 @@ object LaunchSettingsCreator {
       val pathToDependencies = config.getString("testing.dependency")
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       println(" site xml is" + dummySiteXml)
-      val files = List(pathToJar, pathToDependencies, dummySiteXml) ::: filesToUpload
+      val files = yarnConfigFiles ::: List(pathToJar, pathToDependencies, dummySiteXml) ::: filesToUpload
       new LaunchSettings(pathsToJars = files)
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       val pathToJar = config.getString("deployment.pathToJar")
-      val files = List(dummySiteXml, pathToJar) ::: filesToUpload
+      val files = yarnConfigFiles ::: List(dummySiteXml, pathToJar) ::: filesToUpload
       new LaunchSettings(pathsToJars = files)
 
     } else if(createJarOnTheFly) {
        val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("testing.dependency")
-      val files = List(pathToJar, pathToDependencies) ::: filesToUpload
+      val files = yarnConfigFiles ::: List(pathToJar, pathToDependencies) ::: filesToUpload
       new LaunchSettings(pathsToJars = files)
     } else {
       val pathToJar = config.getString("deployment.pathToJar")

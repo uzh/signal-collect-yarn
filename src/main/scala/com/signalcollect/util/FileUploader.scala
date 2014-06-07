@@ -58,6 +58,7 @@ class FileUploader(applicationId: String,
     val src = getSource(srcPath,jarName)
     val pathSuffix = getPathSuffix(jarName)
     val dest = new Path(fs.getHomeDirectory(), pathSuffix)
+    println(s"upload file $jarName to $dest")
     uploadFile(jarName, src, dest)
   }
 
