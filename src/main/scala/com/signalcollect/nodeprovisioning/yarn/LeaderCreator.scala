@@ -9,6 +9,9 @@ object LeaderCreator {
     val baseport = config.getInt("deployment.akka.port")
     val numberOfNodes = config.getInt("deployment.numberOfNodes")
     val akkaConfig = AkkaConfigCreator.getConfig(baseport)
-    new DefaultLeader( numberOfNodes = numberOfNodes, akkaConfig = akkaConfig)
+    val deploymentConfig = ConfigProvider.getDeploymentConfiguration
+    new DefaultLeader( numberOfNodes = numberOfNodes,
+        akkaConfig = akkaConfig,
+        deploymentConfig = deploymentConfig)
   }
 }

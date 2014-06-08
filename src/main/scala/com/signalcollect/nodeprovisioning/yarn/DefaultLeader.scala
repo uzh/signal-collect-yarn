@@ -34,12 +34,13 @@ import com.signalcollect.deployment.YarnDeployableAlgorithm
 import scala.collection.JavaConversions._
 import com.signalcollect.nodeprovisioning.AkkaHelper
 import com.typesafe.config.Config
+import com.signalcollect.deployment.DeploymentConfiguration
 
 class DefaultLeader(
   
   numberOfNodes: Int,
-  akkaConfig: Config = AkkaConfigCreator.getConfig(2552)
-  ) extends Leader with LogHelper {
+  akkaConfig: Config = AkkaConfigCreator.getConfig(2552),
+  deploymentConfig: DeploymentConfiguration) extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
   private var executionStarted = false
@@ -58,7 +59,7 @@ class DefaultLeader(
   }
 
   def startExecution {
-    val algorithm = ConfigProvider.config.getString("deployment.algorithm")
+    val algorithm = deploymentConfig.algorithm
     val parameters = ConfigProvider.config.getConfig("deployment.parameters").entrySet.map {
       entry => (entry.getKey, entry.getValue.unwrapped.toString)
     }.toMap

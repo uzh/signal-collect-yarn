@@ -32,7 +32,7 @@ import com.signalcollect.yarn.deployment.MiniCluster
 import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
 
 class FileUploader(applicationId: String, 
-  files: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")), 
+  files: List[String], 
   useDefaultYarnClient: Boolean = false) {
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
