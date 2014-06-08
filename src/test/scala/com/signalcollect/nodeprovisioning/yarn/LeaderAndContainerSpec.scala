@@ -262,7 +262,7 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ActorAddresses.clear
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val leader = new DefaultLeader(numberOfNodes = 1, deploymentConfig = ConfigProvider.getDeploymentConfiguration)
+  val leader = new DefaultLeader(deploymentConfig = ConfigProvider.getDeploymentConfiguration)
   leader.start
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
   val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )

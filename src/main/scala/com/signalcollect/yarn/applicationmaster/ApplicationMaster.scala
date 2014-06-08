@@ -41,7 +41,8 @@ import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
 
 object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
-  var config: Configuration = YarnClientCreator.yarnClient.getConfig()
+  val deploymentConfig = ConfigProvider.getDeploymentConfiguration
+  val config: Configuration = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   val containerListener = new NMCallbackHandler()
@@ -73,7 +74,7 @@ object ApplicationMaster extends App with LogHelper {
 
   private def startContainers: Unit = {
     val containerAsk = setupContainerAskForRM()
-    val numberOfNodes = ConfigProvider.config.getInt("deployment.numberOfNodes")
+    val numberOfNodes = deploymentConfig.numberOfNodes
     for (i <- 0 until numberOfNodes) {
       ressourcManagerClient.addContainerRequest(containerAsk)
     }

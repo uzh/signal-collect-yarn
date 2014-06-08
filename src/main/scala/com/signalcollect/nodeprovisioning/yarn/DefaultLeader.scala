@@ -37,8 +37,6 @@ import com.typesafe.config.Config
 import com.signalcollect.deployment.DeploymentConfiguration
 
 class DefaultLeader(
-  
-  numberOfNodes: Int,
   akkaConfig: Config = AkkaConfigCreator.getConfig(2552),
   deploymentConfig: DeploymentConfiguration) extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
@@ -109,7 +107,7 @@ class DefaultLeader(
   }
 
   def allNodesRunning: Boolean = {
-    ActorAddresses.getNumberOfNodes == numberOfNodes
+    ActorAddresses.getNumberOfNodes == deploymentConfig.numberOfNodes 
 
   }
 

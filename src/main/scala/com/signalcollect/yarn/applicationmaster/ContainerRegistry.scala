@@ -24,7 +24,7 @@ import com.signalcollect.nodeprovisioning.yarn.ContainerInfo
 import java.net.InetAddress
 
 object ContainerRegistry {
-
+  val deploymentConfig = ConfigProvider.getDeploymentConfiguration
   var containers = Map[String, (Container, Int)]()
   var counter = 0
   var finished = false
@@ -74,7 +74,7 @@ object ContainerRegistry {
 
   def isFinished: Boolean = {
     synchronized {
-      finishedCounter == ConfigProvider.config.getInt("deployment.numberOfNodes")
+      finishedCounter == deploymentConfig.numberOfNodes 
     }
   }
 
@@ -86,7 +86,7 @@ object ContainerRegistry {
   
   def allStarted: Boolean = {
     synchronized {
-      startedCounter == ConfigProvider.config.getInt("deployment.numberOfNodes")
+      startedCounter == deploymentConfig.numberOfNodes 
     }
   }
   
