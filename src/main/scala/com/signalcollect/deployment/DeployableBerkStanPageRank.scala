@@ -10,7 +10,7 @@ import com.signalcollect.examples.PageRankVertex
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 
-class DeployableBerkStanPageRank extends YarnDeployableAlgorithm {
+class DeployableBerkStanPageRank extends DeployableAlgorithm {
   def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None) {
       val graphBuilder = if (actorSystem.isDefined)
         GraphBuilder.withActorSystem(actorSystem.get)

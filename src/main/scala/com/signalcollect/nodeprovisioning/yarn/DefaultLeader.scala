@@ -30,7 +30,7 @@ import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 import akka.actor.ActorRef
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.deployment.YarnDeployableAlgorithm
+import com.signalcollect.deployment.DeployableAlgorithm
 import scala.collection.JavaConversions._
 import com.signalcollect.nodeprovisioning.AkkaHelper
 import com.typesafe.config.Config
@@ -61,7 +61,7 @@ class DefaultLeader(
     val parameters = deploymentConfig.algorithmParameters
     try {
       val nodeActors = getNodeActors.toArray
-      val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[YarnDeployableAlgorithm]
+      val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[DeployableAlgorithm]
       println(s"start algorithm: $algorithm")
       algorithmObject.execute(parameters, nodeActors, Some(system))
     } 

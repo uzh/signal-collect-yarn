@@ -25,7 +25,7 @@ import com.signalcollect.examples.PageRankEdge
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 
-class PageRankExample extends YarnDeployableAlgorithm {
+class PageRankExample extends DeployableAlgorithm {
   def execute(parameters: Map[String, String], nodeActors: Array[ActorRef], actorSystem: Option[ActorSystem] = None) {
     println("create graphbuilder with Actorsystem")
     val graphBuilder = if (actorSystem.isDefined)
