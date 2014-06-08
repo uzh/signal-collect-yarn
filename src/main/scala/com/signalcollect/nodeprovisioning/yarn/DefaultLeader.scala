@@ -60,9 +60,7 @@ class DefaultLeader(
 
   def startExecution {
     val algorithm = deploymentConfig.algorithm
-    val parameters = ConfigProvider.config.getConfig("deployment.parameters").entrySet.map {
-      entry => (entry.getKey, entry.getValue.unwrapped.toString)
-    }.toMap
+    val parameters = deploymentConfig.algorithmParameters
     try {
       val nodeActors = getNodeActors.toArray
       val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[YarnDeployableAlgorithm]
