@@ -25,8 +25,6 @@ import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 
-import com.signalcollect.deployment.yarn.YarnApplicationCreator;
-import com.signalcollect.deployment.yarn.YarnClientCreator;
 import com.signalcollect.util.ConfigProvider
 
 @RunWith(classOf[JUnitRunner])
