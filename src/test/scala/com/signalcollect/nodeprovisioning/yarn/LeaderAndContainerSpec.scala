@@ -19,23 +19,27 @@
 package com.signalcollect.nodeprovisioning.yarn
 
 import java.net.InetAddress
+
 import scala.async.Async.async
 import scala.async.Async.await
+import scala.collection.JavaConversions._
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+
 import org.junit.runner.RunWith
 import org.specs2.mutable.After
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.runner.JUnitRunner
 import org.specs2.specification.AfterExample
 import org.specs2.specification.Scope
+
 import com.signalcollect.configuration.ActorSystemRegistry
+import com.signalcollect.util.ConfigProvider
+import com.signalcollect.util.DeploymentConfigurationCreator
+
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
-import com.signalcollect.util.ConfigProvider
-import scala.collection.JavaConversions._
-import scala.concurrent.duration._
-import com.signalcollect.deployment.DeploymentConfiguration
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
@@ -47,7 +51,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "be started" in new StopActorSystemAfter {
       println("be started")
       val akkaPort = 2552
-      val leader: Leader = LeaderCreator.getLeader
+      val leader: Leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
@@ -231,7 +235,7 @@ trait LeaderScope extends StopActorSystemAfter {
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
   val config = ConfigProvider.config
-  val leader = LeaderCreator.getLeader.asInstanceOf[DefaultLeader]
+  val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration).asInstanceOf[DefaultLeader]
   val leaderActor: ActorRef = leader.getActorRef()
 
   abstract override def after {
@@ -262,7 +266,7 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ActorAddresses.clear
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val leader = new DefaultLeader(deploymentConfig = ConfigProvider.getDeploymentConfiguration)
+  val leader = new DefaultLeader(deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration)
   leader.start
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
   val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )

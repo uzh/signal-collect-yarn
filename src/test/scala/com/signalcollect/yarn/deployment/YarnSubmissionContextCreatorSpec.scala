@@ -18,13 +18,12 @@
  */
 package com.signalcollect.yarn.deployment
 
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
-import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 import com.signalcollect.util.ConfigProvider
+import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.yarn.applicationmaster.ApplicationMaster
+import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
@@ -34,7 +33,7 @@ class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
     lazy val yarnClient = YarnClientCreator.yarnClient
     lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
     "call Factory" in {
-      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), ConfigProvider.getDeploymentConfiguration)
+      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), DeploymentConfigurationCreator.getDeploymentConfiguration)
       val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
       val context =factory.getSubmissionContext()
       context.getApplicationName() === config.getString("deployment.applicationName")

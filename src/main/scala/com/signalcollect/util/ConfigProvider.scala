@@ -28,10 +28,14 @@ import com.typesafe.config.ConfigFactory
 
 object ConfigProvider {
   //change name of config you use here
-  val deployment = ConfigFactory.parseFile(new File("deployment.conf"))
   val yarn = ConfigFactory.parseFile(new File("yarn.conf"))
   val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
-  val config = testing.withFallback(yarn).withFallback(deployment)
+  val config = testing.withFallback(yarn)
+
+}
+
+object DeploymentConfigurationCreator {
+  val deployment = ConfigFactory.parseFile(new File("deployment.conf"))
 
   def getDeploymentConfiguration: DeploymentConfiguration =
     new DeploymentConfiguration(
@@ -43,7 +47,7 @@ object ConfigProvider {
       clusterType = deployment.getString("deployment.type"),
       jvmArguments = deployment.getString("deployment.jvm-arguments"))
 
-  def getAlgorithmParameters: Map[String, String] = {
+  private def getAlgorithmParameters: Map[String, String] = {
     deployment.getConfig("deployment.algorithm-parameters").entrySet.map {
       entry => (entry.getKey, entry.getValue.unwrapped.toString)
     }.toMap

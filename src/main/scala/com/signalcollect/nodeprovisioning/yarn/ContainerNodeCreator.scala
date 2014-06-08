@@ -20,12 +20,13 @@ package com.signalcollect.nodeprovisioning.yarn
 
 import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._
+import com.signalcollect.util.DeploymentConfigurationCreator
 
 object ContainerNodeCreator {
   def getContainer(id: Int, leaderIp: String): ContainerNode = {
     val config = ConfigProvider.config
     val basePort = config.getInt("deployment.akka.port")
-    val numberOfNodes = ConfigProvider.getDeploymentConfiguration.numberOfNodes 
+    val numberOfNodes = DeploymentConfigurationCreator.getDeploymentConfiguration.numberOfNodes 
     val akkaConfig = AkkaConfigCreator.getConfig(basePort + id + 1)
     val container = new DefaultContainerNode(id = id,
       numberOfNodes = numberOfNodes,

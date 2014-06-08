@@ -22,9 +22,10 @@ import org.apache.hadoop.yarn.api.records.Container
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.ContainerInfo
 import java.net.InetAddress
+import com.signalcollect.util.DeploymentConfigurationCreator
 
 object ContainerRegistry {
-  val deploymentConfig = ConfigProvider.getDeploymentConfiguration
+  val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   var containers = Map[String, (Container, Int)]()
   var counter = 0
   var finished = false

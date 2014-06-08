@@ -34,6 +34,8 @@ import java.nio.file.Path
 import java.io.File
 import com.signalcollect.yarn.deployment.LaunchSettingsCreator
 import com.signalcollect.util.ConfigProvider
+import com.signalcollect.deployment.DeploymentConfiguration
+import com.signalcollect.util.DeploymentConfigurationCreator
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
@@ -44,7 +46,7 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
       println("Test executing now: ApplicationMasterSpec")
       val typesafeConfig = ConfigProvider.config 
       val yarnClient = YarnClientCreator.yarnClient
-      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), ConfigProvider.getDeploymentConfiguration)
+      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), DeploymentConfigurationCreator.getDeploymentConfiguration)
       val client = new YarnDeploymentClient(launchSettings)
       val application = client.submitApplication()
       var finished = false

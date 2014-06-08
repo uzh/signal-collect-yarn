@@ -38,10 +38,11 @@ import org.apache.hadoop.fs.Path
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
 import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
+import com.signalcollect.util.DeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
-  val deploymentConfig = ConfigProvider.getDeploymentConfiguration
+  val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   val config: Configuration = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
@@ -50,7 +51,7 @@ object ApplicationMaster extends App with LogHelper {
 
   val allocListener = new RMCallbackHandler(nodeManagerClient)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
-  lazy val leader = LeaderCreator.getLeader
+  lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   run
 
   def run() {

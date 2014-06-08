@@ -1,7 +1,9 @@
 package com.signalcollect.nodeprovisioning.yarn
 
+import com.signalcollect.util.DeploymentConfigurationCreator
+
 object LeaderApp extends App {
-  val leader = LeaderCreator.getLeader
+  val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration)
   leader.start
 }
 

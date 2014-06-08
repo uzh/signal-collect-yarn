@@ -5,10 +5,11 @@ import com.typesafe.config.ConfigFactory
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
 import com.signalcollect.util.ConfigProvider
+import com.signalcollect.util.DeploymentConfigurationCreator
 
 object YarnDeployer extends App {
   val yarnClient = YarnClientCreator.yarnClient
-  val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), ConfigProvider.getDeploymentConfiguration)
+  val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), DeploymentConfigurationCreator.getDeploymentConfiguration)
   val client = new YarnDeploymentClient(launchSettings)
   val application = client.submitApplication()
   waitForTermination
