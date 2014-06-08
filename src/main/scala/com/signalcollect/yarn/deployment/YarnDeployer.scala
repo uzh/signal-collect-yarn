@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigFactory
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 object YarnDeployer extends App {
   val yarnClient = YarnClientCreator.yarnClient

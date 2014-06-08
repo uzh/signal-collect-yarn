@@ -35,7 +35,7 @@ import java.io.File
 import com.signalcollect.yarn.deployment.LaunchSettingsCreator
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.DeploymentConfiguration
-import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {

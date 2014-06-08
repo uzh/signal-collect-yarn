@@ -20,7 +20,7 @@ package com.signalcollect.nodeprovisioning.yarn
 
 import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._
-import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 object ContainerNodeCreator {
   def getContainer(id: Int, leaderIp: String): ContainerNode = {

@@ -21,9 +21,9 @@ package com.signalcollect.yarn.deployment
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.util.DeploymentConfigurationCreator
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 import org.specs2.runner.JUnitRunner
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {

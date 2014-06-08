@@ -38,7 +38,7 @@ import org.apache.hadoop.fs.Path
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
 import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
-import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)

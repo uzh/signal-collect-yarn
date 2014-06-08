@@ -19,27 +19,23 @@
 package com.signalcollect.nodeprovisioning.yarn
 
 import java.net.InetAddress
-
 import scala.async.Async.async
 import scala.async.Async.await
 import scala.collection.JavaConversions._
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-
 import org.junit.runner.RunWith
 import org.specs2.mutable.After
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.runner.JUnitRunner
 import org.specs2.specification.AfterExample
 import org.specs2.specification.Scope
-
 import com.signalcollect.configuration.ActorSystemRegistry
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.util.DeploymentConfigurationCreator
-
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {

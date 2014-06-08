@@ -2,7 +2,7 @@ package com.signalcollect.nodeprovisioning.yarn
 
 import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._
-import com.signalcollect.util.DeploymentConfigurationCreator
+import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.DeploymentConfiguration
 
 object LeaderCreator {
