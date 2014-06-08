@@ -32,13 +32,13 @@ import com.signalcollect.util.LogHelper
 import scala.collection.JavaConversions._
 import org.apache.hadoop.yarn.api.records.Priority
 import org.apache.hadoop.yarn.api.records.Resource
-import com.signalcollect.yarn.deployment.YarnClientCreator
 import java.io.File
 import org.apache.hadoop.fs.Path
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
-import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.deployment.yarn.YarnClientCreator
+import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 
 object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)

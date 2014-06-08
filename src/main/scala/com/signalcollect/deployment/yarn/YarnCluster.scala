@@ -1,13 +1,20 @@
-package com.signalcollect.yarn.deployment
+package com.signalcollect.deployment.yarn
 
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 import com.typesafe.config.ConfigFactory
+
 import scala.collection.JavaConversions._
+
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
+
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.Cluster
 import com.signalcollect.deployment.DeploymentConfiguration
+import com.signalcollect.deployment.yarn.LaunchSettingsCreator;
+import com.signalcollect.deployment.yarn.YarnClientCreator;
+import com.signalcollect.deployment.yarn.YarnDeploymentClient;
+
 import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 

@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.yarn.deployment
+package com.signalcollect.deployment.yarn
 
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster

@@ -1,4 +1,4 @@
-package com.signalcollect.yarn.deployment
+package com.signalcollect.deployment.yarn
 
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
 import com.typesafe.config.ConfigFactory

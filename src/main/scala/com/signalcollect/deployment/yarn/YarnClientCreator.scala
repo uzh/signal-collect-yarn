@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.yarn.deployment
+package com.signalcollect.deployment.yarn
 
 import com.typesafe.config.Config
 

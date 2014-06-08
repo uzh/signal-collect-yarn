@@ -20,10 +20,17 @@ package com.signalcollect.yarn.deployment
 
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
+
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
+
 import org.specs2.runner.JUnitRunner
+
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.deployment.yarn.LaunchSettingsCreator;
+import com.signalcollect.deployment.yarn.YarnApplicationCreator;
+import com.signalcollect.deployment.yarn.YarnClientCreator;
+import com.signalcollect.deployment.yarn.YarnSubmissionContextCreator;
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {

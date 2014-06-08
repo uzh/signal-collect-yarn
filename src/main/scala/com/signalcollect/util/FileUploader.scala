@@ -18,7 +18,6 @@
  */
 package com.signalcollect.util
 
-import com.signalcollect.yarn.deployment.YarnClientCreator
 import org.apache.hadoop.yarn.util.Records
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.fs.FileSystem
@@ -28,8 +27,8 @@ import org.apache.hadoop.yarn.api.records.LocalResourceType
 import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
 import org.apache.hadoop.fs.FileStatus
 import java.util.HashMap
-import com.signalcollect.yarn.deployment.MiniCluster
-import com.signalcollect.yarn.deployment.DefaultYarnClientCreator
+import com.signalcollect.deployment.yarn.YarnClientCreator
+import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 
 class FileUploader(applicationId: String, 
   files: List[String], 

@@ -25,9 +25,10 @@ import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
 import com.signalcollect.util.LogHelper
 import com.signalcollect.util.ConfigProvider
-import com.signalcollect.yarn.deployment.LaunchSettings
-import com.signalcollect.yarn.deployment.YarnContainerLaunchContextCreator
 import java.net.InetAddress
+import specs2.arguments
+import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
+import com.signalcollect.deployment.yarn.LaunchSettings
 
 class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsync.CallbackHandler with LogHelper {
 
