@@ -26,7 +26,6 @@ import org.apache.hadoop.yarn.client.api.async.NMClientAsync
 import com.signalcollect.util.LogHelper
 import com.signalcollect.util.ConfigProvider
 import java.net.InetAddress
-import specs2.arguments
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.deployment.yarn.LaunchSettings
 
