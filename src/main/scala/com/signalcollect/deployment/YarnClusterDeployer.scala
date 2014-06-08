@@ -16,14 +16,9 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.deployment.yarn
+package com.signalcollect.deployment
 
-import com.signalcollect.deployment.ClusterCreator
-import com.signalcollect.deployment.DeploymentConfigurationCreator
-
-object YarnDeployer extends App {
-  val deploymentConf = DeploymentConfigurationCreator.getDeploymentConfiguration
-  val cluster = ClusterCreator.getCluster(deploymentConf)
-  cluster.deploy(deploymentConf)
+object YarnClusterDeployer extends App {
+  ClusterDeployer.main(args)
 }
 
