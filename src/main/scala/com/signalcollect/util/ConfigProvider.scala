@@ -18,10 +18,13 @@
  */
 package com.signalcollect.util
 
-import com.typesafe.config.ConfigFactory
 import java.io.File
+
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.JavaConversions.asScalaSet
+
 import com.signalcollect.deployment.DeploymentConfiguration
-import scala.collection.JavaConversions._
+import com.typesafe.config.ConfigFactory
 
 object ConfigProvider {
   //change name of config you use here
