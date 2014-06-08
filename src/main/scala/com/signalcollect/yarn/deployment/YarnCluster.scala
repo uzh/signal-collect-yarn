@@ -9,15 +9,18 @@ import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.Cluster
 import com.signalcollect.deployment.DeploymentConfiguration
 import org.apache.hadoop.yarn.api.records.ApplicationId
+import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
 class YarnCluster extends Cluster {
   lazy val yarnClient = YarnClientCreator.yarnClient
-  override def deploy(deploymentConfiguration: DeploymentConfiguration) {
+  override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
 
     val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration)
     val client = new YarnDeploymentClient(launchSettings)
     val application = client.submitApplication()
     waitForTermination(application)
+    val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
+    appReport.getFinalApplicationStatus() == FinalApplicationStatus.SUCCEEDED
   }
 
   def waitForTermination(application: ApplicationId) {

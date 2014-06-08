@@ -36,6 +36,7 @@ import com.signalcollect.yarn.deployment.LaunchSettingsCreator
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.deployment.ClusterCreator
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
@@ -43,31 +44,9 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
   "ApplicationMaster" should {
 
     "run application successfull" in {
-      println("Test executing now: ApplicationMasterSpec")
-      val typesafeConfig = ConfigProvider.config 
-      val yarnClient = YarnClientCreator.yarnClient
-      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), DeploymentConfigurationCreator.getDeploymentConfiguration)
-      val client = new YarnDeploymentClient(launchSettings)
-      val application = client.submitApplication()
-      var finished = false
-      while (!finished) {
-        Thread.sleep(1000)
-        val apps = yarnClient.getApplications.toList
-        if (apps.size() == 0) {
-          Thread.sleep(10)
-        } else {
-          if (apps.exists(_.getApplicationId().equals(application))) {
-            val appReport = apps.find(_.getApplicationId().equals(application)).get
-            val applicationState = appReport.getYarnApplicationState()
-            println("ApplicationState = " + applicationState)
-            if (applicationState == YarnApplicationState.FINISHED || applicationState == YarnApplicationState.FAILED) {
-              finished = true
-            }
-          }
-        }
-      }
-      val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
-      appReport.getFinalApplicationStatus() === FinalApplicationStatus.SUCCEEDED
+      val deploymentConf = DeploymentConfigurationCreator.getDeploymentConfiguration
+      val cluster = ClusterCreator.getCluster(deploymentConf)
+      cluster.deploy(deploymentConf) === true
     }
   }
 }
