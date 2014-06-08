@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.yarn.deployment
+package com.signalcollect.deployment.yarn
 
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
