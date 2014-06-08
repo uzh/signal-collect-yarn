@@ -29,17 +29,18 @@ object ConfigProvider {
   val yarn = ConfigFactory.parseFile(new File("yarn.conf"))
   val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
   val config = testing.withFallback(yarn).withFallback(deployment)
-  
-  def getDeploymentConfiguration: DeploymentConfiguration = 
+
+  def getDeploymentConfiguration: DeploymentConfiguration =
     new DeploymentConfiguration(
-  algorithm = deployment.getString("deployment.algorithm"),
-  algorithmParameters= getAlgorithmParameters,
-  memoryPerNode= deployment.getInt("deployment.memory-per-node"),
-  numberOfNodes= deployment.getInt("deployment.number-of-nodes"),
-  copyFiles= deployment.getStringList("deployment.copy-files").toList, // list of paths to files
-  clusterType = deployment.getString("deployment.type"))
-  
-  def getAlgorithmParameters: Map[String,String] = {
+      algorithm = deployment.getString("deployment.algorithm"),
+      algorithmParameters = getAlgorithmParameters,
+      memoryPerNode = deployment.getInt("deployment.memory-per-node"),
+      numberOfNodes = deployment.getInt("deployment.number-of-nodes"),
+      copyFiles = deployment.getStringList("deployment.copy-files").toList, // list of paths to files
+      clusterType = deployment.getString("deployment.type"),
+      jvmArguments = deployment.getString("deployment.jvm-arguments"))
+
+  def getAlgorithmParameters: Map[String, String] = {
     deployment.getConfig("deployment.algorithm-parameters").entrySet.map {
       entry => (entry.getKey, entry.getValue.unwrapped.toString)
     }.toMap
