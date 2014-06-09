@@ -64,21 +64,22 @@ class DefaultLeader(
       val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[DeployableAlgorithm]
       println(s"start algorithm: $algorithm")
       algorithmObject.execute(parameters, nodeActors, Some(system))
-    } 
-    catch {
+    } catch {
       case e: Throwable => e.printStackTrace
-    }
-    finally {
-     
+    } finally {
+
     }
   }
 
   def shutdown {
-    val shutdownActor = getShutdownActors.foreach(_ ! "shutdown")
-    if (!system.isTerminated) {
-      system.shutdown
-      system.awaitTermination
-      ActorSystemRegistry.remove(system)
+    try {
+      val shutdownActor = getShutdownActors.foreach(_ ! "shutdown")
+    } finally {
+      if (!system.isTerminated) {
+        system.shutdown
+        system.awaitTermination
+        ActorSystemRegistry.remove(system)
+      }
     }
   }
 
@@ -107,7 +108,7 @@ class DefaultLeader(
   }
 
   def allNodesRunning: Boolean = {
-    ActorAddresses.getNumberOfNodes == deploymentConfig.numberOfNodes 
+    ActorAddresses.getNumberOfNodes == deploymentConfig.numberOfNodes
 
   }
 

@@ -22,4 +22,5 @@ trait Leader {
   def start
   def isExecutionStarted: Boolean
   def isExecutionFinished: Boolean
+  def shutdown
 }
