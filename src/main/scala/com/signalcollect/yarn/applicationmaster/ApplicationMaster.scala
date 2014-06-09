@@ -39,6 +39,7 @@ import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
+import com.signalcollect.util.HdfsWrapper
 
 object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
@@ -48,8 +49,8 @@ object ApplicationMaster extends App with LogHelper {
   config.addResource(siteXml)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
-
-  val allocListener = new RMCallbackHandler(nodeManagerClient)
+  val hdfs = new HdfsWrapper(true)
+  val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   run
@@ -82,7 +83,7 @@ object ApplicationMaster extends App with LogHelper {
   }
 
   private def setupContainerAskForRM(): ContainerRequest = {
-    val memory = ConfigProvider.config.getInt("deployment.containerMemory")
+    val memory = deploymentConfig.memoryPerNode
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
 
@@ -106,9 +107,10 @@ object ApplicationMaster extends App with LogHelper {
 
     nodeManagerClient.stop()
     ressourcManagerClient.stop()
+    hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/")
     System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
   }
-  
+
   private def waitFinish: Unit = {
     try {
       while (!leader.isExecutionFinished) {

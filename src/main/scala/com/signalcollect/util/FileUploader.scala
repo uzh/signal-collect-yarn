@@ -1,4 +1,4 @@
-/**
+/*
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
@@ -57,6 +57,14 @@ class FileUploader(applicationId: String,
     val src = getSource(srcPath,jarName)
     val pathSuffix = getPathSuffix(jarName)
     val dest = new Path(fs.getHomeDirectory(), pathSuffix)
+    println(s"upload file $jarName to $dest")
+    uploadFile(jarName, src, dest)
+  }
+  
+   private def prepareAndUploadFile(srcPath: String, destPath: String): (String, LocalResource) = {
+    val jarName = srcPath.split("/").last
+    val src = getSource(srcPath,jarName)
+    val dest = new Path(fs.getHomeDirectory(), destPath)
     println(s"upload file $jarName to $dest")
     uploadFile(jarName, src, dest)
   }

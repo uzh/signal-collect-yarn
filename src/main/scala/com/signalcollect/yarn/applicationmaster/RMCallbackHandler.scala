@@ -28,8 +28,9 @@ import com.signalcollect.util.ConfigProvider
 import java.net.InetAddress
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.deployment.yarn.LaunchSettings
+import com.signalcollect.deployment.DeploymentConfiguration
 
-class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsync.CallbackHandler with LogHelper {
+class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration) extends AMRMClientAsync.CallbackHandler with LogHelper {
 
   override def onContainersCompleted(completedContainers: java.util.List[ContainerStatus]): Unit = {
     log.info("Got response from RM for container ask, completedCnt="
@@ -67,7 +68,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync) extends AMRMClientAsyn
     val launchSettings = new LaunchSettings(
       pathsToJars = jarFiles,
       arguments = List[String](containerId.toString,leaderIp),
-      memory = ConfigProvider.config.getInt("deployment.containerMemory"),
+      memory = deploymentConfig.memoryPerNode,
       useDefaultYarnClientCreator = true)
     val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings)
     val ctx = launchContextCreator.createLaunchContext(container.getId().toString())
