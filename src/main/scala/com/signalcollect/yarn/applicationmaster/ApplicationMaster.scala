@@ -18,7 +18,6 @@
  */
 package com.signalcollect.yarn.applicationmaster
 
-import java.nio.ByteBuffer
 import org.apache.hadoop.net.NetUtils
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.conf.YarnConfiguration
