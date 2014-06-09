@@ -34,6 +34,7 @@ import com.typesafe.config.Config
 
 trait ContainerNode {
   def start
+  def shutdown
 }
 
 class DefaultContainerNode(id: Int,

@@ -55,10 +55,15 @@ object ApplicationMaster extends App with LogHelper {
   run
 
   def run() {
+    try {
     initApplicationMaster
     leader.start
     startContainers
     waitAndStopApplicationMaster
+    } finally {
+      leader.shutdown
+    }
+    
   }
 
   private def initApplicationMaster = {
