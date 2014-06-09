@@ -35,21 +35,19 @@ import com.typesafe.config.Config
 trait ContainerNode {
   def start
   def shutdown
+  def waitForTermination
 }
 
 class DefaultContainerNode(id: Int,
   numberOfNodes: Int,
   leaderIp: String,
   basePort: Int,
-  akkaConfig: Config) extends ContainerNode{
+  akkaConfig: Config) extends ContainerNode {
 
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
   val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, 0, 1, None), name = id.toString + "DefaultNodeActor")
-//  val nodeControllerCreator = NodeActorCreator(id, numberOfNodes, None, false)
-//  val nodeActor = system.actorOf(Props[DefaultNodeActor].withCreator(
-//    nodeControllerCreator.create), name = "DefaultNodeActor" + id.toString)
 
   private var terminated = false
 
@@ -69,9 +67,14 @@ class DefaultContainerNode(id: Int,
 
   def start {
     async {
-      register
-      waitForTermination
-      shutdown
+      try {
+        println("register container")
+        register
+        println("wait for termination")
+        waitForTermination
+      } finally {
+        shutdown
+      }
     }
   }
 
@@ -81,10 +84,10 @@ class DefaultContainerNode(id: Int,
   }
 
   def waitForTermination {
-      while (!ShutdownHelper.shuttingdown) {
-        Thread.sleep(100)
-      }
-      terminated = true
+    while (!ShutdownHelper.shuttingdown) {
+      Thread.sleep(100)
+    }
+    terminated = true
   }
 
   def shutdown {

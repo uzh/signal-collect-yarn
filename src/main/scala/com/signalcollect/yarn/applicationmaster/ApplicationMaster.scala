@@ -63,7 +63,7 @@ object ApplicationMaster extends App with LogHelper {
     } finally {
       leader.shutdown
     }
-    
+     System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
   }
 
   private def initApplicationMaster = {
@@ -112,7 +112,7 @@ object ApplicationMaster extends App with LogHelper {
     nodeManagerClient.stop()
     ressourcManagerClient.stop()
     hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/")
-    System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
+   
   }
 
   private def waitFinish: Unit = {
