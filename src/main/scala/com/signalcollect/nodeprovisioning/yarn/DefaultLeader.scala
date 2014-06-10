@@ -59,16 +59,10 @@ class DefaultLeader(
   def startExecution {
     val algorithm = deploymentConfig.algorithm
     val parameters = deploymentConfig.algorithmParameters
-    try {
-      val nodeActors = getNodeActors.toArray
-      val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[DeployableAlgorithm]
-      println(s"start algorithm: $algorithm")
-      algorithmObject.execute(parameters, Some(nodeActors), Some(system))
-    } catch {
-      case e: Throwable => e.printStackTrace
-    } finally {
-
-    }
+    val nodeActors = getNodeActors.toArray
+    val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[DeployableAlgorithm]
+    println(s"start algorithm: $algorithm")
+    algorithmObject.execute(parameters, Some(nodeActors), Some(system))
   }
 
   def shutdown {

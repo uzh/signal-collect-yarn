@@ -20,25 +20,37 @@ package com.signalcollect.yarn.applicationmaster
 
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
+import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.ClusterCreator
-import com.signalcollect.deployment.DeploymentConfigurationCreator
 import org.specs2.runner.JUnitRunner
 import com.signalcollect.deployment.DeploymentConfiguration
+import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.typesafe.config.ConfigFactory
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
-
+  
+ def createDeploymentConfiguration(cluster: String): DeploymentConfiguration = {
+    val configAsString =
+      s"""deployment {
+	       memory-per-node = 512
+	       jvm-arguments = ""
+	       number-of-nodes = 1
+	       copy-files = []
+	       algorithm = "com.signalcollect.deployment.PageRankExample"
+	       algorithm-parameters {
+		     "parameter-name" = "some-parameter"
+	       }
+	       cluster = "${cluster}"
+         }"""
+    val config = ConfigFactory.parseString(configAsString)
+    DeploymentConfigurationCreator.getDeploymentConfiguration(config)
+  }
+     
   "ApplicationMaster" should {
 
     "run application successfull" in {
-      val deploymentConf =    new DeploymentConfiguration(
-      algorithm = "com.signalcollect.deployment.PageRankExample",
-      algorithmParameters = Map[String,String](),
-      memoryPerNode = 512,
-      numberOfNodes = 1,
-      copyFiles = Nil, // list of paths to files
-      cluster = "com.signalcollect.deployment.yarn.YarnCluster",
-      jvmArguments = "")
+      val deploymentConf = createDeploymentConfiguration("com.signalcollect.deployment.yarn.YarnCluster")
       val cluster = ClusterCreator.getCluster(deploymentConf)
       cluster.deploy(deploymentConf) === true
     }
