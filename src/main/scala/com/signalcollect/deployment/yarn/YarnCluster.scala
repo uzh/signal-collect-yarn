@@ -19,10 +19,11 @@ import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
 class YarnCluster extends Cluster {
+  var testDeployment = false
   lazy val yarnClient = YarnClientCreator.yarnClient
   override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
 
-    val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration)
+    val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration, testDeployment)
     val client = new YarnDeploymentClient(launchSettings)
     val application = client.submitApplication()
     waitForTermination(application)

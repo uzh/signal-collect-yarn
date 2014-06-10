@@ -26,6 +26,7 @@ import org.specs2.runner.JUnitRunner
 import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.typesafe.config.ConfigFactory
+import com.signalcollect.deployment.yarn.YarnCluster
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
@@ -51,7 +52,9 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
 
     "run application successfull" in {
       val deploymentConf = createDeploymentConfiguration("com.signalcollect.deployment.yarn.YarnCluster")
-      val cluster = ClusterCreator.getCluster(deploymentConf)
+      println(deploymentConf.algorithm)
+      val cluster = new YarnCluster()
+      cluster.testDeployment = true
       cluster.deploy(deploymentConf) === true
     }
   }

@@ -38,23 +38,6 @@ import org.specs2.runner.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
   
-  def createDeploymentConfiguration(cluster: String): DeploymentConfiguration = {
-    val configAsString =
-      s"""deployment {
-	       memory-per-node = 512
-	       jvm-arguments = ""
-	       number-of-nodes = 1
-	       copy-files = []
-	       algorithm = "com.signalcollect.deployment.PageRankExample"
-	       algorithm-parameters {
-		     "parameter-name" = "some-parameter"
-	       }
-	       cluster = "${cluster}"
-         }"""
-    val config = ConfigFactory.parseString(configAsString)
-    DeploymentConfigurationCreator.getDeploymentConfiguration(config)
-  }
-  
   sequential
   "Leader" should {
     println("Test executing now: LeaderAndContainerSpec")
@@ -63,7 +46,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "be started" in new StopActorSystemAfter {
       println("be started")
       val akkaPort = 2552
-      val leader: Leader = LeaderCreator.getLeader(createDeploymentConfiguration("com.signalcollect.deployment.yarn.YarnCluster"))
+      val leader: Leader = LeaderCreator.getLeader( DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
@@ -247,30 +230,13 @@ trait LeaderScope extends StopActorSystemAfter {
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
   val config = ConfigProvider.config
-  val leader = LeaderCreator.getLeader(createDeploymentConfiguration("com.signalcollect.deployment.yarn.YarnCluster")).asInstanceOf[DefaultLeader]
+  val leader = LeaderCreator.getLeader( DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf")).asInstanceOf[DefaultLeader]
   val leaderActor: ActorRef = leader.getActorRef()
 
   abstract override def after {
     super.after
     ActorAddresses.clear
     ShutdownHelper.reset
-  }
-  
-   def createDeploymentConfiguration(cluster: String): DeploymentConfiguration = {
-    val configAsString =
-      s"""deployment {
-	       memory-per-node = 512
-	       jvm-arguments = ""
-	       number-of-nodes = 1
-	       copy-files = []
-	       algorithm = "com.signalcollect.deployment.PageRankExample"
-	       algorithm-parameters {
-		     "parameter-name" = "some-parameter"
-	       }
-	       cluster = "${cluster}"
-         }"""
-    val config = ConfigFactory.parseString(configAsString)
-    DeploymentConfigurationCreator.getDeploymentConfiguration(config)
   }
 }
 
@@ -295,7 +261,7 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ActorAddresses.clear
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val leader = new DefaultLeader(deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration)
+  val leader = new DefaultLeader(deploymentConfig =  DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   leader.start
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
   val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
