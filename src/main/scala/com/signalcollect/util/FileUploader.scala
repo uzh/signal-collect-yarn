@@ -85,11 +85,27 @@ class FileUploader(applicationId: String,
     fs.copyFromLocalFile(false, true, src, dest)
     fs.getFileStatus(dest)
   }
+  def createLocalResource(path: String): (String,LocalResource) ={
+    val localResource = Records.newRecord(classOf[LocalResource])
+    val filePath = new Path(path)
+    val fileStatus = fs.getFileStatus(filePath)
+    localResource.setType(LocalResourceType.FILE)
+    localResource.setVisibility(LocalResourceVisibility.PUBLIC)
+    localResource.setResource(ConverterUtils.getYarnUrlFromPath(filePath))
+    localResource.setTimestamp(fileStatus.getModificationTime())
+    localResource.setSize(fileStatus.getLen())
+    (path.split("/").last, localResource)
+  }
   
   private def getPathSuffix(fileName: String): String = {
       config.getString("deployment.hdfspath") + "/" + applicationId + s"/${fileName}"
     
     
+  }
+  
+  def getPathOnFs(fileName:String): String = {
+    val path =  config.getString("deployment.hdfspath") + "/" + applicationId + s"/${fileName}"
+    new Path(fs.getHomeDirectory(), path).toString
   }
   
   private def getSource(jar: String, jarName: String): Path = {

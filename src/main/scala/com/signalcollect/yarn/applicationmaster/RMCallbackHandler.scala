@@ -30,7 +30,7 @@ import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.DeploymentConfiguration
 
-class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration) extends AMRMClientAsync.CallbackHandler with LogHelper {
+class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration, applicationId: String) extends AMRMClientAsync.CallbackHandler with LogHelper {
 
   override def onContainersCompleted(completedContainers: java.util.List[ContainerStatus]): Unit = {
     log.info("Got response from RM for container ask, completedCnt="
@@ -64,14 +64,15 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
   private def startContainer(container: Container) = {
     val containerId = ContainerRegistry.register(container)
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
-    val jarFiles = getJarAndConfFilesInCurrentDir
+    val files = getJarAndConfFilesInCurrentDir
     val launchSettings = new LaunchSettings(
-      pathsToJars = jarFiles,
+      pathsToJars = files,
       arguments = List[String](containerId.toString,leaderIp),
       memory = deploymentConfig.memoryPerNode,
-      useDefaultYarnClientCreator = true)
+      useDefaultYarnClientCreator = true,
+      filesOnHdfs = Nil)
     val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings)
-    val ctx = launchContextCreator.createLaunchContext(container.getId().toString())
+    val ctx = launchContextCreator.createLaunchContext(applicationId)
     nodeManagerClient.startContainerAsync(container, ctx)
   }
 

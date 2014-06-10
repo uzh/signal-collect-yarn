@@ -24,7 +24,7 @@ object AkkaConfigCreator {
       else false
       AkkaConfig.get(
     serializeMessages = serializeMessages,
-    loggingLevel = Logging.WarningLevel, //Logging.DebugLevel,Logging.WarningLevel
+    loggingLevel = Logging.DebugLevel, //Logging.DebugLevel,Logging.WarningLevel
     kryoRegistrations = kryoRegistrations,
     kryoInitializer = kryoInit,
     port = port)

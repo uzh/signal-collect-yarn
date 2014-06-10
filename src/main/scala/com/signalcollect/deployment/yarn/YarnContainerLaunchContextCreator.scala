@@ -29,19 +29,23 @@ import org.apache.hadoop.yarn.util.Records
 import com.signalcollect.util.FileUploader
 import com.signalcollect.util.FileUploader
 
-class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings) {
-  
+class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlreadyInContainer: List[String] = Nil) {
   def createLaunchContext(applicationId: String): ContainerLaunchContext = {
+    val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator)
     val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
-    val jarResource = uploadFiles(applicationId)
+    val jarResource = uploader.uploadFiles()
+    val containerFiles = filesAlreadyInContainer.map(uploader.getPathOnFs(_))
+    val filesOnHdfs = launchSettings.filesOnHdfs ::: containerFiles
+    val hdfsFiles: List[(String, LocalResource)] = filesOnHdfs.map(uploader.createLocalResource(_))
+    hdfsFiles.foreach(file => jarResource.put(file._1 , file._2 ))
     launchContext.setLocalResources(jarResource)
 
     val commands = createCommand
     launchContext.setCommands(commands)
     launchContext
   }
-  
-   def jps(applicationId: String): ContainerLaunchContext = {
+
+  def jps(applicationId: String): ContainerLaunchContext = {
     val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
     val command = s"jps" +
       s" 1> ${launchSettings.logDir}/${launchSettings.mainClass}.stdout" +
@@ -58,11 +62,4 @@ class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings) {
     List(command)
   }
 
-  private def uploadFiles(applicationId: String): HashMap[String, LocalResource] = {
-    
-    val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator)
-    uploader.uploadFiles()
-  }
-  
-  
 }

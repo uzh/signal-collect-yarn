@@ -49,7 +49,8 @@ object ApplicationMaster extends App with LogHelper {
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
   val hdfs = new HdfsWrapper(true)
-  val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig)
+  val applicationId = args(0)
+  val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig, applicationId)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   run
