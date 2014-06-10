@@ -63,7 +63,7 @@ class DefaultLeader(
       val nodeActors = getNodeActors.toArray
       val algorithmObject = Class.forName(algorithm).newInstance.asInstanceOf[DeployableAlgorithm]
       println(s"start algorithm: $algorithm")
-      algorithmObject.execute(parameters, nodeActors, Some(system))
+      algorithmObject.execute(parameters, Some(nodeActors), Some(system))
     } catch {
       case e: Throwable => e.printStackTrace
     } finally {
