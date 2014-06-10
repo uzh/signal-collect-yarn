@@ -24,7 +24,7 @@ import com.signalcollect.nodeprovisioning.yarn.ContainerNodeCreator
 import java.net.InetAddress
 
 
-class LeaderContainerCluster extends Cluster {
+class LeaderCluster extends Cluster {
 
   def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
     val leader = LeaderCreator.getLeader(deploymentConfiguration)
