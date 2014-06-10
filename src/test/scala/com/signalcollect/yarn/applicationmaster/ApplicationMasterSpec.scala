@@ -23,6 +23,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.deployment.ClusterCreator
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import org.specs2.runner.JUnitRunner
+import com.signalcollect.deployment.DeploymentConfiguration
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
@@ -30,7 +31,14 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
   "ApplicationMaster" should {
 
     "run application successfull" in {
-      val deploymentConf = DeploymentConfigurationCreator.getDeploymentConfiguration
+      val deploymentConf =    new DeploymentConfiguration(
+      algorithm = "com.signalcollect.deployment.PageRankExample",
+      algorithmParameters = Map[String,String](),
+      memoryPerNode = 512,
+      numberOfNodes = 1,
+      copyFiles = Nil, // list of paths to files
+      cluster = "com.signalcollect.deployment.yarn.YarnCluster",
+      jvmArguments = "")
       val cluster = ClusterCreator.getCluster(deploymentConf)
       cluster.deploy(deploymentConf) === true
     }
