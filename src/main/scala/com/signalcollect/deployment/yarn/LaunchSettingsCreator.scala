@@ -24,15 +24,18 @@ import collection.JavaConversions._
 import com.signalcollect.deployment.DeploymentConfiguration
 
 object LaunchSettingsCreator {
-  def getSettingsForClass(klass: Class[_], deploymentConf: DeploymentConfiguration): LaunchSettings = {
+  def getSettingsForClass(klass: Class[_], deploymentConf: DeploymentConfiguration, testDeployment: Boolean = false): LaunchSettings = {
     val config = ConfigProvider.config
     val createJarOnTheFly = config.getBoolean("testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("testing.useMiniCluster")
-    val memory = config.getInt("deployment.leader-memory") 
+    val memory = config.getInt("deployment.leader-memory")
     val filesToUpload = deploymentConf.copyFiles
-    val yarnConfigFiles = List("yarn.conf","yarn-testing.conf","deployment.conf")
+    val yarnConfigFiles = if (testDeployment)
+      List("yarn.conf", "yarn-testing.conf", "testdeployment.conf")
+    else
+      List("yarn.conf", "yarn-testing.conf", "deployment.conf")
     val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
-    
+
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("testing.dependency").split(":").toList
@@ -46,8 +49,8 @@ object LaunchSettingsCreator {
       val files = yarnConfigFiles ::: List(dummySiteXml, pathToJar) ::: filesToUpload
       new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
 
-    } else if(createJarOnTheFly) {
-       val pathToJar = JarCreator.createJarFile(klass)
+    } else if (createJarOnTheFly) {
+      val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("testing.dependency").split(":").toList
       val files = pathToJar :: yarnConfigFiles ::: pathToDependencies ::: filesToUpload
       new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
