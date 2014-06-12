@@ -47,20 +47,19 @@ class JvmCommand(settings: LaunchSettings) extends LogHelper {
   }
 }
 
-class LaunchSettings(val memory: Int,
+case class LaunchSettings(val memory: Int,
   val mainClass: String = ConfigProvider.config.getString("deployment.mainClass"),
   val pathsToJars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
   val arguments: List[String] = List[String](),
   val useDefaultYarnClientCreator: Boolean = false,
   val jvmArguments: String = "-XX:+AggressiveOpts -XX:+AlwaysPreTouch -XX:+UseNUMA -XX:-UseBiasedLocking -XX:MaxInlineSize=1024",
+  val javaHome: String = Environment.JAVA_HOME.$(),
+  val classpath: String ,
+  val logDir: String = ApplicationConstants.LOG_DIR_EXPANSION_VAR,
   val filesOnHdfs: List[String]) {
-  val javaHome = Environment.JAVA_HOME.$()
-  val classpath = createClassPath
-  val logDir = ApplicationConstants.LOG_DIR_EXPANSION_VAR
   
   
-  private def createClassPath(): String = {
-    val jarNames = pathsToJars.map(_.split("/").last)
-    jarNames.mkString(":")
-  }
+//  private def createClassPath(): String = {
+//    val jarNames = pathsToJars.map(_.split("/").last).mkString(":")
+//  }
 }

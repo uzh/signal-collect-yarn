@@ -22,7 +22,7 @@ import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper
 import java.util.HashMap
 import org.apache.hadoop.yarn.api.records._
-import org.apache.hadoop.yarn.client.api.{YarnClient, YarnClientApplication}
+import org.apache.hadoop.yarn.client.api.{ YarnClient, YarnClientApplication }
 import org.apache.hadoop.yarn.util.Records
 import scala.collection.JavaConversions._
 import com.signalcollect.util.ConfigProvider
@@ -32,15 +32,12 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
   private lazy val submissionContext = application.getApplicationSubmissionContext()
   private lazy val applicationId = submissionContext.getApplicationId().toString()
   private lazy val launchContextFactory = new YarnContainerLaunchContextCreator(
-      new LaunchSettings(memory = launchSettings.memory,
-          mainClass = config.getString("deployment.applicationMaster"),
-          pathsToJars = launchSettings.pathsToJars,
-          filesOnHdfs = launchSettings.filesOnHdfs,
-          arguments = List[String](applicationId)))
+    launchSettings.copy(mainClass = config.getString("deployment.applicationMaster"),
+      arguments = List[String](applicationId)))
   private lazy val launchContext: ContainerLaunchContext =
     launchContextFactory.createLaunchContext(applicationId)
   val memory = launchSettings.memory
-  
+
   def getSubmissionContext(): ApplicationSubmissionContext = {
     setupLaunchAndSubmissionContext(submissionContext)
     submissionContext
@@ -59,5 +56,5 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
 
     submissionContext.setAMContainerSpec(launchContext)
   }
-  
+
 }

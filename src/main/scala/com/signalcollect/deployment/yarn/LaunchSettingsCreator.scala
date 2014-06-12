@@ -42,22 +42,26 @@ object LaunchSettingsCreator {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       println(" site xml is" + dummySiteXml)
       val files = pathToJar :: dummySiteXml :: yarnConfigFiles ::: pathToDependencies ::: filesToUpload
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
+      val classpath = files.map(_.split("/").last).mkString(":")
+      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       val pathToJar = config.getString("deployment.pathToJar")
       val files = yarnConfigFiles ::: List(dummySiteXml, pathToJar) ::: filesToUpload
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
+      val classpath = files.map(_.split("/").last).mkString(":")
+      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
 
     } else if (createJarOnTheFly) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("testing.dependency").split(":").toList
       val files = pathToJar :: yarnConfigFiles ::: pathToDependencies ::: filesToUpload
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
+      val classpath = files.map(_.split("/").last).mkString(":")
+      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
     } else {
       val pathToJar = config.getString("deployment.pathToJar")
       val files = pathToJar :: yarnConfigFiles ::: filesToUpload
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs)
+      val classpath = files.map(_.split("/").last).mkString(":")
+      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
     }
   }
 }

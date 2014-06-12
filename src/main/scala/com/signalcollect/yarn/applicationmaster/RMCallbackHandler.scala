@@ -64,14 +64,16 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
   private def startContainer(container: Container) = {
     val containerId = ContainerRegistry.register(container)
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
-    val files = getJarAndConfFilesInCurrentDir
+    val copyFiles = deploymentConfig.copyFiles.map(_.split("/").last)
+    val files = getJarAndConfFilesInCurrentDir ::: copyFiles
     val launchSettings = new LaunchSettings(
-      pathsToJars = files,
+      pathsToJars = Nil,
       arguments = List[String](containerId.toString,leaderIp),
       memory = deploymentConfig.memoryPerNode,
       useDefaultYarnClientCreator = true,
-      filesOnHdfs = Nil)
-    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings)
+      filesOnHdfs = Nil,
+      classpath = getJarAndConfFilesInCurrentDir.mkString(":"))
+    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files)
     val ctx = launchContextCreator.createLaunchContext(applicationId)
     nodeManagerClient.startContainerAsync(container, ctx)
   }
