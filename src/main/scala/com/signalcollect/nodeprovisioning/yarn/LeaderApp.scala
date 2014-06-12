@@ -13,5 +13,9 @@ object ContainerNodeApp extends App {
   val container = ContainerNodeCreator.getContainer(id = id, leaderIp = ip)
   container.start
   container.waitForTermination
-  System.exit(0) //ensures all Threads especially actorsystems are killed
+  if (container.isSuccessful) {
+    System.exit(0) //ensures all Threads especially actorsystems are killed
+  } else {
+    System.exit(-1)
+  }
 }

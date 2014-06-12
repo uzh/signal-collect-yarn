@@ -31,11 +31,13 @@ import ExecutionContext.Implicits.global
 import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.typesafe.config.Config
+import com.signalcollect.util.ConfigProvider
 
 trait ContainerNode {
   def start
   def shutdown
   def waitForTermination
+  def isSuccessful: Boolean
 }
 
 class DefaultContainerNode(id: Int,
@@ -50,6 +52,8 @@ class DefaultContainerNode(id: Int,
   val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, 0, 1, None), name = id.toString + "DefaultNodeActor")
 
   private var terminated = false
+  
+  private var successful = false
 
   def getShutdownActor(): ActorRef = {
     shutdownActor
@@ -64,6 +68,8 @@ class DefaultContainerNode(id: Int,
   }
 
   def isTerminated: Boolean = terminated
+  
+  def isSuccessful: Boolean = successful
 
   def start {
     async {
@@ -72,7 +78,13 @@ class DefaultContainerNode(id: Int,
         register
         println("wait for termination")
         waitForTermination
+        successful = true
+      } catch {
+        case e: Throwable => {
+          println("catched Exception")
+          throw e}
       } finally {
+        terminated = true
         shutdown
       }
     }
@@ -84,10 +96,16 @@ class DefaultContainerNode(id: Int,
   }
 
   def waitForTermination {
-    while (!ShutdownHelper.shuttingdown) {
+    val begin = System.currentTimeMillis()
+    while (!ShutdownHelper.shuttingdown && timeoutNotReached(begin)) {
       Thread.sleep(100)
     }
     terminated = true
+  }
+  
+  def timeoutNotReached(begin: Long): Boolean = {
+    val timeout = ConfigProvider.config.getInt("deployment.timeout")
+    (System.currentTimeMillis() - begin) / 1000 < timeout
   }
 
   def shutdown {

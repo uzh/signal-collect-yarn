@@ -39,6 +39,7 @@ class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlr
     val hdfsFiles: List[(String, LocalResource)] = filesOnHdfs.map(uploader.createLocalResource(_))
     hdfsFiles.foreach(file => jarResource.put(file._1 , file._2 ))
     launchContext.setLocalResources(jarResource)
+    
 
     val commands = createCommand
     launchContext.setCommands(commands)

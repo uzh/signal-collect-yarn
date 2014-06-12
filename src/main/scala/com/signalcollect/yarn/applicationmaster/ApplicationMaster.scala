@@ -62,9 +62,10 @@ object ApplicationMaster extends App with LogHelper {
     startContainers
     waitAndStopApplicationMaster
     } finally {
+      println("shuting down leader")
       leader.shutdown
+      System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
     }
-     System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
   }
 
   private def initApplicationMaster = {
@@ -104,26 +105,35 @@ object ApplicationMaster extends App with LogHelper {
     waitFinish
     val appStatus = if (ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
     val appMessage = "finished"
+    leader.shutdown
+    hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/")
     try {
       ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
     } catch {
       case e: Exception => log.info("failed unregister ApplicationMaster")
     }
-
     nodeManagerClient.stop()
     ressourcManagerClient.stop()
-    hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/")
-   
+    
   }
 
   private def waitFinish: Unit = {
+    val begin = System.currentTimeMillis()
     try {
-      while (!leader.isExecutionFinished) {
+      while (!leader.isExecutionFinished && timeoutNotReached(begin)) {
         Thread.sleep(100)
+      }
+      if(!timeoutNotReached(begin)){
+        println("Timeout reached!!!")
       }
     } catch {
       case e: Exception => log.info("interrupted")
     }
+  }
+  
+  def timeoutNotReached(begin: Long): Boolean = {
+    val timeout = ConfigProvider.config.getInt("deployment.timeout")
+    (System.currentTimeMillis() - begin) / 1000 < timeout
   }
 
 }
