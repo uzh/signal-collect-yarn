@@ -117,9 +117,16 @@ class DefaultContainerNode(id: Int,
   }
 
   def startActorSystem: ActorSystem = {
+    try {
     val system = ActorSystem("SignalCollect", akkaConfig)
     ActorSystemRegistry.register(system)
-    system
+    } catch {
+      case e:Throwable => {
+        println("failed to start Actorsystem")
+        throw e
+      }
+    }
+    ActorSystemRegistry.retrieve("SignalCollect").get
   }
 
 }

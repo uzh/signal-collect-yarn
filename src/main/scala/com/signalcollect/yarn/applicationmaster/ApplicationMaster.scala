@@ -57,10 +57,10 @@ object ApplicationMaster extends App with LogHelper {
 
   def run() {
     try {
-    initApplicationMaster
-    leader.start
-    startContainers
-    waitAndStopApplicationMaster
+      initApplicationMaster
+      leader.start
+      startContainers
+      waitAndStopApplicationMaster
     } finally {
       println("shuting down leader")
       leader.shutdown
@@ -114,7 +114,7 @@ object ApplicationMaster extends App with LogHelper {
     }
     nodeManagerClient.stop()
     ressourcManagerClient.stop()
-    
+
   }
 
   private def waitFinish: Unit = {
@@ -123,14 +123,14 @@ object ApplicationMaster extends App with LogHelper {
       while (!leader.isExecutionFinished && timeoutNotReached(begin)) {
         Thread.sleep(100)
       }
-      if(!timeoutNotReached(begin)){
+      if (!timeoutNotReached(begin)) {
         println("Timeout reached!!!")
       }
     } catch {
       case e: Exception => log.info("interrupted")
     }
   }
-  
+
   def timeoutNotReached(begin: Long): Boolean = {
     val timeout = ConfigProvider.config.getInt("deployment.timeout")
     (System.currentTimeMillis() - begin) / 1000 < timeout
