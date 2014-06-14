@@ -22,11 +22,11 @@ import com.jcraft.jsch.JSch
 import com.jcraft.jsch.UserInfo
 
 case class TunnelConfiguration(host: String = "host",
-  user: String = "ec2-user",
+  user: String = "hadoop",
   sshPort: Int = 22,
-  localPort: Int = 9080,
-  remotePort: Int = 80,
-  remoteHost: String = "host",
+  localPort: Int = 8088,
+  remotePort: Int = 9026,
+  remoteHost: String = "localhost",
   pathToPem: String = "signalcollect.pem")
 
 object SshTunnel {
@@ -36,8 +36,18 @@ object SshTunnel {
     jsch.addIdentity(config.pathToPem)
     val session = jsch.getSession(config.user, config.host, config.sshPort)
     session.setConfig("StrictHostKeyChecking", "no")
-    session.connect()
+    try {
+      session.connect()
+    } catch {
+      case e: Throwable => {
+        println(e.getLocalizedMessage())
+        throw e
+      }
+    }
     session.setPortForwardingL(config.localPort, config.remoteHost, config.remotePort)
+    while (true) {
+      Thread.sleep(1000)
+    }
   }
 
 }

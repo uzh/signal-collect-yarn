@@ -19,15 +19,23 @@
 
 package com.signalcollect.deployment.amazon
 
+import scala.collection.JavaConversions._
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClient
+import com.amazonaws.services.elasticmapreduce.model.HadoopJarStepConfig
+import com.amazonaws.services.elasticmapreduce.model.JobFlowInstancesConfig
+import com.amazonaws.services.elasticmapreduce.model.ListInstancesRequest
+import com.amazonaws.services.elasticmapreduce.model.RunJobFlowRequest
+import com.amazonaws.services.elasticmapreduce.model.StepConfig
+import com.amazonaws.services.elasticmapreduce.util.StepFactory
 import com.signalcollect.deployment.Cluster
 import com.signalcollect.deployment.DeploymentConfiguration
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.services.elasticmapreduce.util.StepFactory
-import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClient
-import com.amazonaws.services.elasticmapreduce.model.JobFlowInstancesConfig
-import com.amazonaws.services.elasticmapreduce.model.StepConfig
-import com.amazonaws.services.elasticmapreduce.model.RunJobFlowRequest
-import com.amazonaws.services.elasticmapreduce.model.HadoopJarStepConfig
+import com.signalcollect.deployment.ssh.SshTunnel
+import com.signalcollect.deployment.ssh.TunnelConfiguration
+import com.amazonaws.services.elasticmapreduce.model.ListInstanceGroupsRequest
+import java.net.InetAddress
+import java.net.Socket
+import java.net.InetSocketAddress
 
 class AmazonCluster extends Cluster {
 
@@ -36,19 +44,24 @@ class AmazonCluster extends Cluster {
     val credentials = new BasicAWSCredentials(amazonConfig.accessKey, amazonConfig.secretKey)
     val emr = new AmazonElasticMapReduceClient(credentials)
     emr.setEndpoint(amazonConfig.endpoint)
-    
+
+//    val clusterId = createCluster(amazonConfig, emr)
+    val clusterId = "j-WV8M7IUJRJ50"
+    println(clusterId)
+    val masterIp = getPublicIp(emr, clusterId)
+//    val masterIp = "54.72.252.92"
+    println(masterIp)
+    SshTunnel.open(new TunnelConfiguration(host = masterIp))
+    true
+  }
+
+  private def createCluster(amazonConfig: AmazonConfiguration, emr: AmazonElasticMapReduceClient): String = {
     val stepFactory = new StepFactory()
 
     val enabledebugging = new StepConfig()
       .withName("Enable debugging")
       .withActionOnFailure("TERMINATE_JOB_FLOW")
       .withHadoopJarStep(stepFactory.newEnableDebuggingStep())
-
-    val hadoopConfig1 = new HadoopJarStepConfig()
-      .withJar("./target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar")
-      .withMainClass("com.signalcollect.yarn.applicationmaster.ApplicationMaster")
-      .withArgs("applicationId")
-    val customStep = new StepConfig("Step1", hadoopConfig1)
 
     val request = new RunJobFlowRequest()
       .withName(amazonConfig.name)
@@ -63,10 +76,43 @@ class AmazonCluster extends Cluster {
         .withSlaveInstanceType(amazonConfig.slaveType))
 
     val result = emr.runJobFlow(request)
-    true
+    val clusterId = result.getJobFlowId()
+    waitClusterRunning(emr, clusterId)
+    clusterId
   }
 
+  private def getPublicIp(emr: AmazonElasticMapReduceClient, clusterId: String): String = {
+    val clusters = emr.listClusters().getClusters().filter(_.getId() == clusterId).foreach(println(_))
+    val instanceRequest = new ListInstancesRequest()
+    instanceRequest.setClusterId(clusterId)
+    val instanceGroupRequest = new ListInstanceGroupsRequest()
+    instanceGroupRequest.setClusterId(clusterId)
+    val instances = emr.listInstances(instanceRequest).getInstances()
+    val instanceGroups = emr.listInstanceGroups(instanceGroupRequest).getInstanceGroups().foreach(println(_))
+    instances.foreach(println(_))
+    val ipAddress = "54.72.252.92"
+    val inet = InetAddress.getByName(ipAddress)
+
+    println("Sending Ping Request to " + ipAddress)
+    println(inet.isReachable(5000))
+    instances.get(0).getPublicIpAddress()
+  }
+
+  private def waitClusterRunning(emr: AmazonElasticMapReduceClient, clusterId: String): Unit = {
+    while (!emr.listClusters().getClusters().filter(_.getId() == clusterId).forall(c => c.getStatus().getState() == "RUNNING" || c.getStatus().getState() == "WAITING")) {
+      Thread.sleep(1000)
+      emr.listClusters().getClusters().filter(_.getId() == clusterId).foreach(c => println(c.getStatus().getState()))
+    }
+  }
+  
+  def privateportIsOpen( ip: String, port: Int, timeout: Int): Boolean = {
+        try {
+            val socket = new Socket()
+            socket.connect(new InetSocketAddress(ip, port), timeout)
+            socket.close()
+            true
+        } catch {
+          case e: Throwable => false
+        }
+    }
 }
-
-
-
