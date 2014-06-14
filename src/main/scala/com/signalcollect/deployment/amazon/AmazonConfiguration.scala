@@ -37,7 +37,7 @@ case class AmazonConfiguration(
   masterType: String = "m1.small",
   slaveType: String = "m1.small",
   hadoopVersion: String = "2.2.0",
-  region: String = "eu-west-1")
+  endpoint: String = "elasticmapreduce.eu-west-1.amazonaws.com")
 
 /**
  * Creator of AmazonConfiguration reads configuration from file 'amazon.conf'
@@ -64,7 +64,7 @@ object AmazonConfigurationCreator {
       masterType = config.getString("amazon.master-type"),
       slaveType = config.getString("amazon.slave-type"),
       hadoopVersion = config.getString("amazon.hadoop-version"),
-      region = config.getString("amazon.region"))
+      endpoint = config.getString("amazon.endpoint"))
 
   /**
    * useful for testing or injecting another configuration than 'amazon.conf'

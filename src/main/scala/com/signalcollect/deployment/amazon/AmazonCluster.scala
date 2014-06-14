@@ -35,7 +35,7 @@ class AmazonCluster extends Cluster {
     val amazonConfig = AmazonConfigurationCreator.getAmazonConfiguration
     val credentials = new BasicAWSCredentials(amazonConfig.accessKey, amazonConfig.secretKey)
     val emr = new AmazonElasticMapReduceClient(credentials)
-    emr.setEndpoint("eu-west-1")
+    emr.setEndpoint(amazonConfig.endpoint)
     
     val stepFactory = new StepFactory()
 
