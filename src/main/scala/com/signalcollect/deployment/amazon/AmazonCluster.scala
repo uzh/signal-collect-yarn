@@ -35,7 +35,8 @@ class AmazonCluster extends Cluster {
     val amazonConfig = AmazonConfigurationCreator.getAmazonConfiguration
     val credentials = new BasicAWSCredentials(amazonConfig.accessKey, amazonConfig.secretKey)
     val emr = new AmazonElasticMapReduceClient(credentials)
- 
+    emr.setEndpoint("eu-west-1")
+    
     val stepFactory = new StepFactory()
 
     val enabledebugging = new StepConfig()
@@ -44,7 +45,7 @@ class AmazonCluster extends Cluster {
       .withHadoopJarStep(stepFactory.newEnableDebuggingStep())
 
     val hadoopConfig1 = new HadoopJarStepConfig()
-      .withJar("./target/")
+      .withJar("./target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar")
       .withMainClass("com.signalcollect.yarn.applicationmaster.ApplicationMaster")
       .withArgs("applicationId")
     val customStep = new StepConfig("Step1", hadoopConfig1)
