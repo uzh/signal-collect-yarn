@@ -62,6 +62,9 @@ libraryDependencies ++= Seq(
   "log4j" % "log4j" % "1.2.17" % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.11"  % "test",
+  "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test",
+  "org.easymock" % "easymock" % "3.2" % "test",
   "com.typesafe.akka" %% "akka-remote" % "2.3.2" force()
 )
 
