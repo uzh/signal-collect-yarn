@@ -62,16 +62,21 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
   }
 
   private def startContainer(container: Container) = {
+    val config = ConfigProvider.config
     val containerId = ContainerRegistry.register(container)
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
-    val files = getJarAndConfFilesInCurrentDir
+    val copyFiles = deploymentConfig.copyFiles.map(_.split("/").last)
+    val dependencyOnHdfs = config.getBoolean("testing.onHdfs")
+    val files = getJarAndConfFilesInCurrentDir.filter(!_.contains("signal-collect-yarn-assembly-1.0-SNAPSHOT") || !dependencyOnHdfs) ::: copyFiles
+    val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
     val launchSettings = new LaunchSettings(
-      pathsToJars = files,
+      pathsToJars = Nil,
       arguments = List[String](containerId.toString,leaderIp),
       memory = deploymentConfig.memoryPerNode,
       useDefaultYarnClientCreator = true,
-      filesOnHdfs = Nil)
-    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings)
+      filesOnHdfs = filesOnHdfs,
+      classpath = (getJarAndConfFilesInCurrentDir ::: filesOnHdfs).mkString(":"))
+    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files)
     val ctx = launchContextCreator.createLaunchContext(applicationId)
     nodeManagerClient.startContainerAsync(container, ctx)
   }
