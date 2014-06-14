@@ -40,8 +40,6 @@ class MiniYarnClientCreator extends YarnClientCreatorImpl {
   }
 
   def stopMiniCluster() = {
-    try {
       MiniCluster.cluster.stop()
-    }
   }
 }
