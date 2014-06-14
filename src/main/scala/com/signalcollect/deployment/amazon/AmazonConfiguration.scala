@@ -29,14 +29,15 @@ import com.typesafe.config.Config
  */
 case class AmazonConfiguration(
   name: String = "signalcollect",
-  accessKey: String,
-  secretKey: String,
+  accessKey: String = "changeme",
+  secretKey: String = "changeme",
   s3Folder: String = "s3://myawsbucket/",
   keypair: String = "keypair",
   instanceCount: Int = 2,
   masterType: String = "m1.small",
   slaveType: String = "m1.small",
-  hadoopVersion: String = "2.2.0")
+  hadoopVersion: String = "2.2.0",
+  region: String = "eu-west-1")
 
 /**
  * Creator of AmazonConfiguration reads configuration from file 'amazon.conf'
@@ -57,12 +58,13 @@ object AmazonConfigurationCreator {
       name = config.getString("amazon.name"),
       accessKey = config.getString("amazon.access-key"),
       secretKey = config.getString("amazon.secret-key"),
-      s3Folder = config.getString("amazon.log-uri"),
+      s3Folder = config.getString("amazon.s3-folder"),
       keypair = config.getString("amazon.ec2-keypair"),
       instanceCount = config.getInt("amazon.instance-count"),
       masterType = config.getString("amazon.master-type"),
       slaveType = config.getString("amazon.slave-type"),
-      hadoopVersion = config.getString("amazon.hadoop-version"))
+      hadoopVersion = config.getString("amazon.hadoop-version"),
+      region = config.getString("amazon.region"))
 
   /**
    * useful for testing or injecting another configuration than 'amazon.conf'
