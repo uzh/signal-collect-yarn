@@ -37,6 +37,7 @@ class AmazonConfigurationSpec extends FlatSpec with Checkers {
     		slave-type = "m1.small"
     		hadoop-version = "2.2.0"
             endpoint = "elasticmapreduce.eu-west-1.amazonaws.com"
+            clusterId = "clusterId"
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     AmazonConfigurationCreator.getAmazonConfiguration(config)
@@ -90,5 +91,10 @@ class AmazonConfigurationSpec extends FlatSpec with Checkers {
   it should "contain endpoint" in {
     val deploymentConfig = createAmazonConfiguration
     assert(deploymentConfig.endpoint === "elasticmapreduce.eu-west-1.amazonaws.com")
+  }
+  
+  it should "contain clusterId" in {
+	  val deploymentConfig = createAmazonConfiguration
+			  assert(deploymentConfig.clusterId === "clusterId")
   }
 }

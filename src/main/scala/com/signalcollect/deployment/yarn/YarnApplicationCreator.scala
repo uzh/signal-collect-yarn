@@ -37,6 +37,10 @@ object YarnApplicationCreator extends LogHelper {
           config.getString("deployment.hadoop-overrides.yarn.resourcemanager.address"))
         throw e
       }
+      case e: Throwable => {
+        println(e.getMessage())
+        throw e
+      }
     }
   }
 

@@ -36,6 +36,7 @@ class YarnDeploymentClient(launchSettings: LaunchSettings) {
   }
 
   def submitApplication(): ApplicationId = {
-    yarnClient.submitApplication(submissionContext)
+    val appId = yarnClient.submitApplication(submissionContext)
+    appId
   }
 }

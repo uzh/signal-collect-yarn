@@ -27,7 +27,7 @@ import java.util.concurrent.TimeoutException
 case class TunnelConfiguration(host: String = "host",
   user: String = "hadoop",
   sshPort: Int = 22,
-  ports: List[Int] = List(9000,9022,9023,9024,9025,9026,9035,50070),
+  ports: List[Int] = List(9000,9022,9023,9024,9025,9026,9035,50070,9200),
   remoteHost: String = "localhost",
   pathToPem: String = "signalcollect.pem")
 

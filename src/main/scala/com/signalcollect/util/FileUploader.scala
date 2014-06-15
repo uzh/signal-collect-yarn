@@ -33,12 +33,13 @@ import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 class FileUploader(applicationId: String, 
   files: List[String], 
   useDefaultYarnClient: Boolean = false) {
+  println("set username")
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
   if(useDefaultYarnClient) YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
-
+  
   def uploadFiles(): HashMap[String, LocalResource] = {
     val filesToUpload = getFiles()
     filesToUpload.foreach(jar => {

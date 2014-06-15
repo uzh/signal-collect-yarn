@@ -50,9 +50,9 @@ class AmazonCluster extends Cluster {
     }else {
       amazonConfig.clusterId
     }
-    val masterIp = getPublicIp(emr, clusterId)
+    val masterIp = getPublicAndPrivateIp(emr, clusterId)
     println(s"open tunnels to master on $masterIp")
-    SshTunnel.open(new TunnelConfiguration(host = masterIp))
+    SshTunnel.open(new TunnelConfiguration(host = masterIp._1, remoteHost = masterIp._2))
     true
   }
 
@@ -88,14 +88,15 @@ class AmazonCluster extends Cluster {
     emr.terminateJobFlows(terminateRequest)
   }
 
-  private def getPublicIp(emr: AmazonElasticMapReduceClient, clusterId: String): String = {
+  private def getPublicAndPrivateIp(emr: AmazonElasticMapReduceClient, clusterId: String): (String, String) = {
     val instanceRequest = new ListInstancesRequest()
     instanceRequest.setClusterId(clusterId)
     val instances = emr.listInstances(instanceRequest).getInstances()
     
-    val ips = instances.map(_.getPublicIpAddress).toList
-    val ip = SshTunnel.getOneOpenSsh(ips)
-    ip
+    val ips = instances.map(ip => (ip.getPublicIpAddress,ip.getPrivateIpAddress())).toList
+    println(instances)
+    val ip = SshTunnel.getOneOpenSsh(ips.map(ip => ip._1))
+    ips.find(_._1  == ip).get
   }
 
   private def waitClusterRunning(emr: AmazonElasticMapReduceClient, clusterId: String): Unit = {
