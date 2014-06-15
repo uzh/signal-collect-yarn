@@ -20,12 +20,14 @@ package com.signalcollect.deployment.ssh
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.UserInfo
+import java.net.Socket
+import java.net.InetSocketAddress
+import java.util.concurrent.TimeoutException
 
 case class TunnelConfiguration(host: String = "host",
   user: String = "hadoop",
   sshPort: Int = 22,
-  localPort: Int = 8088,
-  remotePort: Int = 9026,
+  ports: List[Int] = List(9000,9022,9023,9024,9025,9026,9035,50070),
   remoteHost: String = "localhost",
   pathToPem: String = "signalcollect.pem")
 
@@ -44,10 +46,42 @@ object SshTunnel {
         throw e
       }
     }
-    session.setPortForwardingL(config.localPort, config.remoteHost, config.remotePort)
+    config.ports.foreach(port => session.setPortForwardingL(port, config.remoteHost, port))
     while (true) {
       Thread.sleep(1000)
     }
   }
 
+  def portIsOpen(ip: String, port: Int, timeout: Int): Boolean = {
+    try {
+      val socket = new Socket()
+      socket.connect(new InetSocketAddress(ip, port), timeout)
+      socket.close()
+      true
+    } catch {
+      case e: Throwable => false
+    }
+  }
+  
+  def isSshOpen(ip: String, timeout: Int = 5000): Boolean = {
+    val sshPort = 22
+    portIsOpen(ip, sshPort, timeout)
+  }
+  
+  def getOpenSsh(ips: List[String], timeout: Int = 5000): List[String] = {
+    ips.par.filter(ip => isSshOpen(ip, timeout)).toList
+  }
+  
+  def getOneOpenSsh(ips: List[String]): String = {
+    getOpenSshRecursive(ips: List[String], 100)
+  }
+  
+  def getOpenSshRecursive(ips: List[String], timeout: Int): String = {
+    getOpenSsh(ips, timeout) match {
+      case x if timeout > 10000 => throw new TimeoutException
+      case Nil => getOpenSshRecursive(ips: List[String], timeout*2)
+      case ip :: xs => ip
+    }
+  }
+  
 }

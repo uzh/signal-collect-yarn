@@ -36,6 +36,7 @@ import com.amazonaws.services.elasticmapreduce.model.ListInstanceGroupsRequest
 import java.net.InetAddress
 import java.net.Socket
 import java.net.InetSocketAddress
+import com.amazonaws.services.elasticmapreduce.model.TerminateJobFlowsRequest
 
 class AmazonCluster extends Cluster {
 
@@ -44,13 +45,13 @@ class AmazonCluster extends Cluster {
     val credentials = new BasicAWSCredentials(amazonConfig.accessKey, amazonConfig.secretKey)
     val emr = new AmazonElasticMapReduceClient(credentials)
     emr.setEndpoint(amazonConfig.endpoint)
-
-//    val clusterId = createCluster(amazonConfig, emr)
-    val clusterId = "j-WV8M7IUJRJ50"
-    println(clusterId)
+    
+    val clusterId = if(amazonConfig.clusterId == ""){createCluster(amazonConfig, emr)
+    }else {
+      amazonConfig.clusterId
+    }
     val masterIp = getPublicIp(emr, clusterId)
-//    val masterIp = "54.72.252.92"
-    println(masterIp)
+    println(s"open tunnels to master on $masterIp")
     SshTunnel.open(new TunnelConfiguration(host = masterIp))
     true
   }
@@ -78,24 +79,23 @@ class AmazonCluster extends Cluster {
     val result = emr.runJobFlow(request)
     val clusterId = result.getJobFlowId()
     waitClusterRunning(emr, clusterId)
+    println(s"started cluster with id $clusterId")
     clusterId
+  }
+  
+  def terminateCluster(emr: AmazonElasticMapReduceClient, clusterId: String) {
+    val terminateRequest =  new TerminateJobFlowsRequest().withJobFlowIds(clusterId)
+    emr.terminateJobFlows(terminateRequest)
   }
 
   private def getPublicIp(emr: AmazonElasticMapReduceClient, clusterId: String): String = {
-    val clusters = emr.listClusters().getClusters().filter(_.getId() == clusterId).foreach(println(_))
     val instanceRequest = new ListInstancesRequest()
     instanceRequest.setClusterId(clusterId)
-    val instanceGroupRequest = new ListInstanceGroupsRequest()
-    instanceGroupRequest.setClusterId(clusterId)
     val instances = emr.listInstances(instanceRequest).getInstances()
-    val instanceGroups = emr.listInstanceGroups(instanceGroupRequest).getInstanceGroups().foreach(println(_))
-    instances.foreach(println(_))
-    val ipAddress = "54.72.252.92"
-    val inet = InetAddress.getByName(ipAddress)
-
-    println("Sending Ping Request to " + ipAddress)
-    println(inet.isReachable(5000))
-    instances.get(0).getPublicIpAddress()
+    
+    val ips = instances.map(_.getPublicIpAddress).toList
+    val ip = SshTunnel.getOneOpenSsh(ips)
+    ip
   }
 
   private def waitClusterRunning(emr: AmazonElasticMapReduceClient, clusterId: String): Unit = {
@@ -105,7 +105,7 @@ class AmazonCluster extends Cluster {
     }
   }
   
-  def privateportIsOpen( ip: String, port: Int, timeout: Int): Boolean = {
+  def portIsOpen( ip: String, port: Int, timeout: Int): Boolean = {
         try {
             val socket = new Socket()
             socket.connect(new InetSocketAddress(ip, port), timeout)
