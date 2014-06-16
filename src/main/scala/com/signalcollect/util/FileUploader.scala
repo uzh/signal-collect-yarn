@@ -36,7 +36,7 @@ class FileUploader(applicationId: String,
   println("set username")
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
-  if(useDefaultYarnClient) YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
+  if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator()
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
   

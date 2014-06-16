@@ -46,16 +46,6 @@ class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlr
     launchContext
   }
 
-  def jps(applicationId: String): ContainerLaunchContext = {
-    val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
-    val command = s"jps" +
-      s" 1> ${launchSettings.logDir}/${launchSettings.mainClass}.stdout" +
-      s" 2> ${launchSettings.logDir}/${launchSettings.mainClass}.stderr"
-    val commands = List(command)
-    launchContext.setCommands(commands)
-    launchContext
-  }
-
   private def createCommand: List[String] = {
     val jvmCommand = new JvmCommand(launchSettings)
     val command = jvmCommand.getCommand

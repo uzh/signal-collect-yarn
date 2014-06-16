@@ -26,21 +26,23 @@ import org.apache.hadoop.yarn.client.api.YarnClient
 import scala.collection.JavaConversions._
 import com.signalcollect.util.ConfigProvider
 
-class DefaultYarnClientCreator extends YarnClientCreatorImpl with LogHelper{
+class DefaultYarnClientCreator(useOverrides: Boolean = true, masterIp: String = "localhost") extends YarnClientCreatorImpl with LogHelper {
   val config = ConfigProvider.config
   override lazy val yarnClient = createYarnClient
 
   def createYarnClient: YarnClient = {
-    val yarnOverrides = config.getConfig("deployment.hadoop-overrides").entrySet().iterator()
+    println(s"useHadoopOverrides = $useOverrides")
     val yarnConfig = new YarnConfiguration()
-    yarnConfig.set("fs.hdfs.impl", 
-        classOf[org.apache.hadoop.hdfs.DistributedFileSystem].getName()
-    )
+    val yarnOverrides = config.getConfig("deployment.hadoop-overrides").entrySet().iterator()
+    val tupleListOverrides = yarnOverrides.map(entry => (entry.getKey,entry.getValue.unwrapped.toString())).toList
+    val replaceMaster = tupleListOverrides.map(entry => (entry._1 ,entry._2.replaceAll("master", masterIp)))
+    yarnConfig.set("fs.hdfs.impl",
+      classOf[org.apache.hadoop.hdfs.DistributedFileSystem].getName())
     yarnConfig.set("fs.file.impl",
-        classOf[org.apache.hadoop.fs.LocalFileSystem].getName()
-    )
-    yarnOverrides.foreach(e => yarnConfig.set(e.getKey(), e.getValue().unwrapped().toString()))
+      classOf[org.apache.hadoop.fs.LocalFileSystem].getName())
+    replaceMaster.foreach(e => yarnConfig.set(e._1, e._2))
     yarnConfig.reloadConfiguration()
+    println(yarnConfig.get("yarn.resourcemanager.admin.address"))
     createYarnClient(yarnConfig)
   }
 

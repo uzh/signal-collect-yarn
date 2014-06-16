@@ -31,7 +31,7 @@ import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 
 class HdfsWrapper(useDefaultYarnClient: Boolean = false) {
   val config = ConfigProvider.config
-  if(useDefaultYarnClient) YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
+  if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
 

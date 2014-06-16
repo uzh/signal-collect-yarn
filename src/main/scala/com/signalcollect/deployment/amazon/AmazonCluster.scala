@@ -37,6 +37,7 @@ import java.net.InetAddress
 import java.net.Socket
 import java.net.InetSocketAddress
 import com.amazonaws.services.elasticmapreduce.model.TerminateJobFlowsRequest
+import com.signalcollect.deployment.yarn.YarnCluster
 
 class AmazonCluster extends Cluster {
 
@@ -51,9 +52,14 @@ class AmazonCluster extends Cluster {
       amazonConfig.clusterId
     }
     val masterIp = getPublicAndPrivateIp(emr, clusterId)
-    println(s"open tunnels to master on $masterIp")
+    println(s"open tunnels to master on $masterIp to use cluster $clusterId" )
     SshTunnel.open(new TunnelConfiguration(host = masterIp._1, remoteHost = masterIp._2))
-    true
+    val yarncluster = new YarnCluster(masterIp._2)
+    val result = yarncluster.deploy(deploymentConfiguration)
+    if (amazonConfig.stopCluster){
+      terminateCluster(emr, clusterId)
+    }
+    result
   }
 
   private def createCluster(amazonConfig: AmazonConfiguration, emr: AmazonElasticMapReduceClient): String = {

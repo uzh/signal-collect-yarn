@@ -38,7 +38,8 @@ case class AmazonConfiguration(
   slaveType: String = "m1.small",
   hadoopVersion: String = "2.2.0",
   endpoint: String = "elasticmapreduce.eu-west-1.amazonaws.com",
-  clusterId: String = "")
+  clusterId: String = "",
+  stopCluster: Boolean = false)
 
 /**
  * Creator of AmazonConfiguration reads configuration from file 'amazon.conf'
@@ -66,7 +67,8 @@ object AmazonConfigurationCreator {
       slaveType = config.getString("amazon.slave-type"),
       hadoopVersion = config.getString("amazon.hadoop-version"),
       endpoint = config.getString("amazon.endpoint"),
-      clusterId = config.getString("amazon.clusterId"))
+      clusterId = config.getString("amazon.clusterId"),
+      stopCluster = config.getBoolean("amazon.stop-cluster"))
 
   /**
    * useful for testing or injecting another configuration than 'amazon.conf'

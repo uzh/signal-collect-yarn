@@ -26,21 +26,23 @@ import com.signalcollect.util.ConfigProvider
 
 object YarnClientCreator {
   val config = ConfigProvider.config
-  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator
-  var overrideFactory = false
+  var useHadoopOverrides = true
+  var masterIp = "localhost"
+  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(useHadoopOverrides,masterIp)
+  var useDefault = false
   
   
   /**
    * This function allows to override the Creator which is chosen in the createFactory function
    * it is useful when running a container on the MiniCluster
    */
-  def overrideFactory(factory: YarnClientCreatorImpl){
-    overrideFactory = true
-    creator = factory
+  def useDefaultCreator() ={
+    useDefault = true
+    creator = new DefaultYarnClientCreator(useHadoopOverrides,masterIp)
   }
   
   def yarnClient(): YarnClient = {
-    if(!overrideFactory){
+    if(!useDefault){
     	creator = createFactory()
     }
     creator.yarnClient
@@ -54,7 +56,7 @@ object YarnClientCreator {
     if (useMiniCluster){
       new MiniYarnClientCreator
     } else {
-      new DefaultYarnClientCreator
+      new DefaultYarnClientCreator(useHadoopOverrides)
     }
   }
 }

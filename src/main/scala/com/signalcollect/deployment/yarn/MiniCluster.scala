@@ -53,7 +53,6 @@ object MiniCluster {
     cluster
   }
   def getClusterConfig(): Configuration = {
-    println(url)
     if (url == null) {
       throw new RuntimeException(s"Could not find ' $dummyFilename ' dummy file in classpath")
     }

@@ -39,11 +39,22 @@ import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 import com.signalcollect.util.HdfsWrapper
+import scala.concurrent._
+import scala.concurrent.duration._
+import ExecutionContext.Implicits.global
 
 object ApplicationMaster extends App with LogHelper {
-  YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
+  println("override factory")
+  val masterIp = args(1)
+  YarnClientCreator.masterIp = masterIp
+  YarnClientCreator.useHadoopOverrides = false
+  YarnClientCreator.useDefaultCreator
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
-  val config: Configuration = YarnClientCreator.yarnClient.getConfig()
+  val f: Future[Configuration] = Future {
+    
+	  YarnClientCreator.yarnClient.getConfig()
+  }
+  val config = Await.result(f, 10.seconds)
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   val containerListener = new NMCallbackHandler()

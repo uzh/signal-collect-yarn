@@ -47,9 +47,6 @@ object SshTunnel {
       }
     }
     config.ports.foreach(port => session.setPortForwardingL(port, config.remoteHost, port))
-    while (true) {
-      Thread.sleep(1000)
-    }
   }
 
   def portIsOpen(ip: String, port: Int, timeout: Int): Boolean = {

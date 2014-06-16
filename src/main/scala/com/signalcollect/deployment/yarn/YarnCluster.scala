@@ -15,13 +15,14 @@ import com.signalcollect.deployment.DeploymentConfiguration
 import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
-class YarnCluster extends Cluster {
+class YarnCluster(masterIp:String = "localhost") extends Cluster {
   var testDeployment = false
   lazy val yarnClient = YarnClientCreator.yarnClient
   override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
     System.setProperty("HADOOP_USER_NAME", "hadoop")
     val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration, testDeployment)
-    val client = new YarnDeploymentClient(launchSettings)
+    val launchSettingsWithMasterIp = launchSettings.copy(arguments = launchSettings.arguments :+ masterIp)
+    val client = new YarnDeploymentClient(launchSettingsWithMasterIp)
     val application = client.submitApplication()
     waitForTermination(application)
     val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
