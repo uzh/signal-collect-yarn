@@ -58,6 +58,7 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "minicluster" % "2.2.0"	,
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion,
   "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.4" % "compile",
+  "org.apache.commons" % "commons-compress" % "1.5" % "compile",
   "log4j" % "log4j" % "1.2.17" % "compile",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.11"  % "test",

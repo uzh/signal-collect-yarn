@@ -48,7 +48,6 @@ class HdfsWrapper(useDefaultYarnClient: Boolean = false) {
   private def uploadAndGetFileStatus(src: String, dest: String): FileStatus = {
     val srcPath = new Path(src)
     val destPath = new Path(fs.getHomeDirectory(),dest)
-    println(s"uploading file from $src to $dest")
     fs.copyFromLocalFile(false, true, srcPath, destPath)
     fs.getFileStatus(destPath)
   }
