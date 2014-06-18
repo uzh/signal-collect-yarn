@@ -39,8 +39,10 @@ import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 import com.signalcollect.util.HdfsWrapper
+import com.signalcollect.util.NodeKiller
 
 object ApplicationMaster extends App with LogHelper {
+//  NodeKiller.killOtherMasterAndNodes
   YarnClientCreator.overrideFactory(new DefaultYarnClientCreator)
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   val config: Configuration = YarnClientCreator.yarnClient.getConfig()

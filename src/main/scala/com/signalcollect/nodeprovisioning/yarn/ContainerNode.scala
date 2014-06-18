@@ -1,4 +1,4 @@
-/**
+/*
  *  @author Tobias Bachmann
  *
  *  Copyright 2014 University of Zurich
@@ -49,7 +49,8 @@ class DefaultContainerNode(id: Int,
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
-  val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, 0, 1, None), name = id.toString + "DefaultNodeActor")
+  println(s"start nodeActor with id $id on $numberOfNodes nodes")
+  val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, id, numberOfNodes, None), name = id.toString + "DefaultNodeActor")
 
   private var terminated = false
   

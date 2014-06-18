@@ -1,6 +1,7 @@
 package com.signalcollect.nodeprovisioning.yarn
 
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.util.NodeKiller
 
 object LeaderApp extends App {
   val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration)
@@ -8,6 +9,7 @@ object LeaderApp extends App {
 }
 
 object ContainerNodeApp extends App {
+//  NodeKiller.killOtherMasterAndNodes
   val id = args(0).toInt
   val ip = args(1)
   val container = ContainerNodeCreator.getContainer(id = id, leaderIp = ip)
