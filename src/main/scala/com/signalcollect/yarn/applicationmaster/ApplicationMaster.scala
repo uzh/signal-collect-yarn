@@ -42,6 +42,7 @@ import com.signalcollect.util.HdfsWrapper
 import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
+import com.signalcollect.util.NodeKiller
 
 object ApplicationMaster extends App with LogHelper {
   println("override factory")
@@ -49,6 +50,7 @@ object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.masterIp = masterIp
   YarnClientCreator.useHadoopOverrides = false
   YarnClientCreator.useDefaultCreator
+//  NodeKiller.killOtherMasterAndNodes
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   val f: Future[Configuration] = Future {
     
