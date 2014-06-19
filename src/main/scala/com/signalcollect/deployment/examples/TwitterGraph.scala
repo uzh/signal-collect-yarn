@@ -31,22 +31,12 @@ import scala.async.Async.{ async, await }
 import scala.sys.process._
 
 /** Builds a PageRank compute graph and executes the computation */
-class TwitterGraphDownloader extends DeployableAlgorithm {
+class TwitterGraph extends DeployableAlgorithm {
   override def execute(parameters: Map[String, String], graphBuilder: GraphBuilder[Any, Any]) {
-    var downloading = true
-    async {
-      while(downloading) {
-        Thread.sleep(5000)
-        println("ls -l".!!)
-      }
-    }
     println("download graph")
-    FileDownloader.downloadFile(new URL("http://an.kaist.ac.kr/~haewoon/release/twitter_social_graph/twitter_rv.tar.gz"), "twitter_rv.tar.gz")
+    FileDownloader.downloadFile(new URL("https://s3-eu-west-1.amazonaws.com/signalcollect/user/hadoop/twitterSmall.txt.gz"), "twitter.txt.gz")
     println("decompress graph")
-    FileDownloader.decompressGzip("twitter_rv.tar.gz", "twitter_rv.tar")
-    println("ls -l | grep twitter".!!)
-    downloading = false
-//    println("extract graph")
-//    FileDownloader.extract("twitter_rv.tar")
+    FileDownloader.decompressGzip("twitter.txt.gz", "twitter.txt")
+    
   }
 }

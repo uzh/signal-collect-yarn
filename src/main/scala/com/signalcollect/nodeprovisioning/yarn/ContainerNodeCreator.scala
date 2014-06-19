@@ -27,9 +27,7 @@ object ContainerNodeCreator {
     val config = ConfigProvider.config
     val basePort = config.getInt("deployment.akka.port")
     val numberOfNodes = DeploymentConfigurationCreator.getDeploymentConfiguration.numberOfNodes
-    println("create AkkaConfig with port" + (basePort + id + 1) )
     val akkaConfig = AkkaConfigCreator.getConfig(basePort + id + 1)
-    println(s"start defaultcontainernode with id: $id , numberOfNode: $numberOfNodes, leaderIp: $leaderIp , baseport: $basePort" )
     val container = new DefaultContainerNode(id = id,
       numberOfNodes = numberOfNodes,
       leaderIp = leaderIp,

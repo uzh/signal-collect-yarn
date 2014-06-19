@@ -58,6 +58,7 @@ def downloadFile(url: URL, localFileName: String) {
  
     for(entry <- stream if !entry.isDirectory) {
       println(s"${entry.getName} - ${entry.getSize} bytes")
+      entry
     }
  
   }
