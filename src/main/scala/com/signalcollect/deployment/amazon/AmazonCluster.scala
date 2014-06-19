@@ -54,7 +54,8 @@ class AmazonCluster extends Cluster {
     val masterIp = getPublicAndPrivateIp(emr, clusterId)
     println(s"open tunnels to master on $masterIp to use cluster $clusterId" )
     SshTunnel.open(new TunnelConfiguration(host = masterIp._1, remoteHost = masterIp._2))
-    val yarncluster = new YarnCluster(masterIp._2)
+    val yarncluster = new YarnCluster
+    yarncluster.setMasterIP(masterIp._2)
     val result = yarncluster.deploy(deploymentConfiguration)
     if (amazonConfig.stopCluster){
       terminateCluster(emr, clusterId)

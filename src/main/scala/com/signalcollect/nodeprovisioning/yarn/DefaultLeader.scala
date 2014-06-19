@@ -41,6 +41,8 @@ class DefaultLeader(
   deploymentConfig: DeploymentConfiguration) extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")
+  val leaderAddress = AkkaHelper.getRemoteAddress(leaderactor, system)
+  println(s"leaderAddress is $leaderAddress")
   private var executionStarted = false
   private var executionFinished = false
 
@@ -66,7 +68,9 @@ class DefaultLeader(
   }
 
   def shutdown {
+    println("leader is shuttingdown")
     try {
+      println("tell all ContainerNodes to shutdown")
       val shutdownActor = getShutdownActors.foreach(_ ! "shutdown")
     } finally {
       if (!system.isTerminated) {
@@ -83,6 +87,7 @@ class DefaultLeader(
 
   def startActorSystem: ActorSystem = {
     try {
+      println("start actorsystem")
       val system = ActorSystem("SignalCollect", akkaConfig)
       ActorSystemRegistry.register(system)
       system
@@ -130,6 +135,7 @@ class LeaderActor extends Actor {
   }
 
   def filterAddress(address: String) {
+    println(s"received $address")
     address match {
       case nodeactor if nodeactor.contains("NodeActor") => ActorAddresses.addNodeActorAddress(address)
       case shutdown if shutdown.contains("shutdown") => ActorAddresses.addShutdownAddress(address)

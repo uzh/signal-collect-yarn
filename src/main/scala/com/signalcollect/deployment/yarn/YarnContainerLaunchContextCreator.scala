@@ -40,7 +40,6 @@ class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlr
     hdfsFiles.foreach(file => jarResource.put(file._1 , file._2 ))
     launchContext.setLocalResources(jarResource)
     
-
     val commands = createCommand
     launchContext.setCommands(commands)
     launchContext

@@ -52,26 +52,25 @@ object ApplicationMaster extends App with LogHelper {
   YarnClientCreator.useDefaultCreator
 //  NodeKiller.killOtherMasterAndNodes
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
-  val f: Future[Configuration] = Future {
     
-	  YarnClientCreator.yarnClient.getConfig()
-  }
-  val config = Await.result(f, 10.seconds)
+  val config = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
+  lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
   val hdfs = new HdfsWrapper(true)
   val applicationId = args(0)
-  val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig, applicationId)
+  val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig, applicationId, leader)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)
-  lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   run
 
   def run() {
     try {
       initApplicationMaster
+      println("start leader")
       leader.start
+      println("start containers")
       startContainers
       waitAndStopApplicationMaster
     } finally {
@@ -103,11 +102,13 @@ object ApplicationMaster extends App with LogHelper {
 
   private def setupContainerAskForRM(): ContainerRequest = {
     val memory = deploymentConfig.memoryPerNode
+    val memoryFactor = ConfigProvider.config.getDouble("deployment.requested-memory-factor")
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
 
     val capability = Records.newRecord(classOf[Resource])
-    capability.setMemory(memory)
+    val memoryToRequest = (memory * memoryFactor)
+    capability.setMemory(memoryToRequest.toInt)
 
     val request = new ContainerRequest(capability, null, null, pri)
     log.info("Requested container ask: " + request.toString())
@@ -140,7 +141,10 @@ object ApplicationMaster extends App with LogHelper {
         println("Timeout reached!!!")
       }
     } catch {
-      case e: Exception => log.info("interrupted")
+      case e: Exception => {
+        log.info("interrupted")
+        throw e
+      }
     }
   }
 

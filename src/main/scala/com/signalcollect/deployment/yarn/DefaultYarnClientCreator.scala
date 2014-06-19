@@ -31,7 +31,6 @@ class DefaultYarnClientCreator(useOverrides: Boolean = true, masterIp: String = 
   override lazy val yarnClient = createYarnClient
 
   def createYarnClient: YarnClient = {
-    println(s"useHadoopOverrides = $useOverrides")
     val yarnConfig = new YarnConfiguration()
     val yarnOverrides = config.getConfig("deployment.hadoop-overrides").entrySet().iterator()
     val tupleListOverrides = yarnOverrides.map(entry => (entry.getKey,entry.getValue.unwrapped.toString())).toList
@@ -48,7 +47,6 @@ class DefaultYarnClientCreator(useOverrides: Boolean = true, masterIp: String = 
 
   protected def createYarnClient(config: Configuration): YarnClient = {
     val yarnClient = YarnClient.createYarnClient()
-    log.info("initialize YarnClient")
     yarnClient.init(config)
     yarnClient.start()
     yarnClient

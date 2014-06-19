@@ -29,13 +29,17 @@ import java.net.InetAddress
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.DeploymentConfiguration
+import com.signalcollect.nodeprovisioning.yarn.Leader
 
-class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration, applicationId: String) extends AMRMClientAsync.CallbackHandler with LogHelper {
+class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with LogHelper {
 
   override def onContainersCompleted(completedContainers: java.util.List[ContainerStatus]): Unit = {
     log.info("Got response from RM for container ask, completedCnt="
       + completedContainers.size)
       Thread.sleep(1000)
+      completedContainers.foreach(println(_))
+      completedContainers.foreach( c => println( c.getDiagnostics()))
+      println(completedContainers.map("exit status" + _.getExitStatus().toString))
       val allSuccessfull = completedContainers.forall(_.getExitStatus() == 0)
       ContainerRegistry.setSuccessfull(allSuccessfull) 
       ContainerRegistry.setFinished(completedContainers.size)
@@ -58,7 +62,8 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
   }
 
   override def onError(e: Throwable) {
-    log.info("onError")
+    println("on Error")
+    throw e
   }
 
   private def startContainer(container: Container) = {
@@ -67,7 +72,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
     val copyFiles = deploymentConfig.copyFiles.map(_.split("/").last)
     val dependencyOnHdfs = config.getBoolean("testing.onHdfs")
-    val files = getJarAndConfFilesInCurrentDir.filter(!_.contains("signal-collect-yarn-assembly-1.0-SNAPSHOT") || !dependencyOnHdfs) ::: copyFiles
+    val files = getJarAndConfFilesInCurrentDir ::: copyFiles
     val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
     val launchSettings = new LaunchSettings(
       pathsToJars = Nil,
@@ -77,8 +82,11 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
       filesOnHdfs = filesOnHdfs,
       classpath = (getJarAndConfFilesInCurrentDir ::: filesOnHdfs).mkString(":"))
     val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files)
+    println("create launchcontext")
     val ctx = launchContextCreator.createLaunchContext(applicationId)
+    println("start Container")
     nodeManagerClient.startContainerAsync(container, ctx)
+    println("container started")
   }
 
   private def getJarAndConfFilesInCurrentDir(): List[String] = {

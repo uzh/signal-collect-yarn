@@ -33,7 +33,6 @@ import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 class FileUploader(applicationId: String, 
   files: List[String], 
   useDefaultYarnClient: Boolean = false) {
-  println("set username")
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
   if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator()
@@ -58,7 +57,6 @@ class FileUploader(applicationId: String,
     val src = getSource(srcPath,jarName)
     val pathSuffix = getPathSuffix(jarName)
     val dest = new Path(fs.getHomeDirectory(), pathSuffix)
-    println(s"upload file $jarName to $dest")
     uploadFile(jarName, src, dest)
   }
   
@@ -66,7 +64,6 @@ class FileUploader(applicationId: String,
     val jarName = srcPath.split("/").last
     val src = getSource(srcPath,jarName)
     val dest = new Path(fs.getHomeDirectory(), destPath)
-    println(s"upload file $jarName to $dest")
     uploadFile(jarName, src, dest)
   }
 

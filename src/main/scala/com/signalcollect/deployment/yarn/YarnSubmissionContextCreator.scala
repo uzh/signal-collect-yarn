@@ -37,6 +37,7 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
   private lazy val launchContext: ContainerLaunchContext =
     launchContextFactory.createLaunchContext(applicationId)
   val memory = launchSettings.memory
+  val memoryFactor = config.getDouble("deployment.requested-memory-factor")
 
   def getSubmissionContext(): ApplicationSubmissionContext = {
     setupLaunchAndSubmissionContext(submissionContext)
@@ -47,7 +48,8 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
     setupLaunchContext(submissionContext)
     submissionContext.setApplicationName(config.getString("deployment.applicationName"))
     val capability = Records.newRecord(classOf[Resource])
-    capability.setMemory(memory)
+    val requestMemory = memory * memoryFactor
+    capability.setMemory(requestMemory.toInt)
     submissionContext.setResource(capability)
     submissionContext
   }

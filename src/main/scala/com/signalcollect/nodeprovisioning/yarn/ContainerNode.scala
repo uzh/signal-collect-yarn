@@ -47,7 +47,9 @@ class DefaultContainerNode(id: Int,
   akkaConfig: Config) extends ContainerNode {
 
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
+  println("get actorsystem")
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
+  println("start shutdownactor")
   val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
   println(s"start nodeActor with id $id on $numberOfNodes nodes")
   val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, id, numberOfNodes, None), name = id.toString + "DefaultNodeActor")
@@ -65,6 +67,7 @@ class DefaultContainerNode(id: Int,
   }
 
   def getLeaderActor(): ActorRef = {
+    println(s"leaderAddress is $leaderAddress")
     system.actorFor(leaderAddress)
   }
 
@@ -119,8 +122,11 @@ class DefaultContainerNode(id: Int,
 
   def startActorSystem: ActorSystem = {
     try {
+    println("start Actorsystem")
     val system = ActorSystem("SignalCollect", akkaConfig)
+    println("register actorsystem")
     ActorSystemRegistry.register(system)
+    println("registered actorsystem")
     } catch {
       case e:Throwable => {
         println("failed to start Actorsystem")
@@ -134,7 +140,10 @@ class DefaultContainerNode(id: Int,
 
 class ShutdownActor extends Actor {
   override def receive = {
-    case "shutdown" => ShutdownHelper.shutdown
+    case "shutdown" => {
+      println("shutdown received")
+      ShutdownHelper.shutdown
+    }
     case whatever => println("received unexpected message")
   }
 }
