@@ -25,7 +25,7 @@ class YarnCluster extends Cluster {
   }
   
   override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
-    System.setProperty("HADOOP_USER_NAME", "hadoop")
+    System.setProperty("HADOOP_USER_NAME", ConfigProvider.config.getString("deployment.user"))
     val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration, testDeployment)
     val launchSettingsWithMasterIp = launchSettings.copy(arguments = launchSettings.arguments :+ masterIp)
     val client = new YarnDeploymentClient(launchSettingsWithMasterIp)

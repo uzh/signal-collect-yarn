@@ -37,8 +37,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
     log.info("Got response from RM for container ask, completedCnt="
       + completedContainers.size)
       Thread.sleep(1000)
-      completedContainers.foreach(println(_))
-      completedContainers.foreach( c => println( c.getDiagnostics()))
+      completedContainers.foreach( c => println("diagnostics for container with id:" + c.getContainerId() + c.getDiagnostics()))
       println(completedContainers.map("exit status" + _.getExitStatus().toString))
       val allSuccessfull = completedContainers.forall(_.getExitStatus() == 0)
       ContainerRegistry.setSuccessfull(allSuccessfull) 
@@ -49,6 +48,12 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
     log.info("Got response from RM for container ask, allocatedCnt="
       + allocatedContainers.size)
     allocatedContainers.foreach(startContainer(_))
+    allocatedContainers.foreach(createLogUrl(_))
+  }
+  
+  def createLogUrl(container: Container){
+    println("logUrl: ")
+    println(container.getNodeHttpAddress() + "/node/containerlogs/" + container.getId())
   }
 
   override def onShutdownRequest() {

@@ -33,7 +33,9 @@ class LeaderCluster extends Cluster {
     val numberOfNodes = deploymentConfiguration.numberOfNodes 
     var id = 0
     for (id <- 0 until numberOfNodes) {
+      println(s"create node $id")
       val container = ContainerNodeCreator.getContainer(id = id, leaderIp = ip)
+      println(s"start node $id")
       container.start
     }
     while(!leader.isExecutionFinished){

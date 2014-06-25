@@ -131,6 +131,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
 
     "shutdown actorsystem after execution" in new Execution {
       println("shutdown actorsystem after execution")
+      Thread.sleep(10000)
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
     }
 
@@ -175,8 +176,6 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
       container.getShutdownActor ! "shutdown"
       Thread.sleep(1000)
       container.isTerminated === true
-      container.shutdown
-      ActorSystemRegistry.retrieve("SignalCollect").isDefined === false
     }
 
     "get NodeActor" in new ContainerScope {
@@ -214,7 +213,7 @@ trait StopActorSystemAfter extends After {
       system.shutdown
       println("wait for Termination")
       try {
-       system.awaitTermination(3.seconds)
+       system.awaitTermination(20.seconds)
       } catch {
         case e: Exception => println("couldn't wait for shutdown of actorsystem")
       }
@@ -261,9 +260,11 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ActorAddresses.clear
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
+  println("create leader")
   val leader = new DefaultLeader(deploymentConfig =  DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   leader.start
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
+  println("create Container")
   val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
   container.start
 

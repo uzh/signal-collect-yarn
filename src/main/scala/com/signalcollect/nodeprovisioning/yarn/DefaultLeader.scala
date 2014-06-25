@@ -72,6 +72,8 @@ class DefaultLeader(
   def shutdown {
     try {
       val shutdownActor = getShutdownActors.foreach(_ ! "shutdown")
+      println("told them")
+      Thread.sleep(10000)
     } finally {
       if (!system.isTerminated) {
         system.shutdown
@@ -100,7 +102,6 @@ class DefaultLeader(
 
   def waitForAllNodes {
     while (!allNodesRunning) {
-      println(allNodesRunning)
       Thread.sleep(100)
     }
     executionStarted = true
@@ -113,6 +114,7 @@ class DefaultLeader(
   }
 
   def shutdownAllNodes {
+    println("shutdown nodes")
     getShutdownActors.foreach(_ ! "shutdown")
   }
 

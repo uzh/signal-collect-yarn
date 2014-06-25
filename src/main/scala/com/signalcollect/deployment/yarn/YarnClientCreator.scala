@@ -26,9 +26,8 @@ import com.signalcollect.util.ConfigProvider
 
 object YarnClientCreator {
   val config = ConfigProvider.config
-  var useHadoopOverrides = true
   var masterIp = "localhost"
-  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(useHadoopOverrides,masterIp)
+  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(masterIp)
   var useDefault = false
   
   
@@ -38,7 +37,7 @@ object YarnClientCreator {
    */
   def useDefaultCreator() ={
     useDefault = true
-    creator = new DefaultYarnClientCreator(useHadoopOverrides,masterIp)
+    creator = new DefaultYarnClientCreator(masterIp)
   }
   
   def yarnClient(): YarnClient = {
@@ -56,7 +55,7 @@ object YarnClientCreator {
     if (useMiniCluster){
       new MiniYarnClientCreator
     } else {
-      new DefaultYarnClientCreator(useHadoopOverrides)
+      new DefaultYarnClientCreator()
     }
   }
 }

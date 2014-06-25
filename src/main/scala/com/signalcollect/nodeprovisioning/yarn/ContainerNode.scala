@@ -32,6 +32,8 @@ import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.typesafe.config.Config
 import com.signalcollect.util.ConfigProvider
+import scala.concurrent.duration._
+import akka.actor.PoisonPill
 
 trait ContainerNode {
   def start
@@ -48,7 +50,7 @@ class DefaultContainerNode(id: Int,
 
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
-  val shutdownActor = system.actorOf(Props[ShutdownActor], s"shutdownactor$id")
+  val shutdownActor = system.actorOf(Props(classOf[ShutdownActor], this), s"shutdownactor$id")
   val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, id, numberOfNodes, None), name = id.toString + "DefaultNodeActor")
 
   private var terminated = false
@@ -72,20 +74,23 @@ class DefaultContainerNode(id: Int,
   def isSuccessful: Boolean = successful
 
   def start {
-    async {
-      try {
-        register
-        waitForTermination
-        successful = true
-      } catch {
-        case e: Throwable => {
-          println("catched Exception")
-          throw e}
-      } finally {
-        terminated = true
-        shutdown
-      }
-    }
+    	register
+//    async {
+//      try {
+//    	println(s"start container $id")
+//        println(s"container $id is registered")
+//        waitForTermination
+//        successful = true
+//      } catch {
+//        case e: Throwable => {
+//          println("catched Exception")
+//          throw e}
+//      } finally {
+//        println("shutting down")
+//        terminated = true
+//        shutdown
+//      }
+//    }
   }
 
   def register {
@@ -95,7 +100,7 @@ class DefaultContainerNode(id: Int,
 
   def waitForTermination {
     val begin = System.currentTimeMillis()
-    while (!ShutdownHelper.shuttingdown && timeoutNotReached(begin)) {
+    while (!ShutdownHelper.shuttingdown && timeoutNotReached(begin) && terminated == false) {
       Thread.sleep(100)
     }
     terminated = true
@@ -107,11 +112,14 @@ class DefaultContainerNode(id: Int,
   }
 
   def shutdown {
-    if (!system.isTerminated) {
-      system.shutdown
-      system.awaitTermination
-      ActorSystemRegistry.remove(system)
-    }
+    terminated = true
+    shutdownActor ! PoisonPill
+    nodeActor ! PoisonPill
+//    if (!system.isTerminated) {
+//      system.shutdown
+//      system.awaitTermination(60.seconds)
+//      ActorSystemRegistry.remove(system)
+//    }
   }
 
   def startActorSystem: ActorSystem = {
@@ -129,11 +137,12 @@ class DefaultContainerNode(id: Int,
 
 }
 
-class ShutdownActor extends Actor {
+class ShutdownActor(container: ContainerNode) extends Actor {
   override def receive = {
     case "shutdown" => {
-      println("shutdown received")
+      println("received shutdown call")
       ShutdownHelper.shutdown
+      container.shutdown
     }
     case whatever => println("received unexpected message")
   }

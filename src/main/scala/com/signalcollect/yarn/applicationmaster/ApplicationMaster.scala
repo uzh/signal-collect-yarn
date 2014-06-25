@@ -43,19 +43,22 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import ExecutionContext.Implicits.global
 import com.signalcollect.util.NodeKiller
+import com.signalcollect.nodeprovisioning.yarn.MemoryUsage
 
 object ApplicationMaster extends App with LogHelper {
+//  NodeKiller.killOtherMasterAndNodes
   println("override factory")
   val masterIp = args(1)
+  println(masterIp)
   YarnClientCreator.masterIp = masterIp
-  YarnClientCreator.useHadoopOverrides = false
   YarnClientCreator.useDefaultCreator
-//  NodeKiller.killOtherMasterAndNodes
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
-    
+
   val config = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
+  config.reloadConfiguration
+  println(config.toString())
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
@@ -74,8 +77,6 @@ object ApplicationMaster extends App with LogHelper {
       startContainers
       waitAndStopApplicationMaster
     } finally {
-      println("shuting down leader")
-      leader.shutdown
       System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
     }
   }
@@ -95,6 +96,7 @@ object ApplicationMaster extends App with LogHelper {
   private def startContainers: Unit = {
     val containerAsk = setupContainerAskForRM()
     val numberOfNodes = deploymentConfig.numberOfNodes
+    println(s"requesting $numberOfNodes Containers")
     for (i <- 0 until numberOfNodes) {
       ressourcManagerClient.addContainerRequest(containerAsk)
     }
@@ -117,9 +119,9 @@ object ApplicationMaster extends App with LogHelper {
 
   private def waitAndStopApplicationMaster: Unit = {
     waitFinish
+    
     val appStatus = if (ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
     val appMessage = "finished"
-    leader.shutdown
     hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/" + applicationId + "/")
     try {
       ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
@@ -134,11 +136,15 @@ object ApplicationMaster extends App with LogHelper {
   private def waitFinish: Unit = {
     val begin = System.currentTimeMillis()
     try {
-      while (!leader.isExecutionFinished && timeoutNotReached(begin)) {
+      while ((!leader.isExecutionFinished) && timeoutNotReached(begin)) {
         Thread.sleep(100)
       }
       if (!timeoutNotReached(begin)) {
         println("Timeout reached!!!")
+      }
+      leader.shutdown
+      while (!ContainerRegistry.isFinished){
+        Thread.sleep(100)
       }
     } catch {
       case e: Exception => {

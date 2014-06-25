@@ -46,18 +46,22 @@ class AmazonCluster extends Cluster {
     val credentials = new BasicAWSCredentials(amazonConfig.accessKey, amazonConfig.secretKey)
     val emr = new AmazonElasticMapReduceClient(credentials)
     emr.setEndpoint(amazonConfig.endpoint)
-    
-    val clusterId = if(amazonConfig.clusterId == ""){createCluster(amazonConfig, emr)
-    }else {
+
+    val clusterId = if (amazonConfig.clusterId == "") {
+      createCluster(amazonConfig, emr)
+    } else {
       amazonConfig.clusterId
     }
     val masterIp = getPublicAndPrivateIp(emr, clusterId)
-    println(s"open tunnels to master on $masterIp to use cluster $clusterId" )
+    println(s"open tunnels to master on $masterIp to use cluster $clusterId")
     SshTunnel.open(new TunnelConfiguration(host = masterIp._1, remoteHost = masterIp._2))
+//        while(true){
+//          Thread.sleep(1000)
+//        }
     val yarncluster = new YarnCluster
     yarncluster.setMasterIP(masterIp._2)
     val result = yarncluster.deploy(deploymentConfiguration)
-    if (amazonConfig.stopCluster){
+    if (amazonConfig.stopCluster) {
       terminateCluster(emr, clusterId)
     }
     result
@@ -89,9 +93,9 @@ class AmazonCluster extends Cluster {
     println(s"started cluster with id $clusterId")
     clusterId
   }
-  
+
   def terminateCluster(emr: AmazonElasticMapReduceClient, clusterId: String) {
-    val terminateRequest =  new TerminateJobFlowsRequest().withJobFlowIds(clusterId)
+    val terminateRequest = new TerminateJobFlowsRequest().withJobFlowIds(clusterId)
     emr.terminateJobFlows(terminateRequest)
   }
 
@@ -99,11 +103,11 @@ class AmazonCluster extends Cluster {
     val instanceRequest = new ListInstancesRequest()
     instanceRequest.setClusterId(clusterId)
     val instances = emr.listInstances(instanceRequest).getInstances()
-    
-    val ips = instances.map(ip => (ip.getPublicIpAddress,ip.getPrivateIpAddress())).toList
-    println(instances)
+
+    val ips = instances.map(ip => (ip.getPublicIpAddress, ip.getPrivateIpAddress())).toList
+    instances.foreach(i =>println(i.getPrivateDnsName() + ": " + i.getPublicIpAddress()))
     val ip = SshTunnel.getOneOpenSsh(ips.map(ip => ip._1))
-    ips.find(_._1  == ip).get
+    ips.find(_._1 == ip).get
   }
 
   private def waitClusterRunning(emr: AmazonElasticMapReduceClient, clusterId: String): Unit = {
@@ -112,15 +116,15 @@ class AmazonCluster extends Cluster {
       emr.listClusters().getClusters().filter(_.getId() == clusterId).foreach(c => println(c.getStatus().getState()))
     }
   }
-  
-  def portIsOpen( ip: String, port: Int, timeout: Int): Boolean = {
-        try {
-            val socket = new Socket()
-            socket.connect(new InetSocketAddress(ip, port), timeout)
-            socket.close()
-            true
-        } catch {
-          case e: Throwable => false
-        }
+
+  def portIsOpen(ip: String, port: Int, timeout: Int): Boolean = {
+    try {
+      val socket = new Socket()
+      socket.connect(new InetSocketAddress(ip, port), timeout)
+      socket.close()
+      true
+    } catch {
+      case e: Throwable => false
     }
+  }
 }
