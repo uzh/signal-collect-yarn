@@ -41,6 +41,7 @@ object MiniCluster {
     yarnConfig.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64)
     yarnConfig.setClass(YarnConfiguration.RM_SCHEDULER, classOf[FifoScheduler], classOf[ResourceScheduler])
     val cluster = new MiniYARNCluster(ApplicationMaster.getClass.getSimpleName, 1, 1, 1)
+    cluster.init(yarnConfig)
     cluster.start()
     val nodemanager = cluster.getNodeManager(0)
     var attempt: Int = 60

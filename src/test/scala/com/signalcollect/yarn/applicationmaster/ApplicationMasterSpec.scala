@@ -21,12 +21,10 @@ package com.signalcollect.yarn.applicationmaster
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.deployment.DeploymentConfiguration
-import com.signalcollect.deployment.ClusterCreator
-import org.specs2.runner.JUnitRunner
-import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.DeploymentConfigurationCreator
-import com.typesafe.config.ConfigFactory
 import com.signalcollect.deployment.yarn.YarnCluster
+import com.typesafe.config.ConfigFactory
+import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
