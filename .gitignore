@@ -30,3 +30,16 @@ web-split-*
 
 deployment.config
 /bin
+/signalcollect-tobi.pem
+/signalcollect.pem
+/tentacle-yarn-testing.conf
+/tentacle-yarn.conf
+/leader-yarn.conf
+/leader-yarn-testing.conf
+/amazon-yarn.conf
+/twitter_rv.net
+/twitter_rv.net.gz
+/twitter.tar.gz
+/twitter.txt
+/twitter.txt.gz
+/target/
