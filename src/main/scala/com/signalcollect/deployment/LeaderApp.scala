@@ -1,6 +1,8 @@
 package com.signalcollect.deployment
 
 import com.signalcollect.configuration.ActorSystemRegistry
+import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.configuration.ActorSystemRegistry
 
 object LeaderApp extends App {
   val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration)
@@ -23,24 +25,3 @@ object ContainerNodeApp extends App {
     }
   }
 }
-
-object MemoryUsage {
-  def print {
-    (new Thread(new Runnable {
-      def run() {
-        while (true) {
-          Thread.sleep(2000)
-          val runtime = Runtime.getRuntime()
-          val maxMemory = runtime.maxMemory()
-          val allocatedMemory = runtime.totalMemory()
-          val freeMemory = runtime.freeMemory()
-          println(s"maxMemory: $maxMemory")
-          println(s"allocatedMemory: $allocatedMemory")
-          println(s"freeMemory: $freeMemory")
-        }
-      }
-    })s"allocatedMemory: $allocatedMemory")
-          println(s"freeMemory: $freeMemory")
-        }
-      }
-    }).start()
