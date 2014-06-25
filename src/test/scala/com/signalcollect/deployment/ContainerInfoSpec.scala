@@ -20,6 +20,7 @@ package com.signalcollect.deployment
 
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
+import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ContainerInfoSpec() extends SpecificationWithJUnit {

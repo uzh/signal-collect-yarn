@@ -18,17 +18,18 @@
  */
 package com.signalcollect.deployment.yarn
 
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+
+import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
 import org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler
+
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
-import java.io.FileOutputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import org.apache.hadoop.conf.Configuration
-import com.signalcollect.util.FileUploader
 
 object MiniCluster {
   val dummyFilename = "dummy-yarn-site.xml"
@@ -40,7 +41,6 @@ object MiniCluster {
     yarnConfig.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64)
     yarnConfig.setClass(YarnConfiguration.RM_SCHEDULER, classOf[FifoScheduler], classOf[ResourceScheduler])
     val cluster = new MiniYARNCluster(ApplicationMaster.getClass.getSimpleName, 1, 1, 1)
-    cluster.init(yarnConfig)
     cluster.start()
     val nodemanager = cluster.getNodeManager(0)
     var attempt: Int = 60
