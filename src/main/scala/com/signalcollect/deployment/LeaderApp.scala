@@ -1,9 +1,5 @@
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
-import com.signalcollect.deployment.DeploymentConfigurationCreator
-import com.signalcollect.util.NodeKiller
-import java.net.Inet4Address
-import java.net.InetAddress
 import com.signalcollect.configuration.ActorSystemRegistry
 
 object LeaderApp extends App {
@@ -30,7 +26,7 @@ object ContainerNodeApp extends App {
 
 object MemoryUsage {
   def print {
-    new Thread(new Runnable {
+    (new Thread(new Runnable {
       def run() {
         while (true) {
           Thread.sleep(2000)
@@ -43,6 +39,8 @@ object MemoryUsage {
           println(s"freeMemory: $freeMemory")
         }
       }
+    })s"allocatedMemory: $allocatedMemory")
+          println(s"freeMemory: $freeMemory")
+        }
+      }
     }).start()
-  }
-}

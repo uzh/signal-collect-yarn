@@ -16,24 +16,22 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 import akka.actor.ActorSystem
 import com.signalcollect.configuration.ActorSystemRegistry
-import com.signalcollect.configuration.AkkaConfig
-import akka.event.Logging
 import com.signalcollect.nodeprovisioning.AkkaHelper
 import akka.actor.ActorRef
 import akka.actor.Actor
 import akka.actor.Props
 import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.async.Async.{ async, await }
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.typesafe.config.Config
 import com.signalcollect.util.ConfigProvider
 import scala.concurrent.duration._
 import akka.actor.PoisonPill
+import akka.actor.actorRef2Scala
+import com.signalcollect.nodeprovisioning.DefaultNodeActor
 
 trait ContainerNode {
   def start

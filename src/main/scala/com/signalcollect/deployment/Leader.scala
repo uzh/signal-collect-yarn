@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 trait Leader {
   def start

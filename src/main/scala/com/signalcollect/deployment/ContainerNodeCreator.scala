@@ -16,11 +16,9 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 import com.signalcollect.util.ConfigProvider
-import scala.collection.JavaConversions._
-import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 object ContainerNodeCreator {
   def getContainer(id: Int, leaderIp: String): ContainerNode = {

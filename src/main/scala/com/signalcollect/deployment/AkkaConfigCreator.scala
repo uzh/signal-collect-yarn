@@ -1,4 +1,4 @@
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 import com.signalcollect.util.ConfigProvider
 import scala.collection.JavaConversions._

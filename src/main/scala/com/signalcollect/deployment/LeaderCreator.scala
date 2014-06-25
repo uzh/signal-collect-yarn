@@ -1,9 +1,6 @@
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 import com.signalcollect.util.ConfigProvider
-import scala.collection.JavaConversions._
-import com.signalcollect.deployment.DeploymentConfigurationCreator
-import com.signalcollect.deployment.DeploymentConfiguration
 
 object LeaderCreator {
   def getLeader(deploymentConfig: DeploymentConfiguration = DeploymentConfigurationCreator.getDeploymentConfiguration): Leader = {

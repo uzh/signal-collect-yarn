@@ -19,10 +19,7 @@
 
 package com.signalcollect.deployment
 
-import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
-import com.signalcollect.nodeprovisioning.yarn.ContainerNodeCreator
 import java.net.InetAddress
-
 
 class LeaderCluster extends Cluster {
 

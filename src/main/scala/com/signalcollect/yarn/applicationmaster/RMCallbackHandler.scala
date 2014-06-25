@@ -19,17 +19,22 @@
 package com.signalcollect.yarn.applicationmaster
 
 import java.io.File
-import scala.collection.JavaConversions._
-import org.apache.hadoop.yarn.api.records._
+import java.net.InetAddress
+
+import scala.collection.JavaConversions.asScalaBuffer
+
+import org.apache.hadoop.yarn.api.records.Container
+import org.apache.hadoop.yarn.api.records.ContainerStatus
+import org.apache.hadoop.yarn.api.records.NodeReport
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
-import com.signalcollect.util.LogHelper
-import com.signalcollect.util.ConfigProvider
-import java.net.InetAddress
-import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
-import com.signalcollect.deployment.yarn.LaunchSettings
+
 import com.signalcollect.deployment.DeploymentConfiguration
-import com.signalcollect.nodeprovisioning.yarn.Leader
+import com.signalcollect.deployment.Leader
+import com.signalcollect.deployment.yarn.LaunchSettings
+import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
+import com.signalcollect.util.ConfigProvider
+import com.signalcollect.util.LogHelper
 
 class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with LogHelper {
 

@@ -17,7 +17,7 @@
  *
  */
 
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 /**
  * Every Container has an unique id and an actor system that runs on port 'baseport + id + 1'

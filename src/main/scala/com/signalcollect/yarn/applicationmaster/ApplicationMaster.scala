@@ -18,32 +18,22 @@
  */
 package com.signalcollect.yarn.applicationmaster
 
+import org.apache.hadoop.fs.Path
 import org.apache.hadoop.net.NetUtils
-import org.apache.hadoop.yarn.api.records._
-import org.apache.hadoop.yarn.conf.YarnConfiguration
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
-import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
-import org.apache.hadoop.yarn.client.api.async.NMClientAsync
-import org.apache.hadoop.yarn.client.api.async.impl.NMClientAsyncImpl
-import org.apache.hadoop.yarn.util.Records
-import com.signalcollect.util.LogHelper
-import scala.collection.JavaConversions._
+import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 import org.apache.hadoop.yarn.api.records.Priority
 import org.apache.hadoop.yarn.api.records.Resource
-import java.io.File
-import org.apache.hadoop.fs.Path
-import com.signalcollect.util.ConfigProvider
-import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
+import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
+import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
+import org.apache.hadoop.yarn.client.api.async.impl.NMClientAsyncImpl
+import org.apache.hadoop.yarn.util.Records
+
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.deployment.LeaderCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
-import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
+import com.signalcollect.util.ConfigProvider
 import com.signalcollect.util.HdfsWrapper
-import scala.concurrent._
-import scala.concurrent.duration._
-import ExecutionContext.Implicits.global
-import com.signalcollect.util.NodeKiller
-import com.signalcollect.nodeprovisioning.yarn.MemoryUsage
+import com.signalcollect.util.LogHelper
 
 object ApplicationMaster extends App with LogHelper {
 //  NodeKiller.killOtherMasterAndNodes

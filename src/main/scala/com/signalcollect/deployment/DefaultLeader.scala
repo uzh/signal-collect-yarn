@@ -16,25 +16,21 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
+
+import scala.async.Async.async
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.signalcollect.configuration.ActorSystemRegistry
-import com.signalcollect.configuration.AkkaConfig
+import com.signalcollect.nodeprovisioning.AkkaHelper
 import com.signalcollect.util.LogHelper
+import com.typesafe.config.Config
+
 import akka.actor.Actor
+import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
-import akka.event.Logging
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.async.Async.{ async, await }
-import akka.actor.ActorRef
-import com.signalcollect.util.ConfigProvider
-import com.signalcollect.deployment.DeployableAlgorithm
-import scala.collection.JavaConversions._
-import com.signalcollect.nodeprovisioning.AkkaHelper
-import com.typesafe.config.Config
-import com.signalcollect.deployment.DeploymentConfiguration
+import akka.actor.actorRef2Scala
 
 class DefaultLeader(
   akkaConfig: Config = AkkaConfigCreator.getConfig(2552),

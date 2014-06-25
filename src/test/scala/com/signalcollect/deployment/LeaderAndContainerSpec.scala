@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.nodeprovisioning.yarn
+package com.signalcollect.deployment
 
 import java.net.InetAddress
 import scala.async.Async.async
@@ -26,14 +26,19 @@ import org.junit.runner.RunWith
 import org.specs2.mutable.After
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.configuration.ActorSystemRegistry
-import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.util.ConfigProvider
-import com.typesafe.config.ConfigFactory
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.actorRef2Scala
-import org.specs2.runner.JUnitRunner
+import com.signalcollect.nodeprovisioning.yarn.ActorAddresses
+import com.signalcollect.nodeprovisioning.yarn.AkkaConfigCreator
+import com.signalcollect.nodeprovisioning.yarn.DefaultContainerNode
+import com.signalcollect.nodeprovisioning.yarn.DefaultLeader
+import com.signalcollect.nodeprovisioning.yarn.Leader
+import com.signalcollect.nodeprovisioning.yarn.LeaderCreator
+import com.signalcollect.nodeprovisioning.yarn.ShutdownHelper
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
