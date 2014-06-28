@@ -50,12 +50,29 @@ object YarnDeploymentConfigurationCreator {
    * creates DeploymentConfiguration out of 'amazon.conf'
    */
   def getYarnDeploymentConfiguration: YarnDeploymentConfiguration = getYarnDeploymentConfiguration(yarnConfig)
-
-  /**
-   * can be called with another Config, useful for testing or injecting another configuration than 'deployment.conf'
-   */
+  
   def getYarnDeploymentConfiguration(config: Config): YarnDeploymentConfiguration = {
     val basicConfig = DeploymentConfigurationCreator.getDeploymentConfiguration(config)
+    getYarnDeploymentConfiguration(config, basicConfig)
+  }
+  
+  def getYarnDeploymentConfiguration(basicConfig: DeploymentConfiguration): YarnDeploymentConfiguration = {
+    getYarnDeploymentConfiguration(yarnConfig, basicConfig)
+  }
+
+  /**
+   * can be called with another Config, useful for testing or injecting another configuration than 'deployment.conf', merges in a basic configuration
+   */
+  def getYarnDeploymentConfiguration(config: Config, basicConfig: DeploymentConfiguration): YarnDeploymentConfiguration = {
+
+    /**
+     * gets an object of Type T from the Config, when key not exists it returns None
+     */
+    def get[T](path: String): Option[T] = {
+      if (config.hasPath(path))
+        Some(config.getAnyRef(path).asInstanceOf[T])
+      else None
+    }
     new YarnDeploymentConfiguration(
       algorithm = basicConfig.algorithm,
       algorithmParameters = basicConfig.algorithmParameters,
@@ -65,15 +82,6 @@ object YarnDeploymentConfigurationCreator {
       cluster = basicConfig.cluster,
       jvmArguments = basicConfig.jvmArguments,
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"))
-  }
-
-  /**
-   * gets an object of Type T from the Config, when key not exists it returns None
-   */
-  private def get[T](path: String): Option[T] = {
-    if (yarnConfig.hasPath(path))
-      Some(yarnConfig.getObject(path).asInstanceOf[T])
-    else None
   }
 
   /**

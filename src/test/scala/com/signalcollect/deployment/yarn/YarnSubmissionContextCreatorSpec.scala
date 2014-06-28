@@ -33,11 +33,12 @@ class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextCreator" should {
     println("Test executing now: YarnSubmissionContextCreator")
     val config = ConfigProvider.config
+    val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration("testdeployment.conf")
     lazy val yarnClient = YarnClientCreator.yarnClient
     lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
     "call Factory" in {
-      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
-      val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings)
+      val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfig)
+      val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings, deploymentConfig)
       val context =factory.getSubmissionContext()
       context.getApplicationName() === config.getString("deployment.applicationName")
     }

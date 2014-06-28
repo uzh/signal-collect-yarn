@@ -27,7 +27,7 @@ import org.apache.hadoop.yarn.util.Records
 import scala.collection.JavaConversions._
 import com.signalcollect.util.ConfigProvider
 
-class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientApplication, launchSettings: LaunchSettings) {
+class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientApplication, launchSettings: LaunchSettings, deploymentConf: YarnDeploymentConfiguration) {
   private val config = ConfigProvider.config
   private lazy val submissionContext = application.getApplicationSubmissionContext()
   private lazy val applicationId = submissionContext.getApplicationId().toString()
@@ -46,7 +46,7 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
 
   def setupLaunchAndSubmissionContext(submissionContext: ApplicationSubmissionContext): ApplicationSubmissionContext = {
     setupLaunchContext(submissionContext)
-    submissionContext.setApplicationName(config.getString("deployment.applicationName"))
+    submissionContext.setApplicationName(deploymentConf.applicationName)
     val capability = Records.newRecord(classOf[Resource])
     val requestMemory = memory * memoryFactor
     capability.setMemory(requestMemory.toInt)

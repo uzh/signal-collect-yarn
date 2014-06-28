@@ -18,17 +18,18 @@ import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 class YarnCluster extends Cluster {
   var testDeployment = false
   lazy val yarnClient = YarnClientCreator.yarnClient
-  var masterIp:String = "localhost"
-    
-  def setMasterIP(ip:String) {
+  var masterIp: String = "localhost"
+
+  def setMasterIP(ip: String) {
     masterIp = ip
   }
-  
+
   override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
     System.setProperty("HADOOP_USER_NAME", ConfigProvider.config.getString("deployment.user"))
     val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfiguration, testDeployment)
     val launchSettingsWithMasterIp = launchSettings.copy(arguments = launchSettings.arguments :+ masterIp)
-    val client = new YarnDeploymentClient(launchSettingsWithMasterIp)
+    val yarnDeploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(deploymentConfiguration)
+    val client = new YarnDeploymentClient(launchSettingsWithMasterIp, yarnDeploymentConfig)
     val application = client.submitApplication()
     waitForTermination(application)
     val appReport = yarnClient.getApplications.toList.find(_.getApplicationId().equals(application)).get
