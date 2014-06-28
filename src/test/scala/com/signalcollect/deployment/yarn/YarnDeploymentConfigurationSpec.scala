@@ -45,6 +45,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            files-on-hdfs = ["testFile"]
            hdfspath = "signal-collect-yarn-deployment"
            timeout = 400
+           user = "tbachmann"
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
@@ -93,5 +94,10 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   it should "contain timeout" in {
     val deploymentConfig = createYarnDeploymentConfiguration
     assert(deploymentConfig.timeout === 400)
+  }
+
+  it should "contain user" in {
+    val deploymentConfig = createYarnDeploymentConfiguration
+    assert(deploymentConfig.user === "tbachmann")
   }
 }
