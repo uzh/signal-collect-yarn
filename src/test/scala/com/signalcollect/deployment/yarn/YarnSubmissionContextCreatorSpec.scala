@@ -40,7 +40,7 @@ class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
       val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfig)
       val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings, deploymentConfig)
       val context =factory.getSubmissionContext()
-      context.getApplicationName() === config.getString("deployment.applicationName")
+      context.getApplicationName() === deploymentConfig.applicationName
     }
   }
 }

@@ -39,7 +39,8 @@ case class YarnDeploymentConfiguration(
   override val cluster: String = "com.signalcollect.deployment.LeaderCluster",
   override val jvmArguments: String = "",
   applicationName: String = "signal-collect-yarn-deployment",
-  leaderMemory: Int = 512) extends DeploymentConfiguration
+  leaderMemory: Int = 512,
+  applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster") extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -83,7 +84,8 @@ object YarnDeploymentConfigurationCreator {
       cluster = basicConfig.cluster,
       jvmArguments = basicConfig.jvmArguments,
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
-      leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512))
+      leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
+      applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"))
   }
 
   /**

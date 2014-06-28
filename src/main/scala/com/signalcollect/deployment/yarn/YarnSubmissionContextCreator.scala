@@ -32,7 +32,7 @@ class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientAp
   private lazy val submissionContext = application.getApplicationSubmissionContext()
   private lazy val applicationId = submissionContext.getApplicationId().toString()
   private lazy val launchContextFactory = new YarnContainerLaunchContextCreator(
-    launchSettings.copy(mainClass = config.getString("deployment.applicationMaster"),
+    launchSettings.copy(mainClass = deploymentConf.applicationMaster,
       arguments = applicationId :: launchSettings.arguments))
   private lazy val launchContext: ContainerLaunchContext =
     launchContextFactory.createLaunchContext(applicationId)
