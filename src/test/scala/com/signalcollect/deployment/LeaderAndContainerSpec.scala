@@ -249,7 +249,7 @@ trait Execution extends LeaderContainerScope {
 
 trait ContainerScope extends StopActorSystemAfter {
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
-  val akkaConfig = AkkaConfigCreator.getConfig(2552)
+  val akkaConfig = AkkaConfigCreator.getConfig(2552,DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   val container = new DefaultContainerNode(id = 0,
     leaderIp = leaderIp,
     basePort = 2552,
@@ -262,9 +262,9 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
   println("create leader")
-  val leader = new DefaultLeader(deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
+  val akkaConfig = AkkaConfigCreator.getConfig(2552,DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
+  val leader = new DefaultLeader(akkaConfig = akkaConfig, deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   leader.start
-  val akkaConfig = AkkaConfigCreator.getConfig(2552)
   println("create Container")
   val container = new DefaultContainerNode(id = 0,
     leaderIp = leaderIp,

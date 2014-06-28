@@ -26,6 +26,7 @@ import com.typesafe.config.Config
 import com.signalcollect.deployment.amazon.AmazonConfiguration
 import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.DeploymentConfigurationCreator
+import com.signalcollect.configuration.KryoInit
 
 /**
  * extends the basic DeploymentConfiguration and adds Yarn specifc values
@@ -38,6 +39,7 @@ case class YarnDeploymentConfiguration(
   override val copyFiles: List[String] = Nil, // list of paths to files
   override val cluster: String = "com.signalcollect.deployment.LeaderCluster",
   override val jvmArguments: String = "",
+  override val timeout: Int = 1,
   applicationName: String = "signal-collect-yarn-deployment",
   leaderMemory: Int = 512,
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
@@ -46,8 +48,11 @@ case class YarnDeploymentConfiguration(
   pathToJar: String = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar",
   filesOnHdfs: List[String] = Nil,
   hdfsPath: String = "",
-  timeout: Int = 1,
-  user: String = "hadoop") extends DeploymentConfiguration
+  user: String = "hadoop",
+  override val akkaBasePort: Int = 2552,
+  override val kryoInit: String,
+  override val kryoRegistrations: List[String] = Nil,
+  override val serializeMessages: Boolean = false) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -100,6 +105,10 @@ object YarnDeploymentConfigurationCreator {
       copyFiles = basicConfig.copyFiles,
       cluster = basicConfig.cluster,
       jvmArguments = basicConfig.jvmArguments,
+      akkaBasePort = basicConfig.akkaBasePort,
+      kryoInit = basicConfig.kryoInit,
+      kryoRegistrations = basicConfig.kryoRegistrations,
+      serializeMessages = basicConfig.serializeMessages,
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
       leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
       applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),

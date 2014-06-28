@@ -102,7 +102,7 @@ object ContainerRegistry {
   
   def getContainerNodes(): List[ContainerInfo] = {
     
-    val akkaPort = ConfigProvider.config.getInt("deployment.akka.port")
+    val akkaPort = deploymentConfig.akkaBasePort
     val containerNodes = containers.values.map(t => new ContainerInfo(getIpFromHostAddress(t._1), t._2, akkaPort)).toList
     containerNodes
   }

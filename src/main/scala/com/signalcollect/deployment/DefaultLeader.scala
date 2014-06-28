@@ -33,7 +33,7 @@ import akka.actor.Props
 import akka.actor.actorRef2Scala
 
 class DefaultLeader(
-  akkaConfig: Config = AkkaConfigCreator.getConfig(2552),
+  akkaConfig: Config ,
   deploymentConfig: DeploymentConfiguration) extends Leader with LogHelper {
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val leaderactor = system.actorOf(Props[LeaderActor], "leaderactor")

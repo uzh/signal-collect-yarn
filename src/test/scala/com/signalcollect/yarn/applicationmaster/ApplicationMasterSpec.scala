@@ -42,6 +42,14 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
 	       }
 	       cluster = "${cluster}"
            timeout = 500
+	       akka {
+		    port: 2552
+	        kryo-initializer = "com.signalcollect.configuration.KryoInit"
+	        kryo-registrations = [
+	          #"some.class.to.be.registered"
+	        ]
+	        serialize-messages = true
+		  }
          }"""
     val config = ConfigFactory.parseString(configAsString)
     DeploymentConfigurationCreator.getDeploymentConfiguration(config)
