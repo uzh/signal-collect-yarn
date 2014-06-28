@@ -29,9 +29,9 @@ import org.apache.hadoop.yarn.util.Records
 import com.signalcollect.util.FileUploader
 import com.signalcollect.util.FileUploader
 
-class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlreadyInContainer: List[String] = Nil) {
+class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlreadyInContainer: List[String] = Nil, deployConfig: YarnDeploymentConfiguration) {
   def createLaunchContext(applicationId: String): ContainerLaunchContext = {
-    val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator)
+    val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator, deployConfig)
     val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
     val jarResource = uploader.uploadFiles()
     val containerFiles = filesAlreadyInContainer.map(uploader.getPathOnFs(_))

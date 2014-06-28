@@ -90,7 +90,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Yarn
       useDefaultYarnClientCreator = true,
       filesOnHdfs = filesOnHdfs,
       classpath = (getJarAndConfFilesInCurrentDir ::: filesOnHdfs).mkString(":"))
-    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files)
+    val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files, deploymentConfig)
     println("create launchcontext")
     val ctx = launchContextCreator.createLaunchContext(applicationId)
     println("start Container")

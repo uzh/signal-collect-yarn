@@ -29,16 +29,18 @@ import org.apache.hadoop.fs.FileStatus
 import java.util.HashMap
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
+import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
-class FileUploader(applicationId: String, 
-  files: List[String], 
-  useDefaultYarnClient: Boolean = false) {
+class FileUploader(applicationId: String,
+  files: List[String],
+  useDefaultYarnClient: Boolean = false,
+  deployConf: YarnDeploymentConfiguration) {
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
-  if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator()
+  if (useDefaultYarnClient) YarnClientCreator.useDefaultCreator()
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
-  
+
   def uploadFiles(): HashMap[String, LocalResource] = {
     val filesToUpload = getFiles()
     filesToUpload.foreach(jar => {
@@ -49,20 +51,20 @@ class FileUploader(applicationId: String,
   }
 
   private def getFiles(): List[String] = {
-      files
+    files
   }
 
   private def prepareAndUploadFile(srcPath: String): (String, LocalResource) = {
     val jarName = srcPath.split("/").last
-    val src = getSource(srcPath,jarName)
+    val src = getSource(srcPath, jarName)
     val pathSuffix = getPathSuffix(jarName)
     val dest = new Path(fs.getHomeDirectory(), pathSuffix)
     uploadFile(jarName, src, dest)
   }
-  
-   private def prepareAndUploadFile(srcPath: String, destPath: String): (String, LocalResource) = {
+
+  private def prepareAndUploadFile(srcPath: String, destPath: String): (String, LocalResource) = {
     val jarName = srcPath.split("/").last
-    val src = getSource(srcPath,jarName)
+    val src = getSource(srcPath, jarName)
     val dest = new Path(fs.getHomeDirectory(), destPath)
     uploadFile(jarName, src, dest)
   }
@@ -82,7 +84,7 @@ class FileUploader(applicationId: String,
     fs.copyFromLocalFile(false, true, src, dest)
     fs.getFileStatus(dest)
   }
-  def createLocalResource(path: String): (String,LocalResource) ={
+  def createLocalResource(path: String): (String, LocalResource) = {
     val localResource = Records.newRecord(classOf[LocalResource])
     val filePath = new Path(path)
     val fileStatus = fs.getFileStatus(filePath)
@@ -93,21 +95,20 @@ class FileUploader(applicationId: String,
     localResource.setSize(fileStatus.getLen())
     (path.split("/").last, localResource)
   }
-  
+
   private def getPathSuffix(fileName: String): String = {
-      config.getString("deployment.hdfspath") + "/" + applicationId + s"/${fileName}"
-    
-    
+    deployConf.hdfsPath + "/" + applicationId + s"/${fileName}"
+
   }
-  
-  def getPathOnFs(fileName:String): String = {
-    val path =  config.getString("deployment.hdfspath") + "/" + applicationId + s"/${fileName}"
+
+  def getPathOnFs(fileName: String): String = {
+    val path = deployConf.hdfsPath + "/" + applicationId + s"/${fileName}"
     new Path(fs.getHomeDirectory(), path).toString
   }
-  
+
   private def getSource(jar: String, jarName: String): Path = {
     jarName match {
-      case "dummy-yarn-site.xml" => new Path(jar.split("/").init.mkString("/") + "/dummy-yarn-site.xml") 
+      case "dummy-yarn-site.xml" => new Path(jar.split("/").init.mkString("/") + "/dummy-yarn-site.xml")
       case _ => new Path(jar)
     }
   }

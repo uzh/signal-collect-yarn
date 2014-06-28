@@ -112,7 +112,7 @@ object ApplicationMaster extends App with LogHelper {
     
     val appStatus = if (ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
     val appMessage = "finished"
-    hdfs.deleteFolder(ConfigProvider.config.getString("deployment.hdfspath") + "/" + applicationId + "/")
+    hdfs.deleteFolder(deploymentConfig .hdfsPath + "/" + applicationId + "/")
     try {
       ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
     } catch {

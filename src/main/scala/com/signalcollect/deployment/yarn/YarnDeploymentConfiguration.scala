@@ -44,7 +44,8 @@ case class YarnDeploymentConfiguration(
   requestedMemoryFactor: Double = 1.1,
   containerClass: String = "com.signalcollect.deployment.ContainerNodeApp",
   pathToJar: String = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar",
-  filesOnHdfs: List[String] = Nil) extends DeploymentConfiguration
+  filesOnHdfs: List[String] = Nil,
+  hdfsPath: String = "") extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -103,7 +104,8 @@ object YarnDeploymentConfigurationCreator {
       requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1),
       containerClass = get[String]("deployment.container-class").getOrElse("com.signalcollect.deployment.ContainerNodeApp"),
       pathToJar = get[String]("deployment.path-to-jar").getOrElse("target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"),
-      filesOnHdfs= getList[String]("deployment.files-on-hdfs").getOrElse(Nil))
+      filesOnHdfs= getList[String]("deployment.files-on-hdfs").getOrElse(Nil),
+      hdfsPath = get[String]("deployment.hdfspath").getOrElse("~"))
   }
 
   /**
