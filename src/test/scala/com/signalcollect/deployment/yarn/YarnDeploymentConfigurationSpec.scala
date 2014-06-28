@@ -44,6 +44,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            path-to-jar = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"
            files-on-hdfs = ["testFile"]
            hdfspath = "signal-collect-yarn-deployment"
+           timeout = 400
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
@@ -87,5 +88,10 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   it should "contain hdfsPath" in {
     val deploymentConfig = createYarnDeploymentConfiguration
     assert(deploymentConfig.hdfsPath === "signal-collect-yarn-deployment")
+  }
+
+  it should "contain timeout" in {
+    val deploymentConfig = createYarnDeploymentConfiguration
+    assert(deploymentConfig.timeout === 400)
   }
 }

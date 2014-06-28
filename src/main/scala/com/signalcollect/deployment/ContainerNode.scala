@@ -41,15 +41,15 @@ trait ContainerNode {
 }
 
 class DefaultContainerNode(id: Int,
-  numberOfNodes: Int,
   leaderIp: String,
   basePort: Int,
-  akkaConfig: Config) extends ContainerNode {
+  akkaConfig: Config,
+  deploymentConfig: DeploymentConfiguration) extends ContainerNode {
 
   val leaderAddress = s"akka.tcp://SignalCollect@$leaderIp:$basePort/user/leaderactor"
   val system = ActorSystemRegistry.retrieve("SignalCollect").getOrElse(startActorSystem)
   val shutdownActor = system.actorOf(Props(classOf[ShutdownActor], this), s"shutdownactor$id")
-  val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, id, numberOfNodes, None), name = id.toString + "DefaultNodeActor")
+  val nodeActor = system.actorOf(Props(classOf[DefaultNodeActor], id.toString, id, deploymentConfig.numberOfNodes, None), name = id.toString + "DefaultNodeActor")
 
   private var terminated = false
   
@@ -105,7 +105,7 @@ class DefaultContainerNode(id: Int,
   }
   
   def timeoutNotReached(begin: Long): Boolean = {
-    val timeout = ConfigProvider.config.getInt("deployment.timeout")
+    val timeout = deploymentConfig.timeout
     (System.currentTimeMillis() - begin) / 1000 < timeout
   }
 

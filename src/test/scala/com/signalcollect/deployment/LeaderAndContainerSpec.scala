@@ -34,7 +34,7 @@ import org.specs2.runner.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class LeaderAndContainerSpec extends SpecificationWithJUnit {
-  
+
   sequential
   "Leader" should {
     println("Test executing now: LeaderAndContainerSpec")
@@ -43,7 +43,7 @@ class LeaderAndContainerSpec extends SpecificationWithJUnit {
     "be started" in new StopActorSystemAfter {
       println("be started")
       val akkaPort = 2552
-      val leader: Leader = LeaderCreator.getLeader( DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
+      val leader: Leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
       ActorSystemRegistry.retrieve("SignalCollect").isDefined === true
     }
 
@@ -210,7 +210,7 @@ trait StopActorSystemAfter extends After {
       system.shutdown
       println("wait for Termination")
       try {
-       system.awaitTermination(20.seconds)
+        system.awaitTermination(20.seconds)
       } catch {
         case e: Exception => println("couldn't wait for shutdown of actorsystem")
       }
@@ -226,7 +226,7 @@ trait LeaderScope extends StopActorSystemAfter {
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
   val config = ConfigProvider.config
-  val leader = LeaderCreator.getLeader( DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf")).asInstanceOf[DefaultLeader]
+  val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf")).asInstanceOf[DefaultLeader]
   val leaderActor: ActorRef = leader.getActorRef()
 
   abstract override def after {
@@ -250,7 +250,11 @@ trait Execution extends LeaderContainerScope {
 trait ContainerScope extends StopActorSystemAfter {
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
-  val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
+  val container = new DefaultContainerNode(id = 0,
+    leaderIp = leaderIp,
+    basePort = 2552,
+    akkaConfig = akkaConfig,
+    DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
 
 }
 trait LeaderContainerScope extends StopActorSystemAfter {
@@ -258,11 +262,15 @@ trait LeaderContainerScope extends StopActorSystemAfter {
   ShutdownHelper.reset
   val leaderIp = InetAddress.getLocalHost().getHostAddress()
   println("create leader")
-  val leader = new DefaultLeader(deploymentConfig =  DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
+  val leader = new DefaultLeader(deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   leader.start
   val akkaConfig = AkkaConfigCreator.getConfig(2552)
   println("create Container")
-  val container = new DefaultContainerNode(id = 0, numberOfNodes = 1, leaderIp = leaderIp, basePort = 2552, akkaConfig = akkaConfig )
+  val container = new DefaultContainerNode(id = 0,
+    leaderIp = leaderIp,
+    basePort = 2552,
+    akkaConfig = akkaConfig,
+    DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf"))
   container.start
 
   abstract override def after {

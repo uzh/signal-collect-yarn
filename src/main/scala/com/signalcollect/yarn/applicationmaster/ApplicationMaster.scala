@@ -36,7 +36,7 @@ import com.signalcollect.util.LogHelper
 import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
-//  NodeKiller.killOtherMasterAndNodes
+  //  NodeKiller.killOtherMasterAndNodes
   println("override factory")
   val masterIp = args(1)
   println(masterIp)
@@ -109,10 +109,10 @@ object ApplicationMaster extends App with LogHelper {
 
   private def waitAndStopApplicationMaster: Unit = {
     waitFinish
-    
+
     val appStatus = if (ContainerRegistry.successfull) FinalApplicationStatus.SUCCEEDED else FinalApplicationStatus.FAILED
     val appMessage = "finished"
-    hdfs.deleteFolder(deploymentConfig .hdfsPath + "/" + applicationId + "/")
+    hdfs.deleteFolder(deploymentConfig.hdfsPath + "/" + applicationId + "/")
     try {
       ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
     } catch {
@@ -133,7 +133,7 @@ object ApplicationMaster extends App with LogHelper {
         println("Timeout reached!!!")
       }
       leader.shutdown
-      while (!ContainerRegistry.isFinished){
+      while (!ContainerRegistry.isFinished) {
         Thread.sleep(100)
       }
     } catch {
@@ -145,7 +145,7 @@ object ApplicationMaster extends App with LogHelper {
   }
 
   def timeoutNotReached(begin: Long): Boolean = {
-    val timeout = ConfigProvider.config.getInt("deployment.timeout")
+    val timeout = deploymentConfig.timeout
     (System.currentTimeMillis() - begin) / 1000 < timeout
   }
 

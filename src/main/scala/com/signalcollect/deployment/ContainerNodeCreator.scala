@@ -24,13 +24,14 @@ object ContainerNodeCreator {
   def getContainer(id: Int, leaderIp: String): ContainerNode = {
     val config = ConfigProvider.config
     val basePort = config.getInt("deployment.akka.port")
-    val numberOfNodes = DeploymentConfigurationCreator.getDeploymentConfiguration.numberOfNodes
+    val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
+    val numberOfNodes = deploymentConfig.numberOfNodes
     val akkaConfig = AkkaConfigCreator.getConfig(basePort + id + 1)
     val container = new DefaultContainerNode(id = id,
-      numberOfNodes = numberOfNodes,
       leaderIp = leaderIp,
       basePort = basePort,
-      akkaConfig = akkaConfig)
+      akkaConfig = akkaConfig,
+      deploymentConfig = deploymentConfig)
     container
   }
 }

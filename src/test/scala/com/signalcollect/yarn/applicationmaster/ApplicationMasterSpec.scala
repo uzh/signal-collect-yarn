@@ -41,6 +41,7 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
 		     "parameter-name" = "some-parameter"
 	       }
 	       cluster = "${cluster}"
+           timeout = 500
          }"""
     val config = ConfigFactory.parseString(configAsString)
     DeploymentConfigurationCreator.getDeploymentConfiguration(config)
