@@ -42,7 +42,8 @@ case class YarnDeploymentConfiguration(
   leaderMemory: Int = 512,
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
   requestedMemoryFactor: Double = 1.1,
-  containerClass: String = "com.signalcollect.deployment.ContainerNodeApp") extends DeploymentConfiguration
+  containerClass: String = "com.signalcollect.deployment.ContainerNodeApp",
+  pathToJar: String = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar") extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -92,7 +93,8 @@ object YarnDeploymentConfigurationCreator {
       leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
       applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),
       requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1),
-      containerClass = get[String]("deployment.container-class").getOrElse("com.signalcollect.deployment.ContainerNodeApp"))
+      containerClass = get[String]("deployment.container-class").getOrElse("com.signalcollect.deployment.ContainerNodeApp"),
+      pathToJar = get[String]("deployment.path-to-jar").getOrElse("target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"))
   }
 
   /**

@@ -49,7 +49,7 @@ class JvmCommand(settings: LaunchSettings) extends LogHelper {
 
 case class LaunchSettings(val memory: Int,
   val mainClass: String,
-  val pathsToJars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
+  val pathsToJars: List[String],
   val arguments: List[String] = List[String](),
   val useDefaultYarnClientCreator: Boolean = false,
   val jvmArguments: String = "-XX:+AggressiveOpts -XX:+AlwaysPreTouch -XX:+UseNUMA -XX:-UseBiasedLocking -XX:MaxInlineSize=1024",

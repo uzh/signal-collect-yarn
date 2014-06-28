@@ -41,6 +41,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            application-master = "com.signalcollect.yarn.applicationmaster.ApplicationMaster"
            requested-memory-factor = 1.1
            main-class = "com.signalcollect.deployment.ContainerNodeApp"
+           path-to-jar = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
@@ -69,5 +70,10 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   it should "contain container-class" in {
     val deploymentConfig = createYarnDeploymentConfiguration
     assert(deploymentConfig.containerClass === "com.signalcollect.deployment.ContainerNodeApp")
+  }
+
+  it should "contain pathToJar" in {
+    val deploymentConfig = createYarnDeploymentConfiguration
+    assert(deploymentConfig.pathToJar === "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar")
   }
 }
