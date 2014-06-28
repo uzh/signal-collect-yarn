@@ -24,11 +24,11 @@ import collection.JavaConversions._
 import com.signalcollect.deployment.DeploymentConfiguration
 
 object LaunchSettingsCreator {
-  def getSettingsForClass(klass: Class[_], deploymentConf: DeploymentConfiguration, testDeployment: Boolean = false): LaunchSettings = {
+  def getSettingsForClass(klass: Class[_], deploymentConf: YarnDeploymentConfiguration, testDeployment: Boolean = false): LaunchSettings = {
     val config = ConfigProvider.config
     val createJarOnTheFly = config.getBoolean("testing.createJarOnTheFly")
     val useMiniCluster = config.getBoolean("testing.useMiniCluster")
-    val memory = config.getInt("deployment.leader-memory")
+    val memory = deploymentConf.leaderMemory
     val filesToUpload = deploymentConf.copyFiles
     val yarnConfigFiles = if (testDeployment)
       List("yarn.conf", "yarn-testing.conf", "testdeployment.conf")

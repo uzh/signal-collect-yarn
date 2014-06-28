@@ -37,13 +37,19 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
 	       }
 	       cluster = "com.signalcollect.deployment.TestCluster"
     	   application-name = "signal-collect-yarn-deployment"
+           leader-memory = 512
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
   }
 
-  "AmazonConfiguration" should "contain applicationName" in {
+  "YarnConfiguration" should "contain applicationName" in {
     val deploymentConfig = createYarnDeploymentConfiguration
     assert(deploymentConfig.applicationName === "signal-collect-yarn-deployment")
+  }
+  
+  it should "contain leaderMemory" in {
+    val deploymentConfig = createYarnDeploymentConfiguration
+    assert(deploymentConfig.leaderMemory === 512)
   }
 }

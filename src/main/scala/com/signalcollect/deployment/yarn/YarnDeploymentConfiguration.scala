@@ -38,7 +38,8 @@ case class YarnDeploymentConfiguration(
   override val copyFiles: List[String] = Nil, // list of paths to files
   override val cluster: String = "com.signalcollect.deployment.LeaderCluster",
   override val jvmArguments: String = "",
-  applicationName: String = "signal-collect-yarn-deployment") extends DeploymentConfiguration
+  applicationName: String = "signal-collect-yarn-deployment",
+  leaderMemory: Int = 512) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -81,7 +82,8 @@ object YarnDeploymentConfigurationCreator {
       copyFiles = basicConfig.copyFiles,
       cluster = basicConfig.cluster,
       jvmArguments = basicConfig.jvmArguments,
-      applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"))
+      applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
+      leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512))
   }
 
   /**
