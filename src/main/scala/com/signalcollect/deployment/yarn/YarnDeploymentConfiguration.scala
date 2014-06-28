@@ -41,7 +41,8 @@ case class YarnDeploymentConfiguration(
   applicationName: String = "signal-collect-yarn-deployment",
   leaderMemory: Int = 512,
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
-  requestedMemoryFactor: Double = 1.1) extends DeploymentConfiguration
+  requestedMemoryFactor: Double = 1.1,
+  containerClass: String = "com.signalcollect.deployment.ContainerNodeApp") extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -90,7 +91,8 @@ object YarnDeploymentConfigurationCreator {
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
       leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
       applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),
-      requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1))
+      requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1),
+      containerClass = get[String]("deployment.container-class").getOrElse("com.signalcollect.deployment.ContainerNodeApp"))
   }
 
   /**

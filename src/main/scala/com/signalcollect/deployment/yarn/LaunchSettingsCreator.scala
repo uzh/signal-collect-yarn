@@ -43,25 +43,45 @@ object LaunchSettingsCreator {
       println(" site xml is" + dummySiteXml)
       val files = pathToJar :: dummySiteXml :: yarnConfigFiles ::: pathToDependencies ::: filesToUpload
       val classpath = (files ::: filesOnHdfs).map(_.split("/").last).mkString(":")
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
+      new LaunchSettings(mainClass = deploymentConf.containerClass,
+          memory = memory,
+          jvmArguments = deploymentConf.jvmArguments,
+          pathsToJars = files,
+          filesOnHdfs = filesOnHdfs,
+          classpath = classpath)
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       val pathToJar = config.getString("deployment.pathToJar")
       val files = yarnConfigFiles ::: List(dummySiteXml, pathToJar) ::: filesToUpload
       val classpath = files.map(_.split("/").last).mkString(":")
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
+      new LaunchSettings(mainClass = deploymentConf.containerClass,
+          memory = memory,
+          jvmArguments = deploymentConf.jvmArguments,
+          pathsToJars = files,
+          filesOnHdfs = filesOnHdfs,
+          classpath = classpath)
 
     } else if (createJarOnTheFly) {
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = config.getString("testing.dependency").split(":").toList.filter(!_.contains("yarn") || !dependencyOnHdfs)
       val files = pathToJar :: yarnConfigFiles ::: pathToDependencies ::: filesToUpload
       val classpath = (files ::: filesOnHdfs).map(_.split("/").last).mkString(":")
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
+      new LaunchSettings(mainClass = deploymentConf.containerClass,
+          memory = memory,
+          jvmArguments = deploymentConf.jvmArguments,
+          pathsToJars = files,
+          filesOnHdfs = filesOnHdfs,
+          classpath = classpath)
     } else {
       val pathToJar = config.getString("deployment.pathToJar")
       val files = pathToJar :: yarnConfigFiles ::: filesToUpload
       val classpath = files.map(_.split("/").last).mkString(":")
-      new LaunchSettings(memory = memory, jvmArguments = deploymentConf.jvmArguments, pathsToJars = files, filesOnHdfs = filesOnHdfs, classpath = classpath)
+      new LaunchSettings(mainClass = deploymentConf.containerClass,
+          memory = memory,
+          jvmArguments = deploymentConf.jvmArguments,
+          pathsToJars = files,
+          filesOnHdfs = filesOnHdfs,
+          classpath = classpath)
     }
   }
 }

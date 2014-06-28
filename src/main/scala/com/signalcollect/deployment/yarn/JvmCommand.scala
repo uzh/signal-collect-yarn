@@ -48,7 +48,7 @@ class JvmCommand(settings: LaunchSettings) extends LogHelper {
 }
 
 case class LaunchSettings(val memory: Int,
-  val mainClass: String = ConfigProvider.config.getString("deployment.mainClass"),
+  val mainClass: String,
   val pathsToJars: List[String] = List(ConfigProvider.config.getString("deployment.pathToJar")),
   val arguments: List[String] = List[String](),
   val useDefaultYarnClientCreator: Boolean = false,

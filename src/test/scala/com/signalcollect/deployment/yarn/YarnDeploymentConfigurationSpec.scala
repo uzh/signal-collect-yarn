@@ -40,6 +40,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            leader-memory = 512
            application-master = "com.signalcollect.yarn.applicationmaster.ApplicationMaster"
            requested-memory-factor = 1.1
+           main-class = "com.signalcollect.deployment.ContainerNodeApp"
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
@@ -65,4 +66,8 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
     assert(deploymentConfig.requestedMemoryFactor === 1.1)
   }
 
+  it should "contain container-class" in {
+    val deploymentConfig = createYarnDeploymentConfiguration
+    assert(deploymentConfig.containerClass === "com.signalcollect.deployment.ContainerNodeApp")
+  }
 }

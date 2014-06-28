@@ -20,23 +20,21 @@ package com.signalcollect.yarn.applicationmaster
 
 import java.io.File
 import java.net.InetAddress
-
 import scala.collection.JavaConversions.asScalaBuffer
-
 import org.apache.hadoop.yarn.api.records.Container
 import org.apache.hadoop.yarn.api.records.ContainerStatus
 import org.apache.hadoop.yarn.api.records.NodeReport
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
-
 import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.Leader
 import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.util.LogHelper
+import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
-class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: DeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with LogHelper {
+class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: YarnDeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with LogHelper {
 
   override def onContainersCompleted(completedContainers: java.util.List[ContainerStatus]): Unit = {
     log.info("Got response from RM for container ask, completedCnt="
@@ -85,6 +83,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Depl
     val files = getJarAndConfFilesInCurrentDir ::: copyFiles
     val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
     val launchSettings = new LaunchSettings(
+      mainClass = deploymentConfig.containerClass,
       pathsToJars = Nil,
       arguments = List[String](containerId.toString,leaderIp),
       memory = deploymentConfig.memoryPerNode,
