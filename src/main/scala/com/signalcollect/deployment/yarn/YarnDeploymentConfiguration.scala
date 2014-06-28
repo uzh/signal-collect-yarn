@@ -40,24 +40,28 @@ case class YarnDeploymentConfiguration(
   override val jvmArguments: String = "",
   applicationName: String = "signal-collect-yarn-deployment",
   leaderMemory: Int = 512,
-  applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster") extends DeploymentConfiguration
+  applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
+  requestedMemoryFactor: Double = 1.1) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
  */
 object YarnDeploymentConfigurationCreator {
-  val yarnConfig = ConfigFactory.parseFile(new File("deployment.conf"))
+  val yarn = ConfigFactory.parseFile(new File("deployment.conf"))
+  val testing = ConfigFactory.parseFile(new File("yarn-testing.conf"))
+  val testDeployment = ConfigFactory.parseFile(new File("testdeployment.conf"))
+  val yarnConfig = testing.withFallback(yarn).withFallback(testDeployment)
 
   /**
    * creates DeploymentConfiguration out of 'amazon.conf'
    */
   def getYarnDeploymentConfiguration: YarnDeploymentConfiguration = getYarnDeploymentConfiguration(yarnConfig)
-  
+
   def getYarnDeploymentConfiguration(config: Config): YarnDeploymentConfiguration = {
     val basicConfig = DeploymentConfigurationCreator.getDeploymentConfiguration(config)
     getYarnDeploymentConfiguration(config, basicConfig)
   }
-  
+
   def getYarnDeploymentConfiguration(basicConfig: DeploymentConfiguration): YarnDeploymentConfiguration = {
     getYarnDeploymentConfiguration(yarnConfig, basicConfig)
   }
@@ -85,7 +89,8 @@ object YarnDeploymentConfigurationCreator {
       jvmArguments = basicConfig.jvmArguments,
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
       leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
-      applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"))
+      applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),
+      requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1))
   }
 
   /**

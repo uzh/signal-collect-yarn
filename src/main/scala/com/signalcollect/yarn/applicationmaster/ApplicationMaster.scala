@@ -27,13 +27,13 @@ import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.impl.NMClientAsyncImpl
 import org.apache.hadoop.yarn.util.Records
-
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.LeaderCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.util.ConfigProvider
 import com.signalcollect.util.HdfsWrapper
 import com.signalcollect.util.LogHelper
+import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
 //  NodeKiller.killOtherMasterAndNodes
@@ -42,7 +42,7 @@ object ApplicationMaster extends App with LogHelper {
   println(masterIp)
   YarnClientCreator.masterIp = masterIp
   YarnClientCreator.useDefaultCreator
-  val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
+  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
 
   val config = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
@@ -94,7 +94,7 @@ object ApplicationMaster extends App with LogHelper {
 
   private def setupContainerAskForRM(): ContainerRequest = {
     val memory = deploymentConfig.memoryPerNode
-    val memoryFactor = ConfigProvider.config.getDouble("deployment.requested-memory-factor")
+    val memoryFactor = deploymentConfig.requestedMemoryFactor
     val pri = Records.newRecord(classOf[Priority])
     pri.setPriority(0)
 
