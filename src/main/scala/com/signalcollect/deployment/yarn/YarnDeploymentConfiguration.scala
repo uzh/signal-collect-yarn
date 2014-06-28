@@ -43,7 +43,8 @@ case class YarnDeploymentConfiguration(
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
   requestedMemoryFactor: Double = 1.1,
   containerClass: String = "com.signalcollect.deployment.ContainerNodeApp",
-  pathToJar: String = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar") extends DeploymentConfiguration
+  pathToJar: String = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar",
+  filesOnHdfs: List[String] = Nil) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -81,6 +82,13 @@ object YarnDeploymentConfigurationCreator {
         Some(config.getAnyRef(path).asInstanceOf[T])
       else None
     }
+    
+    def getList[T](path: String): Option[List[T]] = {
+      if (config.hasPath(path))
+        Some(config.getAnyRefList(path).toList.map(e => e.asInstanceOf[T]))
+      else None
+    }
+    
     new YarnDeploymentConfiguration(
       algorithm = basicConfig.algorithm,
       algorithmParameters = basicConfig.algorithmParameters,
@@ -94,7 +102,8 @@ object YarnDeploymentConfigurationCreator {
       applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),
       requestedMemoryFactor = get[Double]("deployment.requested-memory-factor").getOrElse(1.1),
       containerClass = get[String]("deployment.container-class").getOrElse("com.signalcollect.deployment.ContainerNodeApp"),
-      pathToJar = get[String]("deployment.path-to-jar").getOrElse("target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"))
+      pathToJar = get[String]("deployment.path-to-jar").getOrElse("target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"),
+      filesOnHdfs= getList[String]("deployment.files-on-hdfs").getOrElse(Nil))
   }
 
   /**

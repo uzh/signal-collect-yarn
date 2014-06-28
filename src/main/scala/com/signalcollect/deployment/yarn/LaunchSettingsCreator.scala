@@ -34,7 +34,7 @@ object LaunchSettingsCreator {
       List("yarn.conf", "yarn-testing.conf", "testdeployment.conf")
     else
       List("yarn.conf", "yarn-testing.conf", "deployment.conf")
-    val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
+    val filesOnHdfs = deploymentConf.filesOnHdfs
     val dependencyOnHdfs = config.getBoolean("testing.onHdfs")
     if (createJarOnTheFly && useMiniCluster) {
       val pathToJar = JarCreator.createJarFile(klass)

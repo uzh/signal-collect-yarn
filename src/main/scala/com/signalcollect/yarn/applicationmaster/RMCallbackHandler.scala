@@ -81,7 +81,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Yarn
     val copyFiles = deploymentConfig.copyFiles.map(_.split("/").last)
     val dependencyOnHdfs = config.getBoolean("testing.onHdfs")
     val files = getJarAndConfFilesInCurrentDir ::: copyFiles
-    val filesOnHdfs = config.getStringList("deployment.files-on-hdfs").toList
+    val filesOnHdfs = deploymentConfig.filesOnHdfs
     val launchSettings = new LaunchSettings(
       mainClass = deploymentConfig.containerClass,
       pathsToJars = Nil,
