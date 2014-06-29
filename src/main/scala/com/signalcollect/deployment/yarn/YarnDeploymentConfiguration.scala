@@ -53,7 +53,11 @@ case class YarnDeploymentConfiguration(
   filesOnHdfs: List[String] = Nil,
   hdfsPath: String = "",
   user: String = "hadoop",
-  hadoopOverrides: Config) extends DeploymentConfiguration
+  hadoopOverrides: Config,
+  useMiniCluster: Boolean = false,
+  createJarOnTheFly: Boolean = false,
+  testDependencies: String = "",
+  testDependenciesOnHdfs: Boolean = false) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -120,7 +124,11 @@ object YarnDeploymentConfigurationCreator {
       hdfsPath = get[String]("deployment.hdfspath").getOrElse("~"),
       timeout = get[Int]("deployment.timeout").getOrElse(1),
       user = get[String]("deployment.user").getOrElse("hadoop"),
-      hadoopOverrides = config.getConfig("deployment.hadoop-overrides"))
+      hadoopOverrides = config.getConfig("deployment.hadoop-overrides"),
+      useMiniCluster = get[Boolean]("testing.useMiniCluster").getOrElse(false),
+      createJarOnTheFly = get[Boolean]("testing.createJarOnTheFly").getOrElse(false),
+      testDependencies = get[String]("testing.dependency").getOrElse(""),
+      testDependenciesOnHdfs = get[Boolean]("testing.onHdfs").getOrElse(false))
   }
 
   /**

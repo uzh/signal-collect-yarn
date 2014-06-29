@@ -63,7 +63,13 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   		        }
   	          }
 	       }
-    	}"""
+    	}
+        testing{
+          useMiniCluster = true
+          createJarOnTheFly = true
+          dependency = "../signal-collect-yarn-dependencies/target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar:../signal-collect/target/scala-2.11/signal-collect-2.1-SNAPSHOT.jar"
+          onHdfs = false
+       }"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
   }
@@ -121,5 +127,13 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   it should "contain hadoop overrides" in {
 	  val deploymentConfig = createYarnDeploymentConfiguration
 	  assert(deploymentConfig.hadoopOverrides.getString("yarn.resourcemanager.host") === "127.0.0.1")
+  }
+  
+  it should "contain testing" in {
+	  val deploymentConfig = createYarnDeploymentConfiguration
+	  assert(deploymentConfig.useMiniCluster === true)
+	  assert(deploymentConfig.createJarOnTheFly === true)
+	  assert(deploymentConfig.testDependencies === "../signal-collect-yarn-dependencies/target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar:../signal-collect/target/scala-2.11/signal-collect-2.1-SNAPSHOT.jar")
+	  assert(deploymentConfig.testDependenciesOnHdfs === false)
   }
 }
