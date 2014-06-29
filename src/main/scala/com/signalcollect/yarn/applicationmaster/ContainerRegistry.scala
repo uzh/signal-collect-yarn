@@ -22,7 +22,6 @@ import java.net.InetAddress
 
 import org.apache.hadoop.yarn.api.records.Container
 
-import com.signalcollect.deployment.ContainerInfo
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.util.ConfigProvider
 
@@ -81,7 +80,7 @@ object ContainerRegistry {
     }
   }
 
-  def containerStarted() {
+  def containerStarted {
     synchronized {
       startedCounter += 1
     }
@@ -93,21 +92,10 @@ object ContainerRegistry {
     }
   }
   
-  def failContainers() {
+  def failContainers {
     synchronized {
       successfull = false
       finished = true
     }
-  }
-  
-  def getContainerNodes(): List[ContainerInfo] = {
-    
-    val akkaPort = deploymentConfig.akkaBasePort
-    val containerNodes = containers.values.map(t => new ContainerInfo(getIpFromHostAddress(t._1), t._2, akkaPort)).toList
-    containerNodes
-  }
-  
-  def getIpFromHostAddress(container: Container): String = {
-    InetAddress.getByName(container.getNodeHttpAddress().split(":").head).getHostAddress()
   }
 }
