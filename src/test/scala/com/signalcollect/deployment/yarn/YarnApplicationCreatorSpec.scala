@@ -25,17 +25,14 @@ import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
 
-import com.signalcollect.util.ConfigProvider
-
 @RunWith(classOf[JUnitRunner])
 class YarnApplicationCreatorSpec extends SpecificationWithJUnit {
   "YarnApplicationCreator" should {
     println("Test executing now: YarnApplicationCreatorSpec")
-    val typesafeConfig = ConfigProvider.config
     val yarnClient = YarnClientCreator.yarnClient
     
     "create a new Application" in {
-      val application = YarnApplicationCreator.getApplication(typesafeConfig, yarnClient)
+      val application = YarnApplicationCreator.getApplication(yarnClient)
       application !== null
       application.getNewApplicationResponse().getApplicationId() !== null
     }

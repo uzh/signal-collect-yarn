@@ -22,11 +22,9 @@ import com.typesafe.config.Config
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
-import com.signalcollect.util.ConfigProvider
 import org.apache.hadoop.conf.Configuration
 
 class MiniYarnClientCreator extends YarnClientCreatorImpl {
-  val config = ConfigProvider.config
   lazy val configuration = MiniCluster.getClusterConfig()
   override def yarnClient(): YarnClient = {
     val client = YarnClient.createYarnClient()

@@ -20,22 +20,16 @@ package com.signalcollect.deployment.yarn
 
 import org.junit.runner.RunWith
 import org.specs2.mutable.SpecificationWithJUnit
-
-import com.signalcollect.util.ConfigProvider
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
-
 import org.specs2.runner.JUnitRunner
-
-import com.signalcollect.deployment.DeploymentConfigurationCreator
 
 @RunWith(classOf[JUnitRunner])
 class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextCreator" should {
     println("Test executing now: YarnSubmissionContextCreator")
-    val config = ConfigProvider.config
     val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration("testdeployment.conf")
     lazy val yarnClient = YarnClientCreator.yarnClient
-    lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
+    lazy val application = YarnApplicationCreator.getApplication(yarnClient)
     "call Factory" in {
       val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), deploymentConfig)
       val factory = new YarnSubmissionContextCreator(yarnClient, application, launchSettings, deploymentConfig)

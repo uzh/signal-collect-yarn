@@ -7,7 +7,6 @@ import scala.collection.JavaConversions._
 
 import org.apache.hadoop.yarn.api.records.YarnApplicationState
 
-import com.signalcollect.util.ConfigProvider
 import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.Cluster
 import com.signalcollect.deployment.DeploymentConfiguration

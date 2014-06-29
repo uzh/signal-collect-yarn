@@ -24,7 +24,6 @@ import org.apache.hadoop.yarn.client.api.async.NMClientAsync
 import com.signalcollect.util.LogHelper
 import java.nio.ByteBuffer
 import org.apache.hadoop.yarn.api.records.ContainerState
-import com.signalcollect.util.ConfigProvider
 
 class NMCallbackHandler
   extends NMClientAsync.CallbackHandler with LogHelper {

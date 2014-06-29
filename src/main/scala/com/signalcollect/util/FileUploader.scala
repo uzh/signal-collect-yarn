@@ -18,24 +18,24 @@
  */
 package com.signalcollect.util
 
-import org.apache.hadoop.yarn.util.Records
-import org.apache.hadoop.fs.Path
+import java.util.HashMap
+
+import org.apache.hadoop.fs.FileStatus
 import org.apache.hadoop.fs.FileSystem
+import org.apache.hadoop.fs.Path
 import org.apache.hadoop.yarn.api.records.LocalResource
-import org.apache.hadoop.yarn.util.ConverterUtils
 import org.apache.hadoop.yarn.api.records.LocalResourceType
 import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
-import org.apache.hadoop.fs.FileStatus
-import java.util.HashMap
+import org.apache.hadoop.yarn.util.ConverterUtils
+import org.apache.hadoop.yarn.util.Records
+
 import com.signalcollect.deployment.yarn.YarnClientCreator
-import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
 class FileUploader(applicationId: String,
   files: List[String],
   useDefaultYarnClient: Boolean = false,
   deployConf: YarnDeploymentConfiguration) {
-  val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
   if (useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deployConf)
   val client = YarnClientCreator.yarnClient

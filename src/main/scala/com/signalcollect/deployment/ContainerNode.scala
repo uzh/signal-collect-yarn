@@ -27,7 +27,6 @@ import akka.actor.Props
 import scala.concurrent._
 import com.signalcollect.nodeprovisioning.DefaultNodeActor
 import com.typesafe.config.Config
-import com.signalcollect.util.ConfigProvider
 import scala.concurrent.duration._
 import akka.actor.PoisonPill
 import akka.actor.actorRef2Scala
@@ -72,23 +71,7 @@ class DefaultContainerNode(id: Int,
   def isSuccessful: Boolean = successful
 
   def start {
-    	register
-//    async {
-//      try {
-//    	println(s"start container $id")
-//        println(s"container $id is registered")
-//        waitForTermination
-//        successful = true
-//      } catch {
-//        case e: Throwable => {
-//          println("catched Exception")
-//          throw e}
-//      } finally {
-//        println("shutting down")
-//        terminated = true
-//        shutdown
-//      }
-//    }
+    register
   }
 
   def register {

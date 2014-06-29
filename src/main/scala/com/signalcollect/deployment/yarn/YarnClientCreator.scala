@@ -22,10 +22,8 @@ import com.typesafe.config.Config
 
 import org.apache.hadoop.yarn.client.api.YarnClient
 
-import com.signalcollect.util.ConfigProvider
 
 object YarnClientCreator {
-  val config = ConfigProvider.config
   var masterIp = "localhost"
   var deploymentConfig: YarnDeploymentConfiguration = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
   var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(masterIp, deploymentConfig)

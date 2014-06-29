@@ -18,20 +18,14 @@
  */
 package com.signalcollect.util
 
-import org.apache.hadoop.yarn.util.Records
-import org.apache.hadoop.fs.Path
-import org.apache.hadoop.fs.FileSystem
-import org.apache.hadoop.yarn.api.records.LocalResource
-import org.apache.hadoop.yarn.util.ConverterUtils
-import org.apache.hadoop.yarn.api.records.LocalResourceType
-import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
 import org.apache.hadoop.fs.FileStatus
+import org.apache.hadoop.fs.FileSystem
+import org.apache.hadoop.fs.Path
+
 import com.signalcollect.deployment.yarn.YarnClientCreator
-import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
 class HdfsWrapper(useDefaultYarnClient: Boolean = false, deploymentConfig: YarnDeploymentConfiguration) {
-  val config = ConfigProvider.config
   if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deploymentConfig)
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())

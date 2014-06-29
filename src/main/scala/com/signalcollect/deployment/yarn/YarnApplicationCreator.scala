@@ -26,7 +26,7 @@ import org.apache.hadoop.yarn.api.protocolrecords.GetNewApplicationResponse
 
 object YarnApplicationCreator extends LogHelper {
 
-  def getApplication(config: Config, client: YarnClient): YarnClientApplication = {
+  def getApplication(client: YarnClient): YarnClientApplication = {
     try {
       val app: YarnClientApplication = client.createApplication()
       logResponse(app.getNewApplicationResponse())

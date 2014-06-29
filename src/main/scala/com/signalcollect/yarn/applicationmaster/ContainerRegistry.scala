@@ -23,7 +23,6 @@ import java.net.InetAddress
 import org.apache.hadoop.yarn.api.records.Container
 
 import com.signalcollect.deployment.DeploymentConfigurationCreator
-import com.signalcollect.util.ConfigProvider
 
 object ContainerRegistry {
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration

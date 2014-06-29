@@ -27,13 +27,12 @@ import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.impl.NMClientAsyncImpl
 import org.apache.hadoop.yarn.util.Records
-import com.signalcollect.deployment.DeploymentConfigurationCreator
+
 import com.signalcollect.deployment.LeaderCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
-import com.signalcollect.util.ConfigProvider
+import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 import com.signalcollect.util.HdfsWrapper
 import com.signalcollect.util.LogHelper
-import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
   //  NodeKiller.killOtherMasterAndNodes

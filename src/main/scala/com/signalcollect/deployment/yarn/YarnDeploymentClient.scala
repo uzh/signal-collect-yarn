@@ -21,13 +21,11 @@ package com.signalcollect.deployment.yarn
 import com.typesafe.config.Config
 import com.signalcollect.util.LogHelper
 import org.apache.hadoop.yarn.api.records.ApplicationSubmissionContext
-import com.signalcollect.util.ConfigProvider
 import org.apache.hadoop.yarn.api.records.ApplicationId
 
 class YarnDeploymentClient(launchSettings: LaunchSettings, deploymentConf: YarnDeploymentConfiguration) {
-  val config = ConfigProvider.config
   lazy val yarnClient = YarnClientCreator.yarnClient
-  lazy val application = YarnApplicationCreator.getApplication(config, yarnClient)
+  lazy val application = YarnApplicationCreator.getApplication(yarnClient)
   lazy val submissionContext = createSubmissionContext()
 
   def createSubmissionContext(): ApplicationSubmissionContext = {

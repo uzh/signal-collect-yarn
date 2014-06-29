@@ -18,8 +18,6 @@
  */
 package com.signalcollect.deployment
 
-import com.signalcollect.util.ConfigProvider
-
 object ContainerNodeCreator {
   def getContainer(id: Int, leaderIp: String): ContainerNode = {
     val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration

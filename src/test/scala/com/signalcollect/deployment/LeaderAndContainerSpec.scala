@@ -26,7 +26,6 @@ import org.junit.runner.RunWith
 import org.specs2.mutable.After
 import org.specs2.mutable.SpecificationWithJUnit
 import com.signalcollect.configuration.ActorSystemRegistry
-import com.signalcollect.util.ConfigProvider
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.actorRef2Scala
@@ -225,7 +224,6 @@ trait LeaderScope extends StopActorSystemAfter {
   val akkaPort = 2552
   val ip = InetAddress.getLocalHost.getHostAddress
   val id = 0
-  val config = ConfigProvider.config
   val leader = LeaderCreator.getLeader(DeploymentConfigurationCreator.getDeploymentConfiguration("testdeployment.conf")).asInstanceOf[DefaultLeader]
   val leaderActor: ActorRef = leader.getActorRef()
 

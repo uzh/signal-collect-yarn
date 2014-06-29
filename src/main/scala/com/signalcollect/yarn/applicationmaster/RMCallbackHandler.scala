@@ -30,7 +30,6 @@ import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.Leader
 import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
-import com.signalcollect.util.ConfigProvider
 import com.signalcollect.util.LogHelper
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
@@ -75,7 +74,6 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Yarn
   }
 
   private def startContainer(container: Container) = {
-    val config = ConfigProvider.config
     val containerId = ContainerRegistry.register(container)
     val leaderIp = InetAddress.getLocalHost().getHostAddress()
     val copyFiles = deploymentConfig.copyFiles.map(_.split("/").last)

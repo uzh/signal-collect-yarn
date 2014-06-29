@@ -18,14 +18,12 @@
  */
 package com.signalcollect.deployment.yarn
 
-import com.signalcollect.util.ConfigProvider
 import java.io.File
 import collection.JavaConversions._
 import com.signalcollect.deployment.DeploymentConfiguration
 
 object LaunchSettingsCreator {
   def getSettingsForClass(klass: Class[_], deploymentConf: YarnDeploymentConfiguration, testDeployment: Boolean = false): LaunchSettings = {
-    val config = ConfigProvider.config
     val createJarOnTheFly = deploymentConf.createJarOnTheFly
     val useMiniCluster = deploymentConf.useMiniCluster
     val memory = deploymentConf.leaderMemory

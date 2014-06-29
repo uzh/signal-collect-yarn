@@ -24,7 +24,6 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.client.api.YarnClient
 import scala.collection.JavaConversions._
-import com.signalcollect.util.ConfigProvider
 
 class DefaultYarnClientCreator(masterIp: String = "localhost", deploymentConfig: YarnDeploymentConfiguration) extends YarnClientCreatorImpl with LogHelper {
   override lazy val yarnClient = createYarnClient
