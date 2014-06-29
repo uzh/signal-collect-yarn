@@ -28,10 +28,11 @@ import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
 import org.apache.hadoop.fs.FileStatus
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.DefaultYarnClientCreator
+import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
-class HdfsWrapper(useDefaultYarnClient: Boolean = false) {
+class HdfsWrapper(useDefaultYarnClient: Boolean = false, deploymentConfig: YarnDeploymentConfiguration) {
   val config = ConfigProvider.config
-  if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator
+  if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deploymentConfig)
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
 

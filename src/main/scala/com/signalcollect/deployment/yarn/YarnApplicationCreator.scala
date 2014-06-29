@@ -32,11 +32,6 @@ object YarnApplicationCreator extends LogHelper {
       logResponse(app.getNewApplicationResponse())
       app
     } catch {
-      case e: UnknownHostException => {
-        log.warn("Couldn't create application: check if ResourceManager is up and running on " +
-          config.getString("deployment.hadoop-overrides.yarn.resourcemanager.address"))
-        throw e
-      }
       case e: Throwable => {
         println(e.getMessage())
         throw e

@@ -37,12 +37,11 @@ import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 
 object ApplicationMaster extends App with LogHelper {
   //  NodeKiller.killOtherMasterAndNodes
-  println("override factory")
   val masterIp = args(1)
+  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
   println(masterIp)
   YarnClientCreator.masterIp = masterIp
-  YarnClientCreator.useDefaultCreator
-  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
+  YarnClientCreator.useDefaultCreator(deploymentConfig)
 
   val config = YarnClientCreator.yarnClient.getConfig()
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
@@ -52,7 +51,7 @@ object ApplicationMaster extends App with LogHelper {
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
-  val hdfs = new HdfsWrapper(true)
+  val hdfs = new HdfsWrapper(true, deploymentConfig)
   val applicationId = args(0)
   val allocListener = new RMCallbackHandler(nodeManagerClient, deploymentConfig, applicationId, leader)
   val ressourcManagerClient: AMRMClientAsync[ContainerRequest] = AMRMClientAsync.createAMRMClientAsync(1000, allocListener)

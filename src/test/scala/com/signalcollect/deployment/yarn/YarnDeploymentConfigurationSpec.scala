@@ -21,6 +21,7 @@ package com.signalcollect.deployment.yarn
 import org.scalatest.prop.Checkers
 import org.scalatest.FlatSpec
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
 
 class YarnConfigurationSpec extends FlatSpec with Checkers {
 
@@ -46,6 +47,22 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            hdfspath = "signal-collect-yarn-deployment"
            timeout = 400
            user = "tbachmann"
+           akka {
+	         port: 2552
+             kryo-initializer = "com.signalcollect.configuration.KryoInit"
+             kryo-registrations = [
+               #"some.class.to.be.registered"
+             ]
+             serialize-messages = true
+	       }
+           hadoop-overrides {
+  	         yarn {
+  		       resourcemanager {
+  			     host = "127.0.0.1"
+  			  
+  		        }
+  	          }
+	       }
     	}"""
     val config = ConfigFactory.parseString(configAsString)
     YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(config)
@@ -99,5 +116,10 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
   it should "contain user" in {
     val deploymentConfig = createYarnDeploymentConfiguration
     assert(deploymentConfig.user === "tbachmann")
+  }
+  
+  it should "contain hadoop overrides" in {
+	  val deploymentConfig = createYarnDeploymentConfiguration
+	  assert(deploymentConfig.hadoopOverrides.getString("yarn.resourcemanager.host") === "127.0.0.1")
   }
 }

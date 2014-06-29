@@ -40,6 +40,10 @@ case class YarnDeploymentConfiguration(
   override val cluster: String = "com.signalcollect.deployment.LeaderCluster",
   override val jvmArguments: String = "",
   override val timeout: Int = 1,
+  override val akkaBasePort: Int = 2552,
+  override val kryoInit: String,
+  override val kryoRegistrations: List[String] = Nil,
+  override val serializeMessages: Boolean = false,
   applicationName: String = "signal-collect-yarn-deployment",
   leaderMemory: Int = 512,
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
@@ -49,10 +53,7 @@ case class YarnDeploymentConfiguration(
   filesOnHdfs: List[String] = Nil,
   hdfsPath: String = "",
   user: String = "hadoop",
-  override val akkaBasePort: Int = 2552,
-  override val kryoInit: String,
-  override val kryoRegistrations: List[String] = Nil,
-  override val serializeMessages: Boolean = false) extends DeploymentConfiguration
+  hadoopOverrides: Config) extends DeploymentConfiguration
 
 /**
  * Creator of YarnConfiguration reads configuration from file 'deployment.conf'
@@ -118,7 +119,8 @@ object YarnDeploymentConfigurationCreator {
       filesOnHdfs= getList[String]("deployment.files-on-hdfs").getOrElse(Nil),
       hdfsPath = get[String]("deployment.hdfspath").getOrElse("~"),
       timeout = get[Int]("deployment.timeout").getOrElse(1),
-      user = get[String]("deployment.user").getOrElse("hadoop"))
+      user = get[String]("deployment.user").getOrElse("hadoop"),
+      hadoopOverrides = config.getConfig("deployment.hadoop-overrides"))
   }
 
   /**

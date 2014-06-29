@@ -37,7 +37,7 @@ class FileUploader(applicationId: String,
   deployConf: YarnDeploymentConfiguration) {
   val config = ConfigProvider.config
   val localResources = new HashMap[String, LocalResource]()
-  if (useDefaultYarnClient) YarnClientCreator.useDefaultCreator()
+  if (useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deployConf)
   val client = YarnClientCreator.yarnClient
   val fs = FileSystem.get(client.getConfig())
 

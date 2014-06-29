@@ -27,39 +27,40 @@ import com.signalcollect.util.ConfigProvider
 object YarnClientCreator {
   val config = ConfigProvider.config
   var masterIp = "localhost"
-  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(masterIp)
+  var deploymentConfig: YarnDeploymentConfiguration = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
+  var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(masterIp, deploymentConfig)
   var useDefault = false
-  
-  
+
   /**
    * This function allows to override the Creator which is chosen in the createFactory function
    * it is useful when running a container on the MiniCluster
    */
-  def useDefaultCreator() ={
+  def useDefaultCreator(deploymentConf: YarnDeploymentConfiguration) = {
+    deploymentConfig = deploymentConf
     useDefault = true
-    creator = new DefaultYarnClientCreator(masterIp)
+    creator = new DefaultYarnClientCreator(masterIp, deploymentConfig)
   }
-  
+
   def yarnClient(): YarnClient = {
-    if(!useDefault){
-    	creator = createFactory()
+    if (!useDefault) {
+      creator = createFactory()
     }
     creator.yarnClient
   }
-  
+
   def createFactory(): YarnClientCreatorImpl = {
     val useMiniCluster = if (config.hasPath("testing.useMiniCluster"))
       config.getBoolean("testing.useMiniCluster")
-      else false
-    
-    if (useMiniCluster){
+    else false
+
+    if (useMiniCluster) {
       new MiniYarnClientCreator
     } else {
-      new DefaultYarnClientCreator()
+      new DefaultYarnClientCreator(deploymentConfig = deploymentConfig)
     }
   }
 }
 
-trait YarnClientCreatorImpl{
+trait YarnClientCreatorImpl {
   def yarnClient: YarnClient
 }
