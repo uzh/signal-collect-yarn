@@ -29,9 +29,9 @@ object LaunchSettingsCreator {
     val memory = deploymentConf.leaderMemory
     val filesToUpload = deploymentConf.copyFiles
     val yarnConfigFiles = if (testDeployment)
-      List("yarn.conf", "yarn-testing.conf", "testdeployment.conf")
+      List("testdeployment.conf")
     else
-      List("yarn.conf", "yarn-testing.conf", "deployment.conf")
+      List("deployment.conf")
     val filesOnHdfs = deploymentConf.filesOnHdfs
     val dependencyOnHdfs = deploymentConf.testDependenciesOnHdfs
     if (createJarOnTheFly && useMiniCluster) {
