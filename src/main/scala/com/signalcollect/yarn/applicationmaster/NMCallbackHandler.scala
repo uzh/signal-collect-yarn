@@ -45,7 +45,7 @@ class NMCallbackHandler
   override def onContainerStarted(containerId: ContainerId,
     allServiceResponse: java.util.Map[String, ByteBuffer]) {
     log.info("onContainerStarted")
-    ContainerRegistry.containerStarted()
+    ContainerRegistry.containerStarted
   }
 
   override def onStartContainerError(containerId: ContainerId, t: Throwable) {
