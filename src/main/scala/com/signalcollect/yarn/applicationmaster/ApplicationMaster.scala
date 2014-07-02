@@ -37,8 +37,8 @@ import com.signalcollect.util.LogHelper
 object ApplicationMaster extends App with LogHelper {
   //  NodeKiller.killOtherMasterAndNodes
   val masterIp = args(1)
-  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
-  println(masterIp)
+  val algorithm = args(2)
+  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration.copy(algorithm = algorithm)
   YarnClientCreator.masterIp = masterIp
   YarnClientCreator.useDefaultCreator(deploymentConfig)
 
@@ -46,7 +46,6 @@ object ApplicationMaster extends App with LogHelper {
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   config.reloadConfiguration
-  println(config.toString())
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)

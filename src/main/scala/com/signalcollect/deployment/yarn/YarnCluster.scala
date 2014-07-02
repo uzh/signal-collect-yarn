@@ -18,7 +18,7 @@ class YarnCluster extends Cluster {
   var testDeployment = false
   lazy val yarnClient = YarnClientCreator.yarnClient
   var masterIp: String = "localhost"
-
+  
   def setMasterIP(ip: String) {
     masterIp = ip
   }
@@ -27,7 +27,7 @@ class YarnCluster extends Cluster {
     val yarnDeploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(deploymentConfiguration)
     System.setProperty("HADOOP_USER_NAME", yarnDeploymentConfig.user)
     val launchSettings = LaunchSettingsCreator.getSettingsForClass(ApplicationMaster.getClass(), yarnDeploymentConfig, testDeployment)
-    val launchSettingsWithMasterIp = launchSettings.copy(arguments = launchSettings.arguments :+ masterIp)
+    val launchSettingsWithMasterIp = launchSettings.copy(arguments = launchSettings.arguments :+ masterIp :+ yarnDeploymentConfig.algorithm)
     val client = new YarnDeploymentClient(launchSettingsWithMasterIp, yarnDeploymentConfig)
     val application = client.submitApplication()
     waitForTermination(application)
