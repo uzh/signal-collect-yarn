@@ -29,9 +29,6 @@ class MiniYarnClientCreator extends YarnClientCreatorImpl {
   override def yarnClient(): YarnClient = {
     val client = YarnClient.createYarnClient()
     val conf = new Configuration(configuration)
-    println("RM Address: " + conf.get("yarn.resourcemanager.address"))
-    println("classpath: " + conf.get("yarn.application.classpath"))
-   
     client.init(conf)
     client.start()
     client

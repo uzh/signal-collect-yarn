@@ -29,18 +29,18 @@ import org.specs2.runner.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
   
- def createDeploymentConfiguration(cluster: String): DeploymentConfiguration = {
+ def createDeploymentConfiguration: DeploymentConfiguration = {
     val configAsString =
-      s"""deployment {
+      """deployment {
 	       memory-per-node = 512
 	       jvm-arguments = ""
 	       number-of-nodes = 1
 	       copy-files = []
-	       algorithm = "com.signalcollect.deployment.PageRankExample"
+	       algorithm = "com.signalcollect.deployment.PageRankExample$"
 	       algorithm-parameters {
 		     "parameter-name" = "some-parameter"
 	       }
-	       cluster = "${cluster}"
+	       cluster = "com.signalcollect.deployment.yarn.YarnCluster"
            timeout = 500
 	       akka {
 		    port: 2552
@@ -58,7 +58,7 @@ class ApplicationMasterSpec extends SpecificationWithJUnit {
   "ApplicationMaster" should {
 
     "run application successfull" in {
-      val deploymentConf = createDeploymentConfiguration("com.signalcollect.deployment.yarn.YarnCluster")
+      val deploymentConf = createDeploymentConfiguration
       println(deploymentConf.algorithm)
       val cluster = new YarnCluster()
       cluster.testDeployment = true
