@@ -41,7 +41,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
            leader-memory = 512
            application-master = "com.signalcollect.yarn.applicationmaster.ApplicationMaster"
            requested-memory-factor = 1.1
-           main-class = "com.signalcollect.deployment.NodeContainerApp"
+           container-class = "com.signalcollect.deployment.NodeContainerApp"
            path-to-jar = "target/scala-2.11/signal-collect-yarn-assembly-1.0-SNAPSHOT.jar"
            files-on-hdfs = ["testFile"]
            hdfspath = "signal-collect-yarn-deployment"

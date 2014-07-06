@@ -18,13 +18,13 @@
  */
 package com.signalcollect.deployment.yarn
 
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
 import com.typesafe.config.Config
 import java.net.UnknownHostException
 import org.apache.hadoop.yarn.client.api._
 import org.apache.hadoop.yarn.api.protocolrecords.GetNewApplicationResponse
 
-object YarnApplicationCreator extends LogHelper {
+object YarnApplicationCreator extends Logging {
 
   def getApplication(client: YarnClient): YarnClientApplication = {
     try {

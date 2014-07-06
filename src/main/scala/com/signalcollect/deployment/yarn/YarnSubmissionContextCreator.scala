@@ -19,7 +19,7 @@
 package com.signalcollect.deployment.yarn
 
 import com.typesafe.config.Config
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
 import java.util.HashMap
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.{ YarnClient, YarnClientApplication }

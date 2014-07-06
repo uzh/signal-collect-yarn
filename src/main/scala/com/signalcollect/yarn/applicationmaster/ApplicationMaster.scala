@@ -27,18 +27,22 @@ import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.impl.NMClientAsyncImpl
 import org.apache.hadoop.yarn.util.Records
-
 import com.signalcollect.deployment.LeaderCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 import com.signalcollect.util.HdfsWrapper
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
+import com.signalcollect.util.SocketLogger
+import com.signalcollect.util.NodeKiller
 
-object ApplicationMaster extends App with LogHelper {
-  //  NodeKiller.killOtherMasterAndNodes
+object ApplicationMaster extends App with Logging {
+  NodeKiller.killOtherMasterAndNodes
   val masterIp = args(1)
   val algorithm = args(2)
+  println(s"masterIp: $masterIp , algorithm: $algorithm ")
+  startLogServer
   val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration.copy(algorithm = algorithm)
+  log.debug(s"deploymentConfig is $deploymentConfig")
   YarnClientCreator.masterIp = masterIp
   YarnClientCreator.useDefaultCreator(deploymentConfig)
 
@@ -46,6 +50,7 @@ object ApplicationMaster extends App with LogHelper {
   val siteXml = new Path("dummy-yarn-site.xml") //this is needed for the minicluster
   config.addResource(siteXml)
   config.reloadConfiguration
+  log.debug(s"yarn config is $config")
   lazy val leader = LeaderCreator.getLeader(deploymentConfig)
   val containerListener = new NMCallbackHandler()
   val nodeManagerClient = new NMClientAsyncImpl(containerListener)
@@ -66,6 +71,10 @@ object ApplicationMaster extends App with LogHelper {
     } finally {
       System.exit(0) // if there are still some threads running, they are killed by that (for example an ActorSystem)
     }
+  }
+  
+  private def startLogServer{
+    new SocketLogger().start()
   }
 
   private def initApplicationMaster = {

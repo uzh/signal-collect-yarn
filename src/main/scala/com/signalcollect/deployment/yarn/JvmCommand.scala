@@ -21,11 +21,11 @@ package com.signalcollect.deployment.yarn
 import org.apache.hadoop.yarn.api.ApplicationConstants
 import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
 
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
 
 import scala.collection.immutable.List
 
-class JvmCommand(settings: LaunchSettings) extends LogHelper {
+class JvmCommand(settings: LaunchSettings) extends Logging {
   val javaHome = settings.javaHome
   val classpath = settings.classpath
   val memory = settings.memory

@@ -19,13 +19,13 @@
 package com.signalcollect.deployment.yarn
 
 import com.typesafe.config.Config
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.client.api.YarnClient
 import scala.collection.JavaConversions._
 
-class DefaultYarnClientCreator(masterIp: String = "localhost", deploymentConfig: YarnDeploymentConfiguration) extends YarnClientCreatorImpl with LogHelper {
+class DefaultYarnClientCreator(masterIp: String = "localhost", deploymentConfig: YarnDeploymentConfiguration) extends YarnClientCreatorImpl with Logging {
   override lazy val yarnClient = createYarnClient
 
   def createYarnClient: YarnClient = {

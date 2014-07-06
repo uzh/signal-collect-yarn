@@ -21,12 +21,12 @@ package com.signalcollect.yarn.applicationmaster
 import org.apache.hadoop.yarn.api.records.ContainerStatus
 import org.apache.hadoop.yarn.api.records.ContainerId
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
-import com.signalcollect.util.LogHelper
+import com.signalcollect.util.Logging
 import java.nio.ByteBuffer
 import org.apache.hadoop.yarn.api.records.ContainerState
 
 class NMCallbackHandler
-  extends NMClientAsync.CallbackHandler with LogHelper {
+  extends NMClientAsync.CallbackHandler with Logging {
   override def onContainerStopped(containerId: ContainerId) {
     log.info("onContainerStopped")
   }

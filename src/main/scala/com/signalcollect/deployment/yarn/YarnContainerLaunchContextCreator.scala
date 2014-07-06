@@ -19,23 +19,25 @@
 package com.signalcollect.deployment.yarn
 
 import java.util.HashMap
-
 import scala.collection.JavaConversions._
-
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.util.Records
-
 import com.signalcollect.util.FileUploader
 import com.signalcollect.util.FileUploader
+import com.signalcollect.util.Logging
 
-class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings, filesAlreadyInContainer: List[String] = Nil, deployConfig: YarnDeploymentConfiguration) {
+class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings,
+    filesAlreadyInContainer: List[String] = Nil,
+    deployConfig: YarnDeploymentConfiguration) extends Logging {
   def createLaunchContext(applicationId: String): ContainerLaunchContext = {
     val uploader = new FileUploader(applicationId, launchSettings.pathsToJars, launchSettings.useDefaultYarnClientCreator, deployConfig)
     val launchContext = Records.newRecord(classOf[ContainerLaunchContext])
     val jarResource = uploader.uploadFiles()
     val containerFiles = filesAlreadyInContainer.map(uploader.getPathOnFs(_))
+    log.debug(s"containerFiles: $containerFiles")
     val filesOnHdfs = launchSettings.filesOnHdfs ::: containerFiles
+    log.debug(s"filesOnHdfs: $filesOnHdfs")
     val hdfsFiles: List[(String, LocalResource)] = filesOnHdfs.map(uploader.createLocalResource(_))
     hdfsFiles.foreach(file => jarResource.put(file._1 , file._2 ))
     launchContext.setLocalResources(jarResource)

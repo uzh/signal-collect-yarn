@@ -19,12 +19,12 @@
 package com.signalcollect.deployment.yarn
 
 import com.typesafe.config.Config
-
 import org.apache.hadoop.yarn.client.api.YarnClient
+import java.net.InetAddress
 
 
 object YarnClientCreator {
-  var masterIp = "localhost"
+  var masterIp = InetAddress.getLocalHost().getCanonicalHostName()
   var deploymentConfig: YarnDeploymentConfiguration = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
   var creator: YarnClientCreatorImpl = new DefaultYarnClientCreator(masterIp, deploymentConfig)
   var useDefault = false
