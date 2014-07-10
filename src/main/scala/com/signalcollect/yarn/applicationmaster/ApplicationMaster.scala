@@ -36,7 +36,7 @@ import com.signalcollect.logging.SocketLogger
 import com.signalcollect.util.NodeKiller
 
 object ApplicationMaster extends App with Logging {
-  NodeKiller.killOtherMasterAndNodes
+//  NodeKiller.killOtherMasterAndNodes
   val masterIp = args(1)
   val algorithm = args(2)
   startLogServer

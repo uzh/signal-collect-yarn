@@ -37,7 +37,7 @@ object LeaderApp extends App {
  * @param ip is the IP address of the leader.
  */
 object NodeContainerApp extends App with Logging{
-  NodeKiller.killOtherMasterAndNodes
+//  NodeKiller.killOtherMasterAndNodes
   val id = args(0).toInt
   val ip = args(1)
   NodeContainerInfo.nodeContainerId = id
