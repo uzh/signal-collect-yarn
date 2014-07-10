@@ -19,9 +19,10 @@
 package com.signalcollect.deployment
 
 import com.signalcollect.configuration.ActorSystemRegistry
-import com.signalcollect.util.LogClient
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.LogClient
+import com.signalcollect.logging.Logging
 import com.signalcollect.util.NodeKiller
+import com.signalcollect.logging.NodeContainerInfo
 /**
  * This App starts a leader, which will wait then for NodeContainers to be registered and runs then a DeployableAlgorithm
  */
@@ -39,8 +40,8 @@ object NodeContainerApp extends App with Logging{
   NodeKiller.killOtherMasterAndNodes
   val id = args(0).toInt
   val ip = args(1)
+  NodeContainerInfo.nodeContainerId = id
   new LogClient(ip).start
-  log.info("test da logger")
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   val container = NodeContainerCreator.getContainer(id = id, leaderIp = ip, deploymentConfig = deploymentConfig)
   container.start

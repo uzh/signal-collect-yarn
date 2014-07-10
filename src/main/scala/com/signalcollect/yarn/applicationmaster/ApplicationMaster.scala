@@ -31,15 +31,14 @@ import com.signalcollect.deployment.LeaderCreator
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 import com.signalcollect.util.HdfsWrapper
-import com.signalcollect.util.Logging
-import com.signalcollect.util.SocketLogger
+import com.signalcollect.logging.Logging
+import com.signalcollect.logging.SocketLogger
 import com.signalcollect.util.NodeKiller
 
 object ApplicationMaster extends App with Logging {
   NodeKiller.killOtherMasterAndNodes
   val masterIp = args(1)
   val algorithm = args(2)
-  println(s"masterIp: $masterIp , algorithm: $algorithm ")
   startLogServer
   val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration.copy(algorithm = algorithm)
   log.debug(s"deploymentConfig is $deploymentConfig")
@@ -63,9 +62,7 @@ object ApplicationMaster extends App with Logging {
   def run() {
     try {
       initApplicationMaster
-      println("start leader")
       leader.start
-      println("start containers")
       startContainers
       waitAndStopApplicationMaster
     } finally {
@@ -92,7 +89,7 @@ object ApplicationMaster extends App with Logging {
   private def startContainers: Unit = {
     val containerAsk = setupContainerAskForRM()
     val numberOfNodes = deploymentConfig.numberOfNodes
-    println(s"requesting $numberOfNodes Containers")
+    log.debug(s"requesting $numberOfNodes Containers")
     for (i <- 0 until numberOfNodes) {
       ressourcManagerClient.addContainerRequest(containerAsk)
     }
@@ -122,7 +119,7 @@ object ApplicationMaster extends App with Logging {
     try {
       ressourcManagerClient.unregisterApplicationMaster(appStatus, appMessage, null)
     } catch {
-      case e: Exception => log.info("failed unregister ApplicationMaster")
+      case e: Exception => log.warn("failed unregister ApplicationMaster")
     }
     nodeManagerClient.stop()
     ressourcManagerClient.stop()
@@ -136,7 +133,7 @@ object ApplicationMaster extends App with Logging {
         Thread.sleep(100)
       }
       if (!timeoutNotReached(begin)) {
-        println("Timeout reached!!!")
+        log.warn("Timeout reached")
       }
       leader.shutdown
       while (!ContainerRegistry.isFinished) {

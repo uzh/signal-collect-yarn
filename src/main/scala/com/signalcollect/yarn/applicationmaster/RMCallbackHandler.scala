@@ -30,7 +30,7 @@ import com.signalcollect.deployment.DeploymentConfiguration
 import com.signalcollect.deployment.Leader
 import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
 class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: YarnDeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with Logging {

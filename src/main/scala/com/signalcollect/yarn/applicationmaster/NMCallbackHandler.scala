@@ -21,7 +21,7 @@ package com.signalcollect.yarn.applicationmaster
 import org.apache.hadoop.yarn.api.records.ContainerStatus
 import org.apache.hadoop.yarn.api.records.ContainerId
 import org.apache.hadoop.yarn.client.api.async.NMClientAsync
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 import java.nio.ByteBuffer
 import org.apache.hadoop.yarn.api.records.ContainerState
 

@@ -28,6 +28,8 @@ class YarnSubmissionContextFactorySpec extends SpecificationWithJUnit {
   "YarnSubmissionContextCreator" should {
     println("Test executing now: YarnSubmissionContextCreator")
     val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration("testdeployment.conf")
+    println(deploymentConfig.useMiniCluster)
+    YarnClientCreator.deploymentConfig = deploymentConfig
     lazy val yarnClient = YarnClientCreator.yarnClient
     lazy val application = YarnApplicationCreator.getApplication(yarnClient)
     "call Factory" in {

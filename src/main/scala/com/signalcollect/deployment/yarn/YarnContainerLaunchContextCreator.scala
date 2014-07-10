@@ -25,7 +25,7 @@ import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.util.Records
 import com.signalcollect.util.FileUploader
 import com.signalcollect.util.FileUploader
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 
 class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings,
     filesAlreadyInContainer: List[String] = Nil,

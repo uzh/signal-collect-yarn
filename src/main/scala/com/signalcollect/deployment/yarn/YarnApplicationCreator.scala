@@ -18,7 +18,7 @@
  */
 package com.signalcollect.deployment.yarn
 
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 import com.typesafe.config.Config
 import java.net.UnknownHostException
 import org.apache.hadoop.yarn.client.api._

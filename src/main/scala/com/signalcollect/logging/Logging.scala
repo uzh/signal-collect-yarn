@@ -16,27 +16,21 @@
  *  limitations under the License.
  *
  */
-package com.signalcollect.util
+package com.signalcollect.logging
 
-import java.io.IOException
-
-import java.net.InetAddress
 import java.net.ServerSocket
-import java.net.Socket
-
 import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.apache.log4j.PatternLayout
 import org.apache.log4j.LogManager
+import org.apache.log4j.Logger
 import org.apache.log4j.net.SocketAppender
 import org.apache.log4j.net.SocketNode
-import org.apache.log4j.net.SocketServer
-import org.apache.log4j.spi.LoggerRepository
 
 trait Logging {
   val loggerName = this.getClass.getName
-  lazy val log = Logger.getLogger(loggerName)
+  lazy val log = new Log4JWrapper(loggerName)
 }
+
+
 /**
  * opens a socket, on which remote hosts can connect to send their log messages via SocketAppender
  */

@@ -21,7 +21,7 @@ package com.signalcollect.deployment.yarn
 import org.apache.hadoop.yarn.api.ApplicationConstants
 import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
 
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 
 import scala.collection.immutable.List
 

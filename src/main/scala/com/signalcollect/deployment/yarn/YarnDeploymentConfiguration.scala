@@ -44,6 +44,7 @@ case class YarnDeploymentConfiguration(
   override val kryoInit: String,
   override val kryoRegistrations: List[String] = Nil,
   override val serializeMessages: Boolean = false,
+  override val loggers: List[String] = Nil,
   applicationName: String = "signal-collect-yarn-deployment",
   leaderMemory: Int = 512,
   applicationMaster: String = "com.signalcollect.yarn.applicationmaster.ApplicationMaster",
@@ -86,7 +87,6 @@ object YarnDeploymentConfigurationCreator {
    * can be called with another Config, useful for testing or injecting another configuration than 'deployment.conf', merges in a basic configuration
    */
   def getYarnDeploymentConfiguration(config: Config, basicConfig: DeploymentConfiguration): YarnDeploymentConfiguration = {
-
     /**
      * gets an object of Type T from the Config, when key not exists it returns None
      */
@@ -114,6 +114,7 @@ object YarnDeploymentConfigurationCreator {
       kryoInit = basicConfig.kryoInit,
       kryoRegistrations = basicConfig.kryoRegistrations,
       serializeMessages = basicConfig.serializeMessages,
+      loggers = basicConfig.loggers,
       applicationName = get[String]("deployment.application-name").getOrElse("signal-collect-yarn-deployment"),
       leaderMemory = get[Int]("deployment.leader-memory").getOrElse(512),
       applicationMaster = get[String]("deployment.application-master").getOrElse("com.signalcollect.yarn.applicationmaster.ApplicationMaster"),

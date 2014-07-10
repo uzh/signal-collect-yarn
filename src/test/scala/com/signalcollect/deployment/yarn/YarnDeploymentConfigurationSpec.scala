@@ -54,6 +54,7 @@ class YarnConfigurationSpec extends FlatSpec with Checkers {
                #"some.class.to.be.registered"
              ]
              serialize-messages = true
+             loggers = ["akka.event.Logging$DefaultLogger"]
 	       }
            hadoop-overrides {
   	         yarn {

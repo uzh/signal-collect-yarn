@@ -25,41 +25,16 @@ import com.signalcollect.deployment.DeploymentConfigurationCreator
 import com.signalcollect.deployment.yarn.YarnCluster
 import com.typesafe.config.ConfigFactory
 import org.specs2.runner.JUnitRunner
+import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
+import akka.event.slf4j.Slf4jLogger
 
 @RunWith(classOf[JUnitRunner])
 class ApplicationMasterSpec extends SpecificationWithJUnit {
   
- def createDeploymentConfiguration: DeploymentConfiguration = {
-    val configAsString =
-      """deployment {
-	       memory-per-node = 512
-	       jvm-arguments = ""
-	       number-of-nodes = 1
-	       copy-files = []
-	       algorithm = "com.signalcollect.deployment.PageRankExample$"
-	       algorithm-parameters {
-		     "parameter-name" = "some-parameter"
-	       }
-	       cluster = "com.signalcollect.deployment.yarn.YarnCluster"
-           timeout = 500
-	       akka {
-		    port: 2552
-	        kryo-initializer = "com.signalcollect.configuration.KryoInit"
-	        kryo-registrations = [
-	          #"some.class.to.be.registered"
-	        ]
-	        serialize-messages = true
-		  }
-         }"""
-    val config = ConfigFactory.parseString(configAsString)
-    DeploymentConfigurationCreator.getDeploymentConfiguration(config)
-  }
-     
   "ApplicationMaster" should {
-
     "run application successfull" in {
-      val deploymentConf = createDeploymentConfiguration
-      println(deploymentConf.algorithm)
+      val deploymentConf = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration("testdeployment.conf")
+      println(deploymentConf)
       val cluster = new YarnCluster()
       cluster.testDeployment = true
       cluster.deploy(deploymentConf) === true

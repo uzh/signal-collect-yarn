@@ -19,7 +19,7 @@
 package com.signalcollect.deployment.yarn
 
 import com.typesafe.config.Config
-import com.signalcollect.util.Logging
+import com.signalcollect.logging.Logging
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.client.api.YarnClient
