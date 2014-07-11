@@ -36,11 +36,11 @@ import com.signalcollect.logging.SocketLogger
 import com.signalcollect.util.NodeKiller
 
 object ApplicationMaster extends App with Logging {
-//  NodeKiller.killOtherMasterAndNodes
   val masterIp = args(1)
   val algorithm = args(2)
-  startLogServer
   val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration.copy(algorithm = algorithm)
+  if(deploymentConfig.killOtherNodes) NodeKiller.killOtherMasterAndNodes
+  startLogServer
   log.debug(s"deploymentConfig is $deploymentConfig")
   YarnClientCreator.masterIp = masterIp
   YarnClientCreator.useDefaultCreator(deploymentConfig)

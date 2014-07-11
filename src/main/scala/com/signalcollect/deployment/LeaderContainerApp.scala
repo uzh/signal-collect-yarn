@@ -23,6 +23,7 @@ import com.signalcollect.logging.LogClient
 import com.signalcollect.logging.Logging
 import com.signalcollect.util.NodeKiller
 import com.signalcollect.logging.NodeContainerInfo
+import com.signalcollect.deployment.yarn.YarnDeploymentConfigurationCreator
 /**
  * This App starts a leader, which will wait then for NodeContainers to be registered and runs then a DeployableAlgorithm
  */
@@ -36,13 +37,13 @@ object LeaderApp extends App {
  * @param id each Container needs a unique id
  * @param ip is the IP address of the leader.
  */
-object NodeContainerApp extends App with Logging{
-//  NodeKiller.killOtherMasterAndNodes
+object NodeContainerApp extends App with Logging {
+  val deploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
+  if (deploymentConfig.killOtherNodes) NodeKiller.killOtherMasterAndNodes
   val id = args(0).toInt
   val ip = args(1)
   NodeContainerInfo.nodeContainerId = id
   new LogClient(ip).start
-  val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   val container = NodeContainerCreator.getContainer(id = id, leaderIp = ip, deploymentConfig = deploymentConfig)
   container.start
   container.waitForTermination
