@@ -36,8 +36,6 @@ class HdfsWrapper(useDefaultYarnClient: Boolean = false, deploymentConfig: YarnD
 
   def deleteFolder(folder:String) {
     val path = new Path(fs.getHomeDirectory(),folder)
-    println(s"deleting folder $path")
-    println("deleted: " + fs.delete(path,true))
   }
   
   private def uploadAndGetFileStatus(src: String, dest: String): FileStatus = {
