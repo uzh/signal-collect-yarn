@@ -57,19 +57,19 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % hadoopVersion % "compile",
   "org.apache.hadoop" % "minicluster" % "2.2.0"	,
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion,
-  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.4" % "compile",
+  "com.github.romix.akka" %% "akka-kryo-serialization-custom" % "0.3.5" % "compile",
   "com.amazonaws" % "aws-java-sdk" % "1.7.12" % "compile",
   "com.jcraft" % "jsch" % "0.1.51" % "compile",
   "org.apache.commons" % "commons-compress" % "1.5" % "compile",
   "log4j" % "log4j" % "1.2.17" % "compile",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-  "com.typesafe.akka" % "akka-slf4j_2.11" % "2.3.3",
+  "com.typesafe.akka" % "akka-slf4j_2.11" % "2.3.4",
   "junit" % "junit" % "4.8.2"  % "test",
   "org.specs2" %% "specs2" % "2.3.11"  % "test",
   "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
   "org.scalatest" %% "scalatest" % "2.1.3" % "test",
   "org.easymock" % "easymock" % "3.2" % "test",
-  "com.typesafe.akka" %% "akka-remote" % "2.3.2" force()
+  "com.typesafe.akka" %% "akka-remote" % "2.3.4" force()
 )
 
 resolvers += "Ifi Public" at "https://maven.ifi.uzh.ch/maven2/content/groups/public/"
