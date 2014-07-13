@@ -38,8 +38,7 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
 
 excludedJars in assembly <<= (fullClasspath in assembly) map { cp => 
   cp filter { entry =>
-    (entry.data.getName == "minlog-1.2.jar" ||
-     entry.data.getName == "asm-3.2.jar" ||
+    (entry.data.getName == "asm-3.2.jar" ||
      entry.data.getName == "asm-3.1.jar"
    )}
 }
@@ -53,7 +52,7 @@ libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-yarn-common" % hadoopVersion % "compile",
   ("org.apache.hadoop" % "hadoop-yarn-client" % hadoopVersion % "compile").
   exclude("hadoop-yarn-api", "org.apache.hadoop"),
- "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % hadoopVersion % "compile",
+  "org.apache.hadoop" % "hadoop-yarn-server-resourcemanager" % hadoopVersion % "compile",
   "org.apache.hadoop" % "hadoop-yarn-server-nodemanager" % hadoopVersion % "compile",
   "org.apache.hadoop" % "minicluster" % "2.2.0"	,
   "org.apache.hadoop" % "hadoop-hdfs" % hadoopVersion,
