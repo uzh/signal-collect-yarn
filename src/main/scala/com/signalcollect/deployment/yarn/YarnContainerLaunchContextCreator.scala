@@ -27,6 +27,9 @@ import com.signalcollect.util.FileUploader
 import com.signalcollect.util.FileUploader
 import com.signalcollect.logging.Logging
 
+/**
+ * create a ContainerLaunchContext. The ContainerLaunchContext defines which jar file, and which files are deployed and started.
+ */
 class YarnContainerLaunchContextCreator(launchSettings: LaunchSettings,
     filesAlreadyInContainer: List[String] = Nil,
     deployConfig: YarnDeploymentConfiguration) extends Logging {

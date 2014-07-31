@@ -24,6 +24,9 @@ import java.net.Socket
 import java.net.InetSocketAddress
 import java.util.concurrent.TimeoutException
 
+/**
+ * the configuration for a SSH tunnel, with the default for an amazon cluster
+ */
 case class TunnelConfiguration(host: String = "host",
   user: String = "hadoop",
   sshPort: Int = 22,
@@ -32,6 +35,9 @@ case class TunnelConfiguration(host: String = "host",
   pathToPem: String = "signalcollect.pem")
 
 object SshTunnel {
+  /**
+   * opens an Ssh Tunnel
+   */
   def open(config: TunnelConfiguration) {
 
     val jsch = new JSch()
@@ -49,6 +55,9 @@ object SshTunnel {
     config.ports.foreach(port => session.setPortForwardingL(port, config.remoteHost, port))
   }
 
+  /**
+   * scans if a port is open
+   */
   def portIsOpen(ip: String, port: Int, timeout: Int): Boolean = {
     try {
       val socket = new Socket()
@@ -60,19 +69,31 @@ object SshTunnel {
     }
   }
   
+  /**
+   * checks if ssh port 22 is open
+   */
   def isSshOpen(ip: String, timeout: Int = 5000): Boolean = {
     val sshPort = 22
     portIsOpen(ip, sshPort, timeout)
   }
   
+  /**
+   * gets an open ssh port from a list in string.
+   */
   def getOpenSsh(ips: List[String], timeout: Int = 5000): List[String] = {
     ips.par.filter(ip => isSshOpen(ip, timeout)).toList
   }
   
+  /**
+   * scans a list of ips until it finds an open ssh port.
+   */
   def getOneOpenSsh(ips: List[String]): String = {
     getOpenSshRecursive(ips: List[String], 100)
   }
   
+  /**
+   * recursive helper function
+   */
   def getOpenSshRecursive(ips: List[String], timeout: Int): String = {
     getOpenSsh(ips, timeout) match {
       case x if timeout > 10000 => throw new TimeoutException

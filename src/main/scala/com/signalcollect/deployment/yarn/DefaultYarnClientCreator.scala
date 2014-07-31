@@ -25,9 +25,17 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.client.api.YarnClient
 import scala.collection.JavaConversions._
 
-class DefaultYarnClientCreator(masterIp: String = "localhost", deploymentConfig: YarnDeploymentConfiguration) extends YarnClientCreatorImpl with Logging {
+/**
+ * Creator for a YarnClient
+ */
+class DefaultYarnClientCreator(masterIp: String = "localhost",
+  deploymentConfig: YarnDeploymentConfiguration)
+  extends YarnClientCreatorImpl with Logging {
   override lazy val yarnClient = createYarnClient
-
+  
+  /**
+   * creating the yarn client from the hadoop override configuration
+   */
   def createYarnClient: YarnClient = {
     val yarnConfig = new YarnConfiguration()
     val yarnOverrides = deploymentConfig.hadoopOverrides.entrySet.iterator
@@ -42,6 +50,9 @@ class DefaultYarnClientCreator(masterIp: String = "localhost", deploymentConfig:
     createYarnClient(yarnConfig)
   }
 
+  /**
+   * inits and starts the client
+   */
   protected def createYarnClient(config: Configuration): YarnClient = {
     val yarnClient = YarnClient.createYarnClient()
     yarnClient.init(config)

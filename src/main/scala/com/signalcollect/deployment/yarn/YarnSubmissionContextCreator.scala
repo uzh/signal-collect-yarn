@@ -26,6 +26,9 @@ import org.apache.hadoop.yarn.client.api.{ YarnClient, YarnClientApplication }
 import org.apache.hadoop.yarn.util.Records
 import scala.collection.JavaConversions._
 
+/**
+ * Creates a SubmissionContext.
+ */
 class YarnSubmissionContextCreator(client: YarnClient, application: YarnClientApplication, launchSettings: LaunchSettings, deploymentConf: YarnDeploymentConfiguration) {
   private lazy val submissionContext = application.getApplicationSubmissionContext()
   private lazy val applicationId = submissionContext.getApplicationId().toString()

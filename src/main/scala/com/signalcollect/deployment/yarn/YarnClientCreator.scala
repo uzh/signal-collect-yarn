@@ -22,7 +22,9 @@ import com.typesafe.config.Config
 import org.apache.hadoop.yarn.client.api.YarnClient
 import java.net.InetAddress
 
-
+/**
+ * This class creates a YarnClient.
+ */
 object YarnClientCreator {
   var masterIp = InetAddress.getLocalHost().getCanonicalHostName()
   var deploymentConfig: YarnDeploymentConfiguration = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration
@@ -46,6 +48,9 @@ object YarnClientCreator {
     creator.yarnClient
   }
 
+  /**
+   * creates an implementation of a YarnClientCreatorImpl
+   */
   def createFactory(): YarnClientCreatorImpl = {
     val useMiniCluster = deploymentConfig.useMiniCluster 
 

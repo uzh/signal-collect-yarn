@@ -24,6 +24,9 @@ import java.net.UnknownHostException
 import org.apache.hadoop.yarn.client.api._
 import org.apache.hadoop.yarn.api.protocolrecords.GetNewApplicationResponse
 
+/**
+ * creates a new application on the cluster
+ */
 object YarnApplicationCreator extends Logging {
 
   def getApplication(client: YarnClient): YarnClientApplication = {

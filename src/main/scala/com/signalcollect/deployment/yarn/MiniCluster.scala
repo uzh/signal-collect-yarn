@@ -30,7 +30,9 @@ import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler
 
 import com.signalcollect.yarn.applicationmaster.ApplicationMaster
-
+/**
+ * this object starts a mini cluster, which is very useful for testing purpose
+ */
 object MiniCluster {
   val dummyFilename = "dummy-yarn-site.xml"
   lazy val cluster = startCluster()
@@ -53,13 +55,13 @@ object MiniCluster {
     }
     cluster
   }
+  
   def getClusterConfig(): Configuration = {
     if (url == null) {
       throw new RuntimeException(s"Could not find ' $dummyFilename ' dummy file in classpath")
     }
     val yarnClusterConfig = cluster.getConfig()
     println("Rm in yarnClusterConfig" + yarnClusterConfig.get("yarn.resourcemanager.address"))
-    //    yarnClusterConfig.set("yarn.application.classpath", (new File(url.getPath())).getParent())
 
     val bytesOut = new ByteArrayOutputStream()
     yarnClusterConfig.writeXml(bytesOut)

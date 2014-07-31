@@ -23,7 +23,9 @@ import java.net.InetAddress
 import org.apache.hadoop.yarn.api.records.Container
 
 import com.signalcollect.deployment.DeploymentConfigurationCreator
-
+/**
+ * keeps track of the running containers
+ */
 object ContainerRegistry {
   val deploymentConfig = DeploymentConfigurationCreator.getDeploymentConfiguration
   var containers = Map[String, (Container, Int)]()

@@ -25,6 +25,9 @@ import com.signalcollect.logging.Logging
 
 import scala.collection.immutable.List
 
+/**
+ * creates the shell command which will start the jvm and the execution
+ */
 class JvmCommand(settings: LaunchSettings) extends Logging {
   val javaHome = settings.javaHome
   val classpath = settings.classpath
@@ -45,7 +48,9 @@ class JvmCommand(settings: LaunchSettings) extends Logging {
     
   }
 }
-
+/**
+ * class which contains the essentile launchsettings
+ */
 case class LaunchSettings(val memory: Int,
   val mainClass: String,
   val pathsToJars: List[String],
@@ -57,8 +62,4 @@ case class LaunchSettings(val memory: Int,
   val logDir: String = ApplicationConstants.LOG_DIR_EXPANSION_VAR,
   val filesOnHdfs: List[String]) {
   
-  
-//  private def createClassPath(): String = {
-//    val jarNames = pathsToJars.map(_.split("/").last).mkString(":")
-//  }
 }

@@ -14,6 +14,9 @@ import com.signalcollect.deployment.DeploymentConfiguration
 import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 
+/**
+ * 
+ */
 class YarnCluster extends Cluster {
   var testDeployment = false
   lazy val yarnClient = YarnClientCreator.yarnClient
@@ -22,12 +25,18 @@ class YarnCluster extends Cluster {
   def setMasterIP(ip: String) {
     masterIp = ip
   }
-
+  
+   /**
+   * deploys an algorithm to a YarnCluster
+   */
   override def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
     val yarnDeploymentConfig = YarnDeploymentConfigurationCreator.getYarnDeploymentConfiguration(deploymentConfiguration)
     deploy(yarnDeploymentConfig)
   }
   
+  /**
+   * deploys an algorithm to a YarnCluster
+   */
   def deploy(yarnDeploymentConfig: YarnDeploymentConfiguration): Boolean = {
     System.setProperty("HADOOP_USER_NAME", yarnDeploymentConfig.user)
     val algorithmClass = Class.forName(yarnDeploymentConfig.algorithm)
@@ -40,6 +49,9 @@ class YarnCluster extends Cluster {
     appReport.getFinalApplicationStatus() == FinalApplicationStatus.SUCCEEDED
   }
 
+  /**
+   * blocks until the Application has finished
+   */
   def waitForTermination(application: ApplicationId) {
     var finished = false
     while (!finished) {

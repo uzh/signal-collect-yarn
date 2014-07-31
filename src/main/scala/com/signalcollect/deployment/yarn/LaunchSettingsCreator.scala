@@ -22,6 +22,9 @@ import java.io.File
 import collection.JavaConversions._
 import com.signalcollect.deployment.DeploymentConfiguration
 
+/**
+ * creates the LaunchSetting, the launchsettings are different if the Minicluster is used or a jar has to be created on the fly.
+ */
 object LaunchSettingsCreator {
   def getSettingsForClass(klass: Class[_], deploymentConf: YarnDeploymentConfiguration, testDeployment: Boolean = false): LaunchSettings = {
     val createJarOnTheFly = deploymentConf.createJarOnTheFly
@@ -34,7 +37,9 @@ object LaunchSettingsCreator {
       List("deployment.conf")
     val filesOnHdfs = deploymentConf.filesOnHdfs
     val dependencyOnHdfs = deploymentConf.testDependenciesOnHdfs
+    
     if (createJarOnTheFly && useMiniCluster) {
+     
       val pathToJar = JarCreator.createJarFile(klass)
       val pathToDependencies = deploymentConf.testDependencies.split(":").toList.filter(!_.contains("signal-collect-yarn-assembly-1.0-SNAPSHOT") || !dependencyOnHdfs)
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
@@ -47,6 +52,7 @@ object LaunchSettingsCreator {
         pathsToJars = files,
         filesOnHdfs = filesOnHdfs,
         classpath = classpath)
+      
     } else if (useMiniCluster) {
       val dummySiteXml = new File(MiniCluster.url.getPath).getParent() + "/dummy-yarn-site.xml"
       val pathToJar = deploymentConf.pathToJar
@@ -70,6 +76,7 @@ object LaunchSettingsCreator {
         pathsToJars = files,
         filesOnHdfs = filesOnHdfs,
         classpath = classpath)
+      
     } else {
       val pathToJar = deploymentConf.pathToJar
       val files = pathToJar :: yarnConfigFiles ::: filesToUpload

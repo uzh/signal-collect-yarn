@@ -34,7 +34,7 @@ trait Logging {
 /**
  * opens a socket, on which remote hosts can connect to send their log messages via SocketAppender
  */
-class SocketLogger(port: Int = 4712) extends Thread with Logging {
+class SocketLogger(port: Int = 3209) extends Thread with Logging {
 
   override def run() = {
     try {
@@ -54,7 +54,7 @@ class SocketLogger(port: Int = 4712) extends Thread with Logging {
 /**
  * connects to SocketLogger on host:port to forward log messages.
  */
-class LogClient(host: String = "localhost", port: Int = 4712) extends Logging {
+class LogClient(host: String = "localhost", port: Int = 3209) extends Logging {
 
   def start {
     val rootLogger = Logger.getRootLogger()

@@ -24,10 +24,15 @@ import collection.JavaConversions._
 import java.io.IOException
 import java.util.jar.JarOutputStream
 import java.io.FileOutputStream
+import com.signalcollect.logging.Logging
 
-object JarCreator {
+/**
+ * creates a Jar on the fly, it takes all the files in the current project
+ */
+object JarCreator extends Logging{
   
   def createJarFile(classes: Class[_]): String = {
+    log.info("create jar on the fly")
     val classloader = classes.getClassLoader()
     val resources = getResources(classes)
     prepareDirs(resources.get(0), classes)
@@ -75,6 +80,7 @@ object JarCreator {
         throw new IOException("could not create jarDir")
     val zos = new JarOutputStream(new FileOutputStream(jarFile))
     JarUtility.jarDir(dir, "", zos)
+    log.info("created jar file")
     jarFile.getAbsolutePath()
   }
 } 

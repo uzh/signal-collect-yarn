@@ -20,6 +20,9 @@ package com.signalcollect.deployment.yarn
 
 import com.signalcollect.deployment.ClusterDeployer
 
+/**
+ * App for starting a cluster
+ */
 object YarnClusterDeployer extends App {
   ClusterDeployer.main(args)
 }

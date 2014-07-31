@@ -32,7 +32,9 @@ import com.signalcollect.deployment.yarn.LaunchSettings
 import com.signalcollect.deployment.yarn.YarnContainerLaunchContextCreator
 import com.signalcollect.logging.Logging
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
-
+/**
+ * CallbackHandler for the RessourcManager, when containers are started it submits the application to them
+ */
 class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: YarnDeploymentConfiguration, applicationId: String, leader: Leader) extends AMRMClientAsync.CallbackHandler with Logging {
 
   override def onContainersCompleted(completedContainers: java.util.List[ContainerStatus]): Unit = {
@@ -81,6 +83,7 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Yarn
     val files = getJarAndConfFilesInCurrentDir ::: copyFiles
     val filesOnHdfs = deploymentConfig.filesOnHdfs
     val launchSettings = new LaunchSettings(
+      jvmArguments = deploymentConfig.jvmArguments,
       mainClass = deploymentConfig.containerClass,
       pathsToJars = Nil,
       arguments = List[String](containerId.toString,leaderIp),
@@ -89,19 +92,18 @@ class RMCallbackHandler(nodeManagerClient: NMClientAsync, deploymentConfig: Yarn
       filesOnHdfs = filesOnHdfs,
       classpath = (getJarAndConfFilesInCurrentDir ::: filesOnHdfs).mkString(":"))
     val launchContextCreator = new YarnContainerLaunchContextCreator(launchSettings, files, deploymentConfig)
-    println("create launchcontext")
     val ctx = launchContextCreator.createLaunchContext(applicationId)
-    println("start Container")
     nodeManagerClient.startContainerAsync(container, ctx)
-    println("container started")
   }
 
+  /**
+   * get the files in current directory, which has to be sent to the containers
+   */
   private def getJarAndConfFilesInCurrentDir(): List[String] = {
     val currentFolder = new File("./")
     val files = currentFolder.listFiles.toList
     val allFiles = files.filter(file => file.getAbsolutePath().endsWith(".conf") || file.getAbsolutePath().endsWith(".jar"))
     val paths = allFiles.map(_.toString)
-    println(s"jarfiles to uploade are: $paths")
     paths
   }
 }

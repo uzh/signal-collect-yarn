@@ -19,7 +19,6 @@
 package com.signalcollect.util
 
 import java.util.HashMap
-
 import org.apache.hadoop.fs.FileStatus
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
@@ -28,14 +27,16 @@ import org.apache.hadoop.yarn.api.records.LocalResourceType
 import org.apache.hadoop.yarn.api.records.LocalResourceVisibility
 import org.apache.hadoop.yarn.util.ConverterUtils
 import org.apache.hadoop.yarn.util.Records
-
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
-
+import com.signalcollect.logging.Logging
+/**
+ * Class for uploading files to a distributed filesystem
+ */
 class FileUploader(applicationId: String,
   files: List[String],
   useDefaultYarnClient: Boolean = false,
-  deployConf: YarnDeploymentConfiguration) {
+  deployConf: YarnDeploymentConfiguration) extends Logging{
   val localResources = new HashMap[String, LocalResource]()
   if (useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deployConf)
   val client = YarnClientCreator.yarnClient
@@ -72,6 +73,7 @@ class FileUploader(applicationId: String,
   private def uploadFile(jarName: String, src: Path, dest: Path): (String, LocalResource) = {
     val jarFile = Records.newRecord(classOf[LocalResource])
     val destStatus = uploadAndGetFileStatus(src, dest)
+    log.info(s"uploaded file: $jarName")
     jarFile.setType(LocalResourceType.FILE)
     jarFile.setVisibility(LocalResourceVisibility.PUBLIC)
     jarFile.setResource(ConverterUtils.getYarnUrlFromPath(dest))

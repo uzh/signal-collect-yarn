@@ -39,6 +39,10 @@ import java.net.InetSocketAddress
 import com.amazonaws.services.elasticmapreduce.model.TerminateJobFlowsRequest
 import com.signalcollect.deployment.yarn.YarnCluster
 
+/**
+ * This is a wrapper of YarnCluster. It provides a cluster based on the amazon.conf
+ * and then runs an algorith on it.
+ */
 class AmazonCluster extends Cluster {
 
   def deploy(deploymentConfiguration: DeploymentConfiguration): Boolean = {
@@ -55,9 +59,6 @@ class AmazonCluster extends Cluster {
     val masterIp = getPublicAndPrivateIp(emr, clusterId)
     println(s"open tunnels to master on $masterIp to use cluster $clusterId")
     SshTunnel.open(new TunnelConfiguration(host = masterIp._1, remoteHost = masterIp._2))
-//        while(true){
-//          Thread.sleep(1000)
-//        }
     val yarncluster = new YarnCluster
     yarncluster.setMasterIP(masterIp._2)
     val result = yarncluster.deploy(deploymentConfiguration)
@@ -66,7 +67,10 @@ class AmazonCluster extends Cluster {
     }
     result
   }
-
+ 
+  /**
+   * creates a new cluster on amazon.
+   */
   private def createCluster(amazonConfig: AmazonConfiguration, emr: AmazonElasticMapReduceClient): String = {
     val stepFactory = new StepFactory()
 
@@ -94,11 +98,17 @@ class AmazonCluster extends Cluster {
     clusterId
   }
 
+  /**
+   * terminates cluster
+   */
   def terminateCluster(emr: AmazonElasticMapReduceClient, clusterId: String) {
     val terminateRequest = new TerminateJobFlowsRequest().withJobFlowIds(clusterId)
     emr.terminateJobFlows(terminateRequest)
   }
 
+  /**
+   * sends a request to Amazon to get the Ip of the Master node, where the ResourceManager runs on.
+   */
   private def getPublicAndPrivateIp(emr: AmazonElasticMapReduceClient, clusterId: String): (String, String) = {
     val instanceRequest = new ListInstancesRequest()
     instanceRequest.setClusterId(clusterId)
@@ -110,21 +120,13 @@ class AmazonCluster extends Cluster {
     ips.find(_._1 == ip).get
   }
 
+  /**
+   * blocks until amazon cluster is running
+   */
   private def waitClusterRunning(emr: AmazonElasticMapReduceClient, clusterId: String): Unit = {
     while (!emr.listClusters().getClusters().filter(_.getId() == clusterId).forall(c => c.getStatus().getState() == "RUNNING" || c.getStatus().getState() == "WAITING")) {
       Thread.sleep(1000)
       emr.listClusters().getClusters().filter(_.getId() == clusterId).foreach(c => println(c.getStatus().getState()))
-    }
-  }
-
-  def portIsOpen(ip: String, port: Int, timeout: Int): Boolean = {
-    try {
-      val socket = new Socket()
-      socket.connect(new InetSocketAddress(ip, port), timeout)
-      socket.close()
-      true
-    } catch {
-      case e: Throwable => false
     }
   }
 }

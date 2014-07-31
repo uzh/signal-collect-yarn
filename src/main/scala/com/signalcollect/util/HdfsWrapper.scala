@@ -25,6 +25,9 @@ import org.apache.hadoop.fs.Path
 import com.signalcollect.deployment.yarn.YarnClientCreator
 import com.signalcollect.deployment.yarn.YarnDeploymentConfiguration
 
+/**
+ * Wrapper for HDFS
+ */
 class HdfsWrapper(useDefaultYarnClient: Boolean = false, deploymentConfig: YarnDeploymentConfiguration) {
   if(useDefaultYarnClient) YarnClientCreator.useDefaultCreator(deploymentConfig)
   val client = YarnClientCreator.yarnClient

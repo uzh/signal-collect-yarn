@@ -25,6 +25,9 @@ import com.signalcollect.logging.Logging
 import java.nio.ByteBuffer
 import org.apache.hadoop.yarn.api.records.ContainerState
 
+/**
+ * Callbackhandler for the NodeManager
+ */
 class NMCallbackHandler
   extends NMClientAsync.CallbackHandler with Logging {
   override def onContainerStopped(containerId: ContainerId) {

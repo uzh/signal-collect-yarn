@@ -24,6 +24,9 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.server.MiniYARNCluster
 import org.apache.hadoop.conf.Configuration
 
+/**
+ * creates a YarnClient for the MiniCluster
+ */
 class MiniYarnClientCreator extends YarnClientCreatorImpl {
   lazy val configuration = MiniCluster.getClusterConfig()
   override def yarnClient(): YarnClient = {

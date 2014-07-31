@@ -35,6 +35,9 @@ import com.signalcollect.logging.Logging
 import com.signalcollect.logging.SocketLogger
 import com.signalcollect.util.NodeKiller
 
+/**
+ * ApplicationMaster which starts the execution and communicates with the ResourceManager
+ */
 object ApplicationMaster extends App with Logging {
   val masterIp = args(1)
   val algorithm = args(2)
@@ -74,6 +77,9 @@ object ApplicationMaster extends App with Logging {
     new SocketLogger().start()
   }
 
+  /**
+   * initalize clients to the ResourceManager and NodeManager
+   */
   private def initApplicationMaster = {
     ressourcManagerClient.init(config)
     ressourcManagerClient.start()
@@ -86,6 +92,9 @@ object ApplicationMaster extends App with Logging {
       .registerApplicationMaster(appMasterHostname, -1, "")
   }
 
+  /**
+   * starts the container requested in the deploymentConfig
+   */
   private def startContainers: Unit = {
     val containerAsk = setupContainerAskForRM()
     val numberOfNodes = deploymentConfig.numberOfNodes
@@ -94,7 +103,7 @@ object ApplicationMaster extends App with Logging {
       ressourcManagerClient.addContainerRequest(containerAsk)
     }
   }
-
+ 
   private def setupContainerAskForRM(): ContainerRequest = {
     val memory = deploymentConfig.memoryPerNode
     val memoryFactor = deploymentConfig.requestedMemoryFactor

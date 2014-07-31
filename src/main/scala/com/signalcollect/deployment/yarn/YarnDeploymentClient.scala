@@ -23,6 +23,9 @@ import com.signalcollect.logging.Logging
 import org.apache.hadoop.yarn.api.records.ApplicationSubmissionContext
 import org.apache.hadoop.yarn.api.records.ApplicationId
 
+/**
+ * Client for deploying 
+ */
 class YarnDeploymentClient(launchSettings: LaunchSettings, deploymentConf: YarnDeploymentConfiguration) {
   YarnClientCreator.deploymentConfig = deploymentConf
   lazy val yarnClient = YarnClientCreator.yarnClient
